@@ -22,7 +22,7 @@ class LoginForm extends StatelessWidget {
             controller: TextEditingController(),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 20),
+            margin: const EdgeInsets.only(top: 30),
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
