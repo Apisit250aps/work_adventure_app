@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
+import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -53,6 +57,25 @@ class RegisterForm extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          const Divider(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("I don't have an account! "),
+              InkWell(
+                child: const Text(
+                  "Back to Login",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontStyle: FontStyle.italic),
+                ),
+                onTap: () {
+                  Get.to(() => const LoginScreen());
+                },
+              )
+            ],
           )
         ],
       ),

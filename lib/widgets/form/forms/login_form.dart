@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:work_adventure/main.dart';
+import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -22,15 +26,13 @@ class LoginForm extends StatelessWidget {
             controller: TextEditingController(),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 25),
+            width: double.infinity,
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                minimumSize: const Size(
-                  double.infinity,
-                  0,
-                ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -48,6 +50,25 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          const Divider(
+            height: 30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("I have exist an account! "),
+              InkWell(
+                child: const Text(
+                  "Go to Register",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontStyle: FontStyle.italic),
+                ),
+                onTap: () {
+                  Get.to(() => const RegisterScreen());
+                },
+              )
+            ],
           )
         ],
       ),
