@@ -17,8 +17,10 @@ class _AuthWordingState extends State<AuthWording> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.heading,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Work Adventure',
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(),

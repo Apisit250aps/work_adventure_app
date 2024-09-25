@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:work_adventure/widgets/base/label/auth_wording.dart';
+import 'package:work_adventure/widgets/form/forms/register_form.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,16 +15,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.all(10),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child:  Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                
-              ],
-            ),
+        child: const Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AuthWording(
+                heading: "Create Your Hero",
+                description: "Forge your legend in the realm of productivity!",
+              ),
+              RegisterForm()
+            ],
           ),
         ),
       ),
