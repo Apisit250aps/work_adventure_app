@@ -1,67 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
-void main() {
-  runApp(const WorksApp());
-}
-
-class WorksApp extends StatelessWidget {
-  const WorksApp({super.key});
+class WorkScreen extends StatefulWidget {
+  const WorkScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
-          titleTextStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        cardTheme: CardTheme(
-          elevation: 0,
-          color: Colors.white, // เพิ่มสีพื้นหลังอ่อนๆ ให้กับ Card
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(color: Colors.black),
-          ),
-        ),
-      ),
-      home: const WorksPage(),
-    );
-  }
+  State<WorkScreen> createState() => _WorkScreenState();
 }
 
-class WorksPage extends StatelessWidget {
-  const WorksPage({super.key});
-
+class _WorkScreenState extends State<WorkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Works',
-          style: TextStyle(
-            fontSize: 36,
-          ),
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
         ),
+        backgroundColor: Colors.white,
+        scrolledUnderElevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add, size: 36),
-            onPressed: () {},
-          ),
+          Container(
+            margin: const EdgeInsets.only(right: 16), // ปรับระยะห่างจากขอบขวา
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Boxicons.bx_message_square_add,
+                size: 24,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+              // ลบ padding ของ IconButton เพื่อให้ไอคอนอยู่ตรงกลางพอดี
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints.tightFor(
+                width: 48,
+                height: 48,
+              ), // ปรับขนาดตามต้องการ
+            ),
+          )
         ],
       ),
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
-          return Card(
+          return Card.outlined(
+            color: Colors.white,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -95,6 +85,12 @@ class WorksPage extends StatelessWidget {
             ),
           );
         },
+      ),
+      bottomNavigationBar: const Padding(
+        padding: EdgeInsets.all(10),
+        child: BottomNavBar(
+          selectedIndex: 0,
+        ),
       ),
     );
   }

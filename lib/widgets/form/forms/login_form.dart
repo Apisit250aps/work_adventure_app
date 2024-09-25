@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
+import 'package:work_adventure/screens/work_screen.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -27,7 +28,9 @@ class LoginForm extends StatelessWidget {
             margin: const EdgeInsets.only(top: 25),
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+              Get.to(() => const WorkScreen());
+            },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
