@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
+import 'package:work_adventure/screens/focus_screen.dart';
 import 'package:work_adventure/screens/quest_screen.dart';
 import 'package:work_adventure/screens/work_screen.dart';
 
@@ -42,7 +43,7 @@ class BottomNavBar extends StatelessWidget {
             icon: Boxicons.bx_time_five,
             isSelected: selectedIndex == 2,
             onTap: () {
-              Get.to(() => const LoginScreen());
+              Get.to(() => const FocusScreen());
             },
           ),
           NavItem(

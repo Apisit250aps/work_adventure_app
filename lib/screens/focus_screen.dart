@@ -1,37 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Focus Adventure',
-      theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      home: ChangeNotifierProvider(
-        create: (context) => FocusScreenModel(),
-        child: const FocusScreen(),
-      ),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
 class FocusScreen extends StatelessWidget {
   const FocusScreen({super.key});
@@ -132,6 +104,12 @@ class FocusScreenContent extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+          bottomNavigationBar: const Padding(
+            padding: EdgeInsets.all(10),
+            child: BottomNavBar(
+              selectedIndex: 2,
             ),
           ),
         );
