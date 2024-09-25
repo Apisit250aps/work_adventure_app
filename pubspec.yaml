@@ -38,6 +38,7 @@ dependencies:
   flutter_boxicons: ^3.1.0
   google_fonts: ^6.2.1
   get: ^4.6.6
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
