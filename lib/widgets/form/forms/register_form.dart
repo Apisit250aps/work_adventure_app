@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:work_adventure/screens/auth/register_screen.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
-class LoginForm extends StatelessWidget {
-  const LoginForm({super.key});
+class RegisterForm extends StatelessWidget {
+  const RegisterForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +13,11 @@ class LoginForm extends StatelessWidget {
       margin: const EdgeInsets.only(top: 20),
       child: Column(
         children: [
+          InputLabel(
+            label: 'Email',
+            // hintText: 'Enter text here',
+            controller: TextEditingController(),
+          ),
           InputLabel(
             label: 'Username',
             // hintText: 'Enter text here',
@@ -24,13 +29,15 @@ class LoginForm extends StatelessWidget {
             controller: TextEditingController(),
           ),
           Container(
-            margin: const EdgeInsets.only(top: 25),
-            width: double.infinity,
+            margin: const EdgeInsets.only(top: 30),
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minimumSize: const Size(
+                  double.infinity,
+                  0,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -40,7 +47,7 @@ class LoginForm extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                "Get Started",
+                "Register",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -55,15 +62,15 @@ class LoginForm extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("I have exist an account! "),
+              const Text("I don't have an account! "),
               InkWell(
                 child: const Text(
-                  "Go to Register",
+                  "Back to Login",
                   style: TextStyle(
                       fontWeight: FontWeight.w600, fontStyle: FontStyle.italic),
                 ),
                 onTap: () {
-                  Get.to(() => const RegisterScreen());
+                  Get.to(() => const LoginScreen());
                 },
               )
             ],

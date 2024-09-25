@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:work_adventure/widgets/base/label/auth_wording.dart';
-import 'package:work_adventure/widgets/form/forms/login_form.dart';
+import 'package:work_adventure/widgets/form/forms/register_form.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,11 +21,10 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AuthWording(
-                heading: "Welcome, Brave Adventurer!",
-                description:
-                    "Embark on your journey to conquer tasks and vanquish procrastination!",
+                heading: "Create Your Hero",
+                description: "Forge your legend in the realm of productivity!",
               ),
-              LoginForm()
+              RegisterForm()
             ],
           ),
         ),
