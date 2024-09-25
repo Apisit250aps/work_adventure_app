@@ -59,7 +59,7 @@ class WorksPage extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
-        itemCount: 5,
+        itemCount: 10,
         itemBuilder: (context, index) {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -74,7 +74,7 @@ class WorksPage extends StatelessWidget {
                       const Text(
                         'Title',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -88,29 +88,13 @@ class WorksPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'This is a brief description of the work item. It provides a quick overview of the task or project.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                   ),
                 ],
               ),
             ),
           );
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey.shade600,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt_outlined), label: 'Quests'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.access_time_outlined), label: 'Focus'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'User'),
-        ],
       ),
     );
   }
