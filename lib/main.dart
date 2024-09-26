@@ -18,9 +18,10 @@ class WorkAdventure extends StatelessWidget {
     return GetMaterialApp(
       title: 'Work Adventure',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.poppinsTextTheme(),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: Colors.white,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
