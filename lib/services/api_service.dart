@@ -1,14 +1,13 @@
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:work_adventure/utils/jwt_storage.dart';
 
-class ApiService {
-  static const String baseUrl = 'http://your-api-url.com/api';
-
+class ApiService extends GetxController {
   Future<http.Response> get(String endpoint) async {
     final token = await JwtStorage.getToken();
     return await http.get(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse(endpoint),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -19,7 +18,7 @@ class ApiService {
   Future<http.Response> post(String endpoint, dynamic data) async {
     final token = await JwtStorage.getToken();
     return await http.post(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse(endpoint),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -27,6 +26,4 @@ class ApiService {
       body: json.encode(data),
     );
   }
-
-  // เพิ่มเมธอดสำหรับ PUT, DELETE ตามต้องการ
 }

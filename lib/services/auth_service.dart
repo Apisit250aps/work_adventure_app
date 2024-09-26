@@ -1,19 +1,29 @@
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:work_adventure/services/api_service.dart';
+import 'package:work_adventure/services/rest_service.dart';
 import 'dart:convert';
 
 import 'package:work_adventure/utils/jwt_storage.dart';
 
 class AuthService {
-  // static const String baseUrl =
-  //     'http://10.0.2.2:3000'; // สำหรับ Android Emulator
-  static const String baseUrl = 'http://10.250.58.229:3000';
-  Future<bool> register(String email, String username, String password) async {
+  final RestServiceController _authRest = Get.put(RestServiceController());
+  final ApiService _apiService = Get.put(ApiService());
+
+  Future<dynamic> register(
+    String email,
+    String username,
+    String password,
+  ) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/register'),
+        Uri.parse(_authRest.register),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(
-            {'email': email, 'username': username, 'password': password}),
+        body: json.encode({
+          'email': email,
+          'username': username,
+          'password': password,
+        }),
       );
       if (response.statusCode == 201) {
         return true;
@@ -28,7 +38,7 @@ class AuthService {
   Future<bool> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
+        Uri.parse(_authRest.login),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'username': username, 'password': password}),
       );
@@ -46,6 +56,17 @@ class AuthService {
       }
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<dynamic> isAuthenticated() async {
+    try {
+      final response = await _apiService.get(_authRest.auth);
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      return {};
     }
   }
 

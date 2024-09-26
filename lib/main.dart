@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:work_adventure/controllers/UserController.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/work_screen.dart';
 
 void main() {
@@ -12,6 +14,7 @@ class WorkAdventure extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserController userController = Get.put(UserController());
     return GetMaterialApp(
       title: 'Work Adventure',
       theme: ThemeData(
@@ -22,7 +25,11 @@ class WorkAdventure extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const WorkScreen(),
+      home: Obx(() {
+        return userController.isAuthenticated.value
+            ? const WorkScreen()
+            : const LoginScreen();
+      }),
       debugShowCheckedModeBanner: false,
     );
   }
