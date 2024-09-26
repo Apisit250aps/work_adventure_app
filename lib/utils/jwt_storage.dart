@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class JwtStorage {
-  static final _storage = FlutterSecureStorage();
+  static const _storage = FlutterSecureStorage();
   static const String _tokenKey = 'jwt_token';
 
   static Future<void> saveToken(String token) async {
