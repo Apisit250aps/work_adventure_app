@@ -4,11 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/screens/work_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const WorkAdventure());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class WorkAdventure extends StatelessWidget {
+  const WorkAdventure({super.key});
 
   @override
   Widget build(BuildContext context) {
