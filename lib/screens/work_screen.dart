@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:work_adventure/utils/jwt_storage.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
 class WorkScreen extends StatefulWidget {
@@ -10,10 +11,14 @@ class WorkScreen extends StatefulWidget {
 }
 
 class _WorkScreenState extends State<WorkScreen> {
+  final _jwtStorage = JwtStorage();
+
+
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-      
       backgroundColor: Colors.white,
       appBar: AppBar(
         automaticallyImplyLeading: false,

@@ -2,11 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/screens/work_screen.dart';
+import 'package:work_adventure/services/auth_service.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
-class LoginForm extends StatelessWidget {
+
+class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
+
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _authService = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final success = await _authService.login(
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      if (success) {
+        Get.offAll(() => const WorkScreen());
+      } else {
+        Get.snackbar(
+          'Login Failed',
+          'Please check your username and password.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An error occurred. Please try again later.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +62,17 @@ class LoginForm extends StatelessWidget {
         children: [
           InputLabel(
             label: 'Username',
-            // hintText: 'Enter text here',
-            controller: TextEditingController(),
+            controller: _usernameController,
           ),
           PasswordInputLabel(
             label: 'Password',
-            // hintText: 'Enter your password',
-            controller: TextEditingController(),
+            controller: _passwordController,
           ),
           Container(
             margin: const EdgeInsets.only(top: 25),
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-              Get.to(() => const WorkScreen());
-            },
+              onPressed: _isLoading ? null : _login,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -42,28 +84,30 @@ class LoginForm extends StatelessWidget {
                   vertical: 15,
                 ),
               ),
-              child: const Text(
-                "Get Started",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text(
+                      "Get Started",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
-          const Divider(
-            height: 30,
-          ),
+          const Divider(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("I have exist an account! "),
+              const Text("I don't have an account! "),
               InkWell(
                 child: const Text(
                   "Go to Register",
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, fontStyle: FontStyle.italic),
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
                 onTap: () {
                   Get.to(() => const RegisterScreen());
@@ -74,5 +118,12 @@ class LoginForm extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
