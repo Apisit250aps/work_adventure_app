@@ -15,76 +15,125 @@ class _WorkScreenState extends State<WorkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          'Works',
-          style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),
-        ),
-        backgroundColor: Colors.white,
-        scrolledUnderElevation: 0,
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16), // ปรับระยะห่างจากขอบขวา
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Boxicons.bx_message_square_add,
-                size: 24,
-                color: Colors.white,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            expandedHeight: 145.0, // ความสูงเมื่อขยายเต็มที่
+            floating: true,
+            pinned: true,
+            snap: true,
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            flexibleSpace: const FlexibleSpaceBar(
+              titlePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              title: Text(
+                'Works',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 36,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              onPressed: () => _showBottomSheet(context),
-              // ลบ padding ของ IconButton เพื่อให้ไอคอนอยู่ตรงกลางพอดี
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints.tightFor(
-                width: 48,
-                height: 48,
-              ), // ปรับขนาดตามต้องการ
+              background: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                child: FlutterLogo(),
+              ),
+              stretchModes: [
+                StretchMode.zoomBackground,
+                StretchMode.blurBackground,
+                StretchMode.fadeTitle,
+              ],
             ),
-          )
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Card.outlined(
-            color: Colors.white,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Title',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 10,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Boxicons.bx_message_square_add,
+                          size: 24,
+                          color: Colors.white,
                         ),
+                        onPressed: () => _showBottomSheet(context),
+                        padding: EdgeInsets.zero,
+                        // constraints: const BoxConstraints.tightFor(
+
+                        // ),
                       ),
-                      Text(
-                        '1 day ago',
-                        style: TextStyle(
-                            color: Colors.grey.shade600, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'This is a brief description of the work item. It provides a quick overview of the task or project.',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                  ),
-                ],
-              ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('Your content goes here'),
             ),
-          );
-        },
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Card.outlined(
+                  color: Colors.white,
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Title',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '1 day ago',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'This is a brief description of the work item. It provides a quick overview of the task or project.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              childCount: 50, // จำนวนรายการ
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: const BottomNavBar(
         selectedIndex: 0,
