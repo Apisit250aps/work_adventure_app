@@ -10,7 +10,10 @@ class RestServiceController extends GetxController {
   String get login => '$base/auth/login/';
   String get register => '$base/auth/register/';
 
+  // user rest service
+  String get userData => '$base/user/data';
+
 
   // character rest service 
-  
+
 }

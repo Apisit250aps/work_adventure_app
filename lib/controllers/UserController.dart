@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:work_adventure/models/character_statistic_model.dart';
 import 'package:work_adventure/models/user_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
@@ -11,10 +12,10 @@ class UserController extends GetxController {
   final RestServiceController _rest = Get.put(RestServiceController());
   final ApiService _apiService = Get.put(ApiService());
 
-  var token = ''.obs; // สร้างตัวแปร token เป็น observable
-  var user = {}.obs; // สร้างตัวแปร user เป็น observable
-  var isAuthenticated =
-      false.obs; // สร้างตัวแปร isAuthenticated เป็น observable
+  var token = ''.obs;
+  var user = {}.obs;
+  var characters = <Character>[].obs;
+  var isAuthenticated = false.obs;
 
   @override
   void onInit() {
@@ -25,14 +26,13 @@ class UserController extends GetxController {
   void _loadToken() async {
     final String? _token = await JwtStorage.getToken();
     if (_token != null && _token.isNotEmpty) {
-      token.value = _token; // อัปเดต token
-      final User? _user = await fetchUser(); // เรียก fetchUser
-      user.value = _user?.toJson() ?? {}; // แปลงอ็อบเจ็กต์ User เป็น JSON ถ้ามี
-      isAuthenticated.value = true; // เปลี่ยนสถานะเป็น authenticated
-      
+      token.value = _token;
+      final User? _userData = await fetchUser();
+      user.value = _userData?.toJson() ?? {};
+      isAuthenticated.value = true;
     } else {
       user.value = {};
-      isAuthenticated.value = false; // เปลี่ยนสถานะเป็น unauthenticated
+      isAuthenticated.value = false;
     }
   }
 
@@ -87,16 +87,15 @@ class UserController extends GetxController {
 
   Future<User?> fetchUser() async {
     try {
-      final response = await _apiService.get(_rest.auth);
+      final response = await _apiService.get(_rest.userData);
       if (response.statusCode == 200) {
-        final userData = json.decode(response.body); // แปลง JSON เป็น Map
-        return User.fromJson(
-            userData); // ใช้ factory method หรือ constructor ในคลาส User เพื่อสร้างอ็อบเจ็กต์
+        final userData = json.decode(response.body);
+        return User.fromJson(userData[0]);
       }
-      return null; // คืนค่า null ถ้า response ไม่สำเร็จ
+      return null;
     } catch (e) {
       print('Error fetching user: $e');
-      return null; // คืนค่า null ในกรณีเกิดข้อผิดพลาด
+      return null;
     }
   }
 }
