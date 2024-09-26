@@ -12,7 +12,7 @@ class _QuestScreenState extends State<QuestScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      bottomNavigationBar: const Padding(
+      bottomNavigationBar: Padding(
         padding: EdgeInsets.all(10),
         child: BottomNavBar(
           selectedIndex: 1,
