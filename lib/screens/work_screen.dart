@@ -28,7 +28,7 @@ class _WorkScreenState extends State<WorkScreen> {
             elevation: 0,
             scrolledUnderElevation: 0,
             flexibleSpace: const FlexibleSpaceBar(
-              titlePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              titlePadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               title: Text(
                 'Works',
                 style: TextStyle(
