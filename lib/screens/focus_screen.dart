@@ -106,12 +106,9 @@ class FocusScreenContent extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: const Padding(
-            padding: EdgeInsets.all(10),
-            child: BottomNavBar(
-              selectedIndex: 2,
-            ),
-          ),
+          bottomNavigationBar: const BottomNavBar(
+          selectedIndex: 2,
+        ),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:work_adventure/widgets/base/work/create_work_sheet.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
 class WorkScreen extends StatefulWidget {
@@ -10,12 +11,8 @@ class WorkScreen extends StatefulWidget {
 }
 
 class _WorkScreenState extends State<WorkScreen> {
-
-
-
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -39,7 +36,7 @@ class _WorkScreenState extends State<WorkScreen> {
                 size: 24,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () => _showBottomSheet(context),
               // ลบ padding ของ IconButton เพื่อให้ไอคอนอยู่ตรงกลางพอดี
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints.tightFor(
@@ -89,12 +86,23 @@ class _WorkScreenState extends State<WorkScreen> {
           );
         },
       ),
-      bottomNavigationBar: const Padding(
-        padding: EdgeInsets.all(10),
-        child: BottomNavBar(
-          selectedIndex: 0,
-        ),
+      bottomNavigationBar: const BottomNavBar(
+        selectedIndex: 0,
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.white,
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      ),
+      builder: (BuildContext context) {
+        return const CreateWorkSheet();
+      },
     );
   }
 }
