@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
+import 'package:work_adventure/services/auth_service.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -12,6 +13,60 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final _authService = AuthService();
+
+  bool _isLoading = false;
+
+  Future<void> _register() async {
+    if (!_validateInputs()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      bool success = await _authService.register(
+        _emailController.text,
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      if (success) {
+        Get.snackbar('Success', 'Registration successful!');
+        Get.off(() => const LoginScreen());
+      } else {
+        Get.snackbar('Error', 'Registration failed. Please try again.');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An error occurred: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  bool _validateInputs() {
+    if (_emailController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill in all fields');
+      return false;
+    }
+    if (!GetUtils.isEmail(_emailController.text)) {
+      Get.snackbar('Error', 'Please enter a valid email');
+      return false;
+    }
+    if (_passwordController.text.length < 6) {
+      Get.snackbar('Error', 'Password must be at least 6 characters long');
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,29 +75,24 @@ class _RegisterFormState extends State<RegisterForm> {
         children: [
           InputLabel(
             label: 'Email',
-            // hintText: 'Enter text here',
-            controller: TextEditingController(),
+            controller: _emailController,
+
           ),
           InputLabel(
             label: 'Username',
-            // hintText: 'Enter text here',
-            controller: TextEditingController(),
+            controller: _usernameController,
           ),
           PasswordInputLabel(
             label: 'Password',
-            // hintText: 'Enter your password',
-            controller: TextEditingController(),
+            controller: _passwordController,
           ),
           Container(
             margin: const EdgeInsets.only(top: 30),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _isLoading ? null : _register,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
-                minimumSize: const Size(
-                  double.infinity,
-                  0,
-                ),
+                minimumSize: const Size(double.infinity, 0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -51,37 +101,45 @@ class _RegisterFormState extends State<RegisterForm> {
                   vertical: 15,
                 ),
               ),
-              child: const Text(
-                "Register",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text(
+                      "Register",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
-          const Divider(
-            height: 30,
-          ),
+          const Divider(height: 30),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("I don't have an account! "),
+              const Text("Already have an account? "),
               InkWell(
                 child: const Text(
                   "Back to Login",
                   style: TextStyle(
-                      fontWeight: FontWeight.w600, fontStyle: FontStyle.italic),
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-                onTap: () {
-                  Get.to(() => const LoginScreen());
-                },
+                onTap: () => Get.off(() => const LoginScreen()),
               )
             ],
           )
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

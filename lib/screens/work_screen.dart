@@ -11,7 +11,6 @@ class WorkScreen extends StatefulWidget {
 }
 
 class _WorkScreenState extends State<WorkScreen> {
-  final _jwtStorage = JwtStorage();
 
 
 

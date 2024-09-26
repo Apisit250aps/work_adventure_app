@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:work_adventure/utils/jwt_storage.dart';
 
 class AuthService {
-  static const String baseUrl =
-      'http://10.0.2.2:3000'; // สำหรับ Android Emulator
-
+  // static const String baseUrl =
+  //     'http://10.0.2.2:3000'; // สำหรับ Android Emulator
+  static const String baseUrl = 'http://10.250.58.229:3000';
   Future<bool> register(String email, String username, String password) async {
     try {
       final response = await http.post(
