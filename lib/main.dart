@@ -18,9 +18,6 @@ class WorkAdventure extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserController userController = Get.put(UserController());
     final CharacterController charController = Get.put(CharacterController());
-    final token = userController.isAuthenticated;
-
-    print(">>$token");
     return GetMaterialApp(
       title: 'Work Adventure',
       theme: ThemeData(
@@ -32,11 +29,13 @@ class WorkAdventure extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Obx(() {
-        return userController.isAuthenticated.value
-            ? const HomeScreen()
-            : const LoginScreen();
-      }),
+      home: Obx(
+        () {
+          return userController.isAuthenticated.value
+              ? const HomeScreen()
+              : const LoginScreen();
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

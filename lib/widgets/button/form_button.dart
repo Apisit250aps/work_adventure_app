@@ -7,12 +7,12 @@ class SquareButton extends StatelessWidget {
   final Color backgroundColor; // Added for customization
 
   const SquareButton({
-    Key? key,
+    super.key,
     required this.onClick,
     required this.isLoading,
     this.buttonText = "Get Started", // Default button text
     this.backgroundColor = Colors.black, // Default background color
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

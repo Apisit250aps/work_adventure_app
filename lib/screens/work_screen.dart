@@ -3,8 +3,12 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/models/character_statistic_model.dart';
 import 'package:work_adventure/widgets/base/work/create_work_sheet.dart';
+import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
+import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
+import 'package:work_adventure/widgets/sheets/sheet.dart';
 
 class WorkScreen extends StatefulWidget {
   const WorkScreen({super.key});
@@ -15,10 +19,20 @@ class WorkScreen extends StatefulWidget {
 
 class _WorkScreenState extends State<WorkScreen> {
   final UserController user = Get.find();
-  final CharacterController char = Get.find();
+  final CharacterController characterController = Get.find();
+
+  // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
+  late Character character;
+
+  @override
+  void initState() {
+    super.initState();
+    character = characterController.character;
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(char.character.toJson());
+    print(character.name);
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
@@ -89,7 +103,7 @@ class _WorkScreenState extends State<WorkScreen> {
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('Your content goes here'),
+              child: Text('All tasks are'),
             ),
           ),
           SliverList(
@@ -156,7 +170,31 @@ class _WorkScreenState extends State<WorkScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (BuildContext context) {
-        return const CreateWorkSheet();
+        return SheetContents(
+          children: [
+            const SheetHeader(title: "New Work"),
+            SheetBody(
+              children: [
+                InputLabel(label: "name"),
+                InputLabel(label: "description"),
+                DateInputLabel(
+                  label: 'Start Date',
+                  onDateSelected: (DateTime date) {
+                    print('Selected date: ${date.toString()}');
+                    // Do something with the selected date
+                  },
+                ),
+                DateInputLabel(
+                  label: 'Due Date',
+                  onDateSelected: (DateTime date) {
+                    print('Selected date: ${date.toString()}');
+                    // Do something with the selected date
+                  },
+                )
+              ],
+            )
+          ],
+        );
       },
     );
   }
