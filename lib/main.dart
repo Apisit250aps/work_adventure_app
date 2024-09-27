@@ -10,33 +10,45 @@ import 'package:work_adventure/screens/home_screen.dart';
 void main() {
   runApp(const WorkAdventure());
 }
-
 class WorkAdventure extends StatelessWidget {
-  const WorkAdventure({super.key});
+  const WorkAdventure({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final UserController userController = Get.put(UserController());
-    final CharacterController charController = Get.put(CharacterController());
     return GetMaterialApp(
       title: 'Work Adventure',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        textTheme: GoogleFonts.poppinsTextTheme(),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      home: Obx(
-        () {
-          return userController.isAuthenticated.value
-              ? const HomeScreen()
-              : const LoginScreen();
-        },
-      ),
+      theme: _buildTheme(),
+      home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
+      initialBinding: BindingsBuilder(() {
+        Get.put(UserController());
+        Get.put(CharacterController());
+      }),
+    );
+  }
+
+  ThemeData _buildTheme() {
+    return ThemeData(
+      scaffoldBackgroundColor: Colors.white,
+      textTheme: GoogleFonts.poppinsTextTheme(),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.blue, // Choose a more distinct seed color
+        brightness: Brightness.light,
+      ),
+      useMaterial3: true,
+      // Add more theme customizations here
+    );
+  }
+}
+
+class AuthWrapper extends GetWidget<UserController> {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => controller.isAuthenticated.value
+      ? const HomeScreen()
+      : const LoginScreen()
     );
   }
 }
