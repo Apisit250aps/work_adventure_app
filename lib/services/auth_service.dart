@@ -37,6 +37,7 @@ class AuthService {
 
   Future<bool> login(String username, String password) async {
     try {
+      print(_authRest.login);
       final response = await http.post(
         Uri.parse(_authRest.login),
         headers: {'Content-Type': 'application/json'},

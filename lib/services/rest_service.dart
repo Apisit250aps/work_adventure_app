@@ -15,5 +15,7 @@ class RestServiceController extends GetxController {
 
 
   // character rest service 
+  String get myCharacters => '$base/character/';
+
 
 }

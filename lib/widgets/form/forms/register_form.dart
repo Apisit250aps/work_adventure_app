@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
-import 'package:work_adventure/services/auth_service.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -16,7 +16,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final UserController userController = Get.find();
 
   bool _isLoading = false;
 
@@ -28,7 +28,7 @@ class _RegisterFormState extends State<RegisterForm> {
     });
 
     try {
-      bool success = await _authService.register(
+      bool success = await userController.register(
         _emailController.text,
         _usernameController.text,
         _passwordController.text,

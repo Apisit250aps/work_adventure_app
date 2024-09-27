@@ -1,8 +1,25 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/services/api_service.dart';
+import 'package:work_adventure/services/rest_service.dart';
 
 class CharacterController extends GetxController {
-  var characters = <Character>[].obs; // ใช้ observable list
+  final UserController user = Get.find();
+  final RestServiceController _rest = Get.find();
+  final ApiService _apiService = Get.find();
+
+  //
+  // Observable list to store the characters
+  var charactersSlot = <Character>[].obs;
+
+  // Observable integer to keep track of selected character index
+  var characterSelect = 0.obs;
+
+  // Safe getter for selected character
+  Character get character => charactersSlot[characterSelect.value];
 
   @override
   void onInit() {
@@ -12,22 +29,25 @@ class CharacterController extends GetxController {
   }
 
   void loadCharacters() async {
-    // สมมติว่าคุณมีฟังก์ชันเพื่อดึงตัวละครจาก API หรือฐานข้อมูล
-    var fetchedCharacters = Character; // ฟังก์ชันนี้ต้องสร้างขึ้น
+    charactersSlot.value = await fetchCharacter();
   }
 
-  // ฟังก์ชันเพื่อเพิ่มตัวละคร
-  void addCharacter(Character character) {
-    characters.add(character);
-  }
+  Future<List<Character>> fetchCharacter() async {
+    try {
+      final response = await _apiService.get(_rest.myCharacters);
+      if (response.statusCode == 200) {
+        // แปลง response.body เป็น List<dynamic> ก่อน
+        final List<dynamic> jsonData = jsonDecode(response.body);
 
-  // ฟังก์ชันเพื่อแก้ไขตัวละคร
-  void updateCharacter(int index, Character character) {
-    characters[index] = character;
-  }
-
-  // ฟังก์ชันเพื่อลบตัวละคร
-  void removeCharacter(int index) {
-    characters.removeAt(index);
+        // แปลงแต่ละ element ใน List ให้เป็น Character
+        return jsonData
+            .map((json) => Character.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      return <Character>[]; // คืนค่าเป็น List ว่างถ้าสถานะไม่ใช่ 200
+    } catch (e) {
+      // จัดการ error และคืนค่าเป็น List ว่าง
+      return <Character>[];
+    }
   }
 }

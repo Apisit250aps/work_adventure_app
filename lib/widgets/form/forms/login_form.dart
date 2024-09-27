@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/screens/work_screen.dart';
-import 'package:work_adventure/services/auth_service.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -18,7 +18,8 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final UserController userController = Get.find();
+
   bool _isLoading = false;
 
   Future<void> _login() async {
@@ -27,7 +28,7 @@ class _LoginFormState extends State<LoginForm> {
     });
 
     try {
-      final success = await _authService.login(
+      final success = await userController.login(
         _usernameController.text,
         _passwordController.text,
       );

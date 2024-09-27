@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/widgets/base/work/create_work_sheet.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
@@ -14,9 +15,10 @@ class WorkScreen extends StatefulWidget {
 
 class _WorkScreenState extends State<WorkScreen> {
   final UserController user = Get.find();
+  final CharacterController char = Get.find();
   @override
   Widget build(BuildContext context) {
-    print(user.user);
+    print(char.character.toJson());
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
