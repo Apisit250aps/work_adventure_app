@@ -24,11 +24,11 @@ class UserController extends GetxController {
   }
 
   void _loadToken() async {
-    final String? _token = await JwtStorage.getToken();
-    if (_token != null && _token.isNotEmpty) {
-      token.value = _token;
-      final User? _userData = await fetchUser();
-      user.value = _userData?.toJson() ?? {};
+    final String? token = await JwtStorage.getToken();
+    if (token != null && token.isNotEmpty) {
+      token.value = token;
+      final User? userData = await fetchUser();
+      user.value = userData?.toJson() ?? {};
       isAuthenticated.value = true;
     } else {
       user.value = {};
