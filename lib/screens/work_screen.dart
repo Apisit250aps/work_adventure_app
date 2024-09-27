@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
-import 'package:work_adventure/widgets/base/work/create_work_sheet.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
@@ -175,8 +174,8 @@ class _WorkScreenState extends State<WorkScreen> {
             const SheetHeader(title: "New Work"),
             SheetBody(
               children: [
-                InputLabel(label: "name"),
-                InputLabel(label: "description"),
+                const InputLabel(label: "name"),
+                const InputLabel(label: "description"),
                 DateInputLabel(
                   label: 'Start Date',
                   onDateSelected: (DateTime date) {
