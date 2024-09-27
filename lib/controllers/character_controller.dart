@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
 class CharacterController extends GetxController {
-  final UserController _user = Get.find();
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
 
