@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
-import 'package:work_adventure/controllers/UserController.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/widgets/base/work/create_work_sheet.dart';
 import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
