@@ -62,12 +62,25 @@ class AuthWrapper extends GetWidget<UserController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => controller.isAuthenticated.value
-        ? const HomeScreen()
-        : const LoginScreen());
+    return Obx(() {
+      // ถ้า controller.isLoading เป็น true แสดงว่าอยู่ในระหว่างตรวจสอบการล็อกอิน
+      if (controller.isLoading.value) {
+        return Scaffold(
+          body: Center(
+            child: Image.asset(
+              'assets/gifs/slime_loading.gif', // แสดง GIF ระหว่างโหลด
+              width: 64,
+            ),
+          ),
+        );
+      } else if (controller.isAuthenticated.value) {
+        return const HomeScreen(); // ถ้า authenticated เปลี่ยนไปหน้า HomeScreen
+      } else {
+        return const LoginScreen(); // ถ้าไม่ได้ authenticated เปลี่ยนไปหน้า LoginScreen
+      }
+    });
   }
 }
-
 class PageControllerX extends GetxController {
   var pageIndex = 0.obs;
   PageController pageController = PageController();

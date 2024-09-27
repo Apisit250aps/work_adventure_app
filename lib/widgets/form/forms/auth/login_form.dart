@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
-import 'package:work_adventure/screens/work_screen.dart';
+import 'package:work_adventure/screens/home_screen.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/form/inputs/password_input_label.dart';
 
@@ -34,7 +34,7 @@ class _LoginFormState extends State<LoginForm> {
       );
 
       if (success) {
-        Get.offAll(() => const WorkScreen());
+        Get.offAll(() => const HomeScreen());
       } else {
         Get.snackbar(
           'Login Failed',

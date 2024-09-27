@@ -7,6 +7,7 @@ import 'package:work_adventure/models/character_statistic_model.dart';
 import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
+import 'package:work_adventure/widgets/loading/slime_loading.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
@@ -88,17 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return CharacterCard(
-                  character: charController.charactersSlot[index],
-                  index: index,
-                );
-              },
-              childCount: charController.charactersSlot.length, // จำนวนรายการ
-            ),
-          ),
+          const CharacterLoader()
         ],
       ),
     );
@@ -225,6 +216,63 @@ class CharacterCard extends StatelessWidget {
           Text(value, style: const TextStyle(fontSize: 14)),
         ],
       ),
+    );
+  }
+}
+
+class CharacterLoader extends StatefulWidget {
+  const CharacterLoader({super.key});
+
+  @override
+  State<CharacterLoader> createState() => _CharacterLoaderState();
+}
+
+class _CharacterLoaderState extends State<CharacterLoader> {
+  final CharacterController characterController = Get.find();
+
+  Future<List<Character>> fetchCharacter() async {
+    return await characterController.fetchCharacter();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Character>>(
+      future: fetchCharacter(), // Call the future function
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While waiting for the data, show a loading spinner
+          return const SliverToBoxAdapter(
+            child: Center(
+                child: SlimeLoading(
+              width: 32,
+            )),
+          );
+        } else if (snapshot.hasError) {
+          // If an error occurred, display an error message
+          return SliverToBoxAdapter(
+            child: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        } else if (snapshot.hasData) {
+          // If data is available, build the SliverList
+          final characters = snapshot.data!;
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return CharacterCard(
+                  character: characters[index],
+                  index: index,
+                );
+              },
+              childCount:
+                  characters.length, // Use the length of the fetched data
+            ),
+          );
+        } else {
+          return const SliverToBoxAdapter(
+            child: Center(child: Text('No data available.')),
+          );
+        }
+      },
     );
   }
 }

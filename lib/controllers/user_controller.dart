@@ -16,6 +16,7 @@ class UserController extends GetxController {
   var user = {}.obs;
   var characters = <Character>[].obs;
   var isAuthenticated = false.obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
@@ -24,6 +25,7 @@ class UserController extends GetxController {
   }
 
   void _loadToken() async {
+    isLoading.value = true;
     final String? tokenStore = await JwtStorage.getToken();
     if (tokenStore != null && tokenStore.isNotEmpty) {
       token.value = tokenStore;
@@ -34,6 +36,7 @@ class UserController extends GetxController {
       user.value = {};
       isAuthenticated.value = false;
     }
+    isLoading.value = false;
   }
 
   Future<dynamic> register(

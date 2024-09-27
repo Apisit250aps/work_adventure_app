@@ -24,15 +24,10 @@ class _WorkScreenState extends State<WorkScreen> {
   // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
   late Character character;
 
-  @override
-  void initState() {
-    super.initState();
-    character = characterController.character;
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    print(character.name);
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(

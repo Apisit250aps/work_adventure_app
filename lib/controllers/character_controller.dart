@@ -12,13 +12,14 @@ class CharacterController extends GetxController {
   final RxInt characterSelect = 0.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-
   Character get character => charactersSlot[characterSelect.value];
+
 
   @override
   void onInit() {
     super.onInit();
     loadCharacters();
+    
   }
 
   Future<void> loadCharacters() async {
