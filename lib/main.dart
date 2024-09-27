@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
-import 'package:work_adventure/screens/work_screen.dart';
+import 'package:work_adventure/screens/home_screen.dart';
+// import 'package:work_adventure/screens/work_screen.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -16,8 +17,6 @@ class WorkAdventure extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserController userController = Get.put(UserController());
-    final CharacterController charController = Get.put(CharacterController());
-    print(userController.isAuthenticated);
     return GetMaterialApp(
       title: 'Work Adventure',
       theme: ThemeData(
@@ -31,7 +30,7 @@ class WorkAdventure extends StatelessWidget {
       ),
       home: Obx(() {
         return userController.isAuthenticated.value
-            ? const WorkScreen()
+            ? const HomeScreen()
             : const LoginScreen();
       }),
       debugShowCheckedModeBanner: false,

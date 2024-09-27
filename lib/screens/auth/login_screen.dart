@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_adventure/widgets/label/auth_wording.dart';
-import 'package:work_adventure/widgets/form/forms/login_form.dart';
+import 'package:work_adventure/widgets/form/forms/auth/login_form.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

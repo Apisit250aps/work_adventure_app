@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_adventure/widgets/label/auth_wording.dart';
-import 'package:work_adventure/widgets/form/forms/register_form.dart';
+import 'package:work_adventure/widgets/form/forms/auth/register_form.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
