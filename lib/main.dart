@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/home_screen.dart';
@@ -16,6 +17,7 @@ class WorkAdventure extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserController userController = Get.put(UserController());
+    final CharacterController charController = Get.put(CharacterController());
     final token = userController.isAuthenticated;
 
     print(">>$token");

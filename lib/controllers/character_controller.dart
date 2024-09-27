@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
@@ -7,68 +6,72 @@ import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
 class CharacterController extends GetxController {
-  final UserController user = Get.find();
+  final UserController _user = Get.find();
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
 
-  // Observable list to store the characters
-  var charactersSlot = <Character>[].obs;
+  final RxList<Character> charactersSlot = <Character>[].obs;
+  final RxInt characterSelect = 0.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
 
-  // Observable integer to keep track of selected character index
-  var characterSelect = 0.obs;
-
-  // Safe getter for selected character
   Character get character => charactersSlot[characterSelect.value];
 
   @override
   void onInit() {
     super.onInit();
-    // เรียกใช้ฟังก์ชันเพื่อโหลดตัวละครจากที่เก็บข้อมูลหรือ API
     loadCharacters();
   }
 
-  void loadCharacters() async {
-    charactersSlot.value = await fetchCharacter();
-  }
-
-  Future<List<Character>> fetchCharacter() async {
+  Future<void> loadCharacters() async {
+    isLoading.value = true;
+    errorMessage.value = '';
     try {
-      final response = await _apiService.get(_rest.myCharacters);
-      if (response.statusCode == 200) {
-        // แปลง response.body เป็น List<dynamic> ก่อน
-        final List<dynamic> jsonData = jsonDecode(response.body);
-
-        // แปลงแต่ละ element ใน List ให้เป็น Character
-        return jsonData
-            .map((json) => Character.fromJson(json as Map<String, dynamic>))
-            .toList();
-      }
-      return <Character>[]; // คืนค่าเป็น List ว่างถ้าสถานะไม่ใช่ 200
+      charactersSlot.value = await fetchCharacter();
     } catch (e) {
-      // จัดการ error และคืนค่าเป็น List ว่าง
-      return <Character>[];
+      errorMessage.value = 'Failed to load characters: ${e.toString()}';
+    } finally {
+      isLoading.value = false;
     }
   }
 
+  Future<List<Character>> fetchCharacter() async {
+    final response = await _apiService.get(_rest.myCharacters);
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      print(jsonData);
+      return jsonData
+          .map((json) => Character.fromJson(json as Map<String, dynamic>))
+          .toList();
+    }
+    throw Exception('Failed to fetch characters: ${response.statusCode}');
+  }
+
   Future<bool> createCharacter(String name, String className) async {
+    isLoading.value = true;
+    errorMessage.value = '';
     try {
       final response = await _apiService.post(
         _rest.createCharacter,
-        jsonEncode({
-          'name': name,
-          'className': className,
-        }),
+        {'name': name, 'className': className},
       );
 
       if (response.statusCode == 201) {
-        // เมื่อสำเร็จให้��หลดข้อมูลใหม่
-        loadCharacters();
+        await loadCharacters();
         return true;
       }
-      return false;
+      throw Exception('Failed to create character: ${response.statusCode}');
     } catch (e) {
-      // จัดการ error
+      errorMessage.value = 'Failed to create character: ${e.toString()}';
       return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void selectCharacter(int index) {
+    if (index >= 0 && index < charactersSlot.length) {
+      characterSelect.value = index;
     }
   }
 }
