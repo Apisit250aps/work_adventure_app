@@ -11,7 +11,6 @@ class CharacterController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
 
-  //
   // Observable list to store the characters
   var charactersSlot = <Character>[].obs;
 
@@ -48,6 +47,28 @@ class CharacterController extends GetxController {
     } catch (e) {
       // จัดการ error และคืนค่าเป็น List ว่าง
       return <Character>[];
+    }
+  }
+
+  Future<bool> createCharacter(String name, String className) async {
+    try {
+      final response = await _apiService.post(
+        _rest.createCharacter,
+        jsonEncode({
+          'name': name,
+          'className': className,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        // เมื่อสำเร็จให้��หลดข้อมูลใหม่
+        loadCharacters();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // จัดการ error
+      return false;
     }
   }
 }

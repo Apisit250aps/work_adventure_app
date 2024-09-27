@@ -39,14 +39,14 @@ class _LoginFormState extends State<LoginForm> {
         Get.snackbar(
           'Login Failed',
           'Please check your username and password.',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error',
         'An error occurred. Please try again later.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
     } finally {
       setState(() {
