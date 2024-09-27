@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:math';
 
-import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
 
 class FocusScreen extends StatelessWidget {
   const FocusScreen({super.key});
@@ -106,9 +105,6 @@ class FocusScreenContent extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: const BottomNavBar(
-          selectedIndex: 2,
-        ),
         );
       },
     );

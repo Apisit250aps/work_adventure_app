@@ -4,9 +4,10 @@ import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
-import 'package:work_adventure/widgets/navigate/BottomNavBar.dart';
+import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
 class WorkScreen extends StatefulWidget {
@@ -36,66 +37,14 @@ class _WorkScreenState extends State<WorkScreen> {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 145.0, // ความสูงเมื่อขยายเต็มที่
-            floating: true,
-            pinned: true,
-            snap: true,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            flexibleSpace: const FlexibleSpaceBar(
-              titlePadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              title: Text(
-                'Works',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 36,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              background: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                child: FlutterLogo(),
-              ),
-              stretchModes: [
-                StretchMode.zoomBackground,
-                StretchMode.blurBackground,
-                StretchMode.fadeTitle,
-              ],
-            ),
+          AppBarNav(
+            title: "Work",
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  right: 10,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 0),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Boxicons.bx_message_square_add,
-                          size: 24,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => _showBottomSheet(context),
-                        padding: EdgeInsets.zero,
-                        // constraints: const BoxConstraints.tightFor(
-
-                        // ),
-                      ),
-                    )
-                  ],
-                ),
+              ActionButton(
+                icon:Boxicons.bx_message_square_add, // ใส่ไอคอนที่ต้องการ เช่น ไอคอนการเพิ่ม
+                onPressed: () {
+                  _showBottomSheet(context); // หรือฟังก์ชันอื่น ๆ ที่คุณต้องการ
+                },
               )
             ],
           ),
@@ -153,9 +102,6 @@ class _WorkScreenState extends State<WorkScreen> {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: const BottomNavBar(
-        selectedIndex: 0,
       ),
     );
   }

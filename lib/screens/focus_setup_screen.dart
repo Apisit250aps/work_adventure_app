@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 
-class QuestScreen extends StatefulWidget {
-  const QuestScreen({super.key});
+class FocusSetupScreen extends StatefulWidget {
+  const FocusSetupScreen({super.key});
 
   @override
-  State<QuestScreen> createState() => _QuestScreenState();
+  State<FocusSetupScreen> createState() => _FocusSetupScreenState();
 }
 
-class _QuestScreenState extends State<QuestScreen> {
+class _FocusSetupScreenState extends State<FocusSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: CustomScrollView(
         slivers: [
-          AppBarNav(
-            title: "Quests",
-          ),
+          AppBarNav(title: "Focus"),
         ],
       ),
     );
