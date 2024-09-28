@@ -17,8 +17,7 @@ class RestServiceController extends GetxController {
   String get myCharacters => '$base/character/';
   String get createCharacter => '$base/character/create';
 
-
   // work rest service
-  String get myWorks => '$base/work/';
+  String get allWork => '$base/work/all';
   String get createWork => '$base/work/create';
 }

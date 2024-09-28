@@ -11,17 +11,34 @@ import 'package:work_adventure/utils/jwt_storage.dart';
 class UserController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
-  
+
   var token = ''.obs;
   var user = {}.obs;
   var characters = <Character>[].obs;
   var isAuthenticated = false.obs;
-  var isLoading = false.obs;
+  final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
+    isLoading.value = true;
     _loadToken();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    isLoading.value = false;
+    print('onReady called');
+    // ใช้งานหลังจาก widget ถูกสร้างเสร็จแล้ว
+  }
+
+  @override
+  void onClose() {
+    print('onClose called');
+    isLoading.value = false;
+    // ทำงานล้างข้อมูลเมื่อปิด widget
+    super.onClose();
   }
 
   void _loadToken() async {

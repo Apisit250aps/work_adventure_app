@@ -14,12 +14,24 @@ class CharacterController extends GetxController {
   final RxString errorMessage = ''.obs;
   Character get character => charactersSlot[characterSelect.value];
 
-
   @override
   void onInit() {
     super.onInit();
     loadCharacters();
-    
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    print('onReady called');
+    // ใช้งานหลังจาก widget ถูกสร้างเสร็จแล้ว
+  }
+
+  @override
+  void onClose() {
+    print('onClose called');
+    // ทำงานล้างข้อมูลเมื่อปิด widget
+    super.onClose();
   }
 
   Future<void> loadCharacters() async {
@@ -38,7 +50,6 @@ class CharacterController extends GetxController {
     final response = await _apiService.get(_rest.myCharacters);
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
-      print(jsonData);
       return jsonData
           .map((json) => Character.fromJson(json as Map<String, dynamic>))
           .toList();

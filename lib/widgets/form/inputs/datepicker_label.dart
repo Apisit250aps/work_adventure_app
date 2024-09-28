@@ -92,6 +92,30 @@ class DateInputLabel extends StatelessWidget {
       initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Colors.black, // สีหลักของ datepicker
+            colorScheme: const ColorScheme.light(
+              primary: Colors.black, // สีปุ่มยืนยัน
+              onSurface: Colors.black, // สีของข้อความในตัวเลือก
+            ),
+            dialogBackgroundColor: Colors.white, // สีพื้นหลังของ dialog
+            dialogTheme: DialogTheme(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // ปรับขอบของ dialog
+              ),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black, // สีปุ่มใน dialog
+              ),
+            ),
+            
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedDate) {
       _controller.text = DateFormat('MMM dd, yyyy').format(picked);

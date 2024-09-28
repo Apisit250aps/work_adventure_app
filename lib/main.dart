@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/focus_setup_screen.dart';
 import 'package:work_adventure/screens/home_screen.dart';
@@ -31,6 +32,7 @@ class WorkAdventure extends StatelessWidget {
         Get.put(ApiService());
         Get.put(UserController());
         Get.put(CharacterController());
+        Get.delete<WorkController>();
       }),
     );
   }
@@ -128,6 +130,7 @@ class PageControllerX extends GetxController {
 
 class OperatorScreen extends StatefulWidget {
   const OperatorScreen({super.key});
+  
 
   @override
   State<OperatorScreen> createState() => _OperatorScreenState();
@@ -135,6 +138,7 @@ class OperatorScreen extends StatefulWidget {
 
 class _OperatorScreenState extends State<OperatorScreen> {
   final PageControllerX controller = Get.put(PageControllerX());
+  final WorkController workController = Get.put(WorkController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

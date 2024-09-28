@@ -5,6 +5,8 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/models/work_model.dart';
+import 'package:work_adventure/widgets/base/work/builders/work_list_builder.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
@@ -20,10 +22,24 @@ class WorkScreen extends StatefulWidget {
 
 class _WorkScreenState extends State<WorkScreen> {
   final UserController user = Get.find();
-  final CharacterController characterController = Get.find();
-  final WorkController workController = Get.put(WorkController());
+  final CharacterController characterController =
+      Get.find<CharacterController>();
+  final WorkController workController = Get.find<WorkController>();
 
   bool isLoading = false;
+
+  // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
+  late Character character;
+
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _description = TextEditingController();
+  final TextEditingController _start = TextEditingController();
+  final TextEditingController _due = TextEditingController();
+  final TextEditingController _status = TextEditingController();
+
+  Future<List<Work>> fetchWork() async {
+    return await workController.fetchAllWork();
+  }
 
   Future<void> onSubmit() async {
     setState(() {
@@ -33,7 +49,27 @@ class _WorkScreenState extends State<WorkScreen> {
       if (_name.text.isEmpty) {
         Get.snackbar("Form invalid", "Please fill in all required fields.");
       } else {
+        if (_status.text.isEmpty) {
+          _status.text = workController.status[0];
+        }
         // Logic to submit the form
+        final success = await workController.createWork(
+          _name.text,
+          _description.text,
+          _start.text,
+          _due.text,
+          _status.text,
+        );
+        if (success) {
+          Get.snackbar("Success", "Work created successfully.");
+          _name.clear();
+          _description.clear();
+          _start.clear();
+          _due.clear();
+          _status.clear();
+        } else {
+          Get.snackbar("Error", "Failed to create work.");
+        }
       }
     } catch (e) {
       print(e);
@@ -44,22 +80,13 @@ class _WorkScreenState extends State<WorkScreen> {
     }
   }
 
-  // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
-  late Character character;
-
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _description = TextEditingController();
-  final TextEditingController _start = TextEditingController();
-  final TextEditingController _due = TextEditingController();
-  final TextEditingController _status = TextEditingController(text: "Pending");
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
+      body: const CustomScrollView(
         slivers: [
-          const AppBarNav(
+          AppBarNav(
             title: "Work",
             actions: [
               IconButton.outlined(
@@ -68,59 +95,13 @@ class _WorkScreenState extends State<WorkScreen> {
               )
             ],
           ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Text('All tasks are'),
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Card.outlined(
-                  color: Colors.white,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Title',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '1 day ago',
-                              style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'This is a brief description of the work item. It provides a quick overview of the task or project.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-              childCount: 50, // จำนวนรายการ
-            ),
-          ),
+          WorkLoader(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -175,11 +156,9 @@ class _WorkScreenState extends State<WorkScreen> {
                         setState(() {
                           _status.text = workController
                               .status[workController.selectedStatusIndex.value];
-
                           print(_status.text);
                         });
                       },
-
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
                       selectedBorderColor: Colors.black,
                       selectedColor: Colors.white,
@@ -189,12 +168,8 @@ class _WorkScreenState extends State<WorkScreen> {
                         minHeight: 40.0,
                         minWidth: 80.0,
                       ),
-                      isSelected: List.generate(
-                          workController.status.length,
-                          (i) =>
-                              i ==
-                              workController.selectedStatusIndex
-                                  .value), // ตรวจสอบว่าตัวเลือกใดถูกเลือก
+                      isSelected: List.generate(workController.status.length,
+                          (i) => i == workController.selectedStatusIndex.value),
                       children: workController.status.map((status) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(

@@ -70,12 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    characterController.loadCharacters();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomScrollView(

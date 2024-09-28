@@ -66,6 +66,7 @@ class _PasswordInputLabelState extends State<PasswordInputLabel> {
                 vertical: 15,
               ),
               suffixIcon: IconButton(
+                style: const ButtonStyle(),
                 icon: Icon(
                   _obscureText ? Icons.visibility_off : Icons.visibility,
                   color: Colors.grey,
