@@ -1,112 +1,105 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:work_adventure/controllers/focus_controller.dart';
 
 class FocusScreen extends StatelessWidget {
-  const FocusScreen({super.key});
+  const FocusScreen({super.key, required totalTime});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => FocusScreenModel(),
-      child: const FocusScreenContent(),
-    );
-  }
-}
+    final focusController = Get.find<FocusController>();
 
-class FocusScreenContent extends StatelessWidget {
-  const FocusScreenContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<FocusScreenModel>(
-      builder: (context, model, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Focus Adventure',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.inventory),
-                onPressed: () => _showInventory(context),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Focus Adventure'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.inventory),
+            onPressed: () => _showInventory(context),
+          ),
+        ],
+      ),
+      body: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.black, width: 2),
+                        ),
+                        child: CircularTimer(
+                          timeRemaining: focusController.timeRemaining,
+                          totalTime: focusController.totalTime,
+                          size: 250,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Obx(
+                        () => Text(
+                          focusController.currentEncounterIcon,
+                          style: const TextStyle(fontSize: 70),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: Obx(
+                          () => Text(
+                            focusController.currentEncounterDescription,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18, color: Colors.grey[800]),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildActionButton(
+                      onPressed: focusController.toggleActive,
+                      label: focusController.isActive ? 'Pause' : 'Focus',
+                      color: focusController.isActive
+                          ? Colors.orange
+                          : Colors.green,
+                      icon: focusController.isActive
+                          ? Icons.pause
+                          : Icons.play_arrow,
+                    ),
+                    _buildActionButton(
+                      onPressed: focusController.resetGame,
+                      label: 'Reset',
+                      color: Colors.red,
+                      icon: Icons.refresh,
+                    ),
+                    _buildActionButton(
+                      onPressed: () => _showSetTimeModal(context),
+                      label: 'Set Time',
+                      color: Colors.blue,
+                      icon: Icons.timer,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          body: Container(
-            color: Colors.white,
-            child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.black, width: 2),
-                            ),
-                            child: CircularTimer(
-                              timeRemaining: model.timeRemaining,
-                              totalTime: model.totalTime,
-                              size: 250,
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          Text(
-                            model.currentEncounterIcon,
-                            style: const TextStyle(fontSize: 70),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10),
-                            child: Text(
-                              model.currentEncounterDescription,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.grey[800]),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildActionButton(
-                          onPressed: model.toggleActive,
-                          label: model.isActive ? 'Pause' : 'Focus',
-                          color: model.isActive ? Colors.orange : Colors.green,
-                          icon: model.isActive ? Icons.pause : Icons.play_arrow,
-                        ),
-                        _buildActionButton(
-                          onPressed: model.resetGame,
-                          label: 'Reset',
-                          color: Colors.red,
-                          icon: Icons.refresh,
-                        ),
-                        _buildActionButton(
-                          onPressed: () => _showSetTimeModal(context),
-                          label: 'Set Time',
-                          color: Colors.blue,
-                          icon: Icons.timer,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -131,8 +124,8 @@ class FocusScreenContent extends StatelessWidget {
   }
 
   void _showSetTimeModal(BuildContext context) {
-    final model = Provider.of<FocusScreenModel>(context, listen: false);
-    int tempTime = model.totalTime ~/ 60;
+    final focusController = Get.find<FocusController>();
+    int tempTime = focusController.totalTime.value ~/ 60;
 
     showModalBottomSheet(
       context: context,
@@ -147,9 +140,11 @@ class FocusScreenContent extends StatelessWidget {
                   Text('Set Focus Time',
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 20),
-                  Text('$tempTime minutes',
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold)),
+                  Obx(
+                    () => Text('$tempTime minutes',
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold)),
+                  ),
                   Slider(
                     value: tempTime.toDouble(),
                     min: 1,
@@ -165,7 +160,7 @@ class FocusScreenContent extends StatelessWidget {
                   ElevatedButton(
                     child: const Text('Set'),
                     onPressed: () {
-                      model.setTime(tempTime);
+                      focusController.setFocusTime(tempTime);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -177,36 +172,36 @@ class FocusScreenContent extends StatelessWidget {
       },
     );
   }
+
+  void _showInventory(BuildContext context) {
+    final focusController = Get.find<FocusController>();
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return InventoryDialog(inventory: focusController.inventory);
+      },
+    );
+  }
 }
 
-void _showInventory(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (BuildContext context) {
-      return Consumer<FocusScreenModel>(
-        builder: (context, model, child) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(20),
-            child: InventoryPopup(inventory: model.inventory),
-          );
-        },
-      );
-    },
-  );
+extension on int {
+  get value => null;
 }
 
 class InventoryDialog extends StatelessWidget {
-  const InventoryDialog({super.key});
+  final Map<String, int> inventory;
+
+  const InventoryDialog({super.key, required this.inventory});
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<FocusScreenModel>(context, listen: false);
+    inventory.entries.toList();
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(20),
-      child: InventoryPopup(inventory: model.inventory),
+      child: InventoryPopup(inventory: inventory),
     );
   }
 }
@@ -312,27 +307,12 @@ class InventorySlot extends StatelessWidget {
   }
 }
 
-class EmptySlot extends StatelessWidget {
-  const EmptySlot({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[700],
-        border: Border.all(color: Colors.grey[600]!, width: 2),
-      ),
-    );
-  }
-}
-
 class CircularTimer extends StatelessWidget {
   final int timeRemaining;
   final int totalTime;
   final double size;
 
-  const CircularTimer({
-    super.key,
+  const CircularTimer({super.key, 
     required this.timeRemaining,
     required this.totalTime,
     this.size = 200,
@@ -354,7 +334,7 @@ class CircularTimer extends StatelessWidget {
           ),
           Center(
             child: Text(
-              formatTime(timeRemaining),
+              _formatTime(timeRemaining),
               style: TextStyle(
                 fontSize: size / 4,
                 fontWeight: FontWeight.bold,
@@ -367,222 +347,9 @@ class CircularTimer extends StatelessWidget {
     );
   }
 
-  String formatTime(int seconds) {
+  String _formatTime(int seconds) {
     int minutes = max(0, seconds ~/ 60);
     int remainingSeconds = max(0, seconds % 60);
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
-}
-
-class FocusScreenModel extends ChangeNotifier {
-  Map<String, int> _inventory = {};
-  Map<String, int> get inventory => _inventory;
-  int _timeRemaining = 1800;
-  int _totalTime = 1800;
-  bool _isActive = false;
-  final List<Event> _events = [];
-  String _currentEncounterIcon = "🌟";
-  String _currentEncounterDescription = "Waiting for adventure...\n";
-  int _eventCount = 0;
-  bool _showingSummary = false;
-
-  int get timeRemaining => _timeRemaining;
-  int get totalTime => _totalTime;
-  bool get isActive => _isActive;
-  List<Event> get events => _events;
-  String get currentEncounterIcon => _currentEncounterIcon;
-  String get currentEncounterDescription => _currentEncounterDescription;
-  bool get showingSummary => _showingSummary;
-
-  late Timer _timer;
-  late Timer _eventTimer;
-
-  FocusScreenModel() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => updateTimer());
-    _eventTimer =
-        Timer.periodic(const Duration(seconds: 3), (_) => generateEvent());
-    _inventory = {}; // Make sure it's initialized
-  }
-
-  void updateTimer() {
-    if (_isActive && _timeRemaining > 0) {
-      _timeRemaining--;
-      notifyListeners();
-    } else if (_timeRemaining == 0) {
-      _isActive = false;
-      showSummary();
-    }
-  }
-
-  void toggleActive() {
-    _isActive = !_isActive;
-    notifyListeners();
-  }
-
-  void resetGame() {
-    _timeRemaining = _totalTime;
-    _isActive = false;
-    _events.clear();
-    _inventory.clear();
-    _currentEncounterIcon = "🌟";
-    _currentEncounterDescription = "Waiting for adventure...\n";
-    _eventCount = 0;
-    notifyListeners();
-  }
-
-  void setTime(int minutes) {
-    _totalTime = minutes * 60;
-    _timeRemaining = _totalTime;
-    notifyListeners();
-  }
-
-  void addToInventory(String item, int quantity) {
-    if (_inventory.containsKey(item)) {
-      _inventory[item] = _inventory[item]! + quantity;
-    } else {
-      _inventory[item] = quantity;
-    }
-    notifyListeners();
-  }
-
-  void generateEvent() {
-    if (_isActive && _timeRemaining > 0) {
-      _eventCount++;
-      if (_eventCount % 20 == 0) {
-        generateRestEvent();
-      } else {
-        int ranNumber = Random().nextInt(100) + 1;
-        if (ranNumber <= 40) {
-          generateNothingEvent();
-        } else if (ranNumber <= 90) {
-          generateEnemyEvent();
-        } else {
-          generateTreasureEvent();
-        }
-      }
-      notifyListeners();
-    }
-  }
-
-  void generateNothingEvent() {
-    _currentEncounterIcon = "🌟";
-    _currentEncounterDescription = "Nothing happened...\n";
-    _events.insert(
-      0,
-      Event(
-        icon: "🌟",
-        title: "Peaceful",
-        description: "You continue your journey without incident.",
-      ),
-    );
-  }
-
-  void generateEnemyEvent() {
-    List<String> enemies = [
-      "👹 Ogre",
-      "🐉 Dragon",
-      "💀 Skeleton",
-      "🧟‍♂️ Zombie",
-      "🦇 Vampire",
-      "🐺 Werewolf"
-    ];
-    String enemy = enemies[Random().nextInt(enemies.length)];
-    int damage = Random().nextInt(16) + 15; // 15-30 damage
-    int exp = Random().nextInt(16) + 5; // 5-20 exp
-    int gold = Random().nextInt(10) + 1; // 1-10 gold
-
-    _currentEncounterIcon = enemy.split(" ")[0];
-    _currentEncounterDescription =
-        "Battle with ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.";
-
-    addToInventory("💰 Gold", gold);
-    addToInventory("⚔️ EXP", exp);
-
-    _events.insert(
-      0,
-      Event(
-        icon: "⚔️",
-        title: "Battle",
-        description:
-            "Encountered a ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.",
-      ),
-    );
-  }
-
-  void generateTreasureEvent() {
-    List<String> treasures = [
-      "💎 Gem",
-      "🗡️ Sword",
-      "🛡️ Shield",
-      "📜 Scroll",
-      "🔮 Magic Orb",
-      "💍 Ring"
-    ];
-    String treasure = treasures[Random().nextInt(treasures.length)];
-    int quantity = Random().nextInt(3) + 1; // 1-3 items
-    int gold = Random().nextInt(41) + 10; // 10-50 gold
-
-    _currentEncounterIcon = treasure.split(" ")[0];
-    _currentEncounterDescription =
-        "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.\n";
-
-    addToInventory(treasure, quantity);
-    addToInventory("💰 Gold", gold);
-
-    _events.insert(
-      0,
-      Event(
-        icon: "💎",
-        title: "Treasure",
-        description:
-            "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.\n",
-      ),
-    );
-  }
-
-  void generateRestEvent() {
-    int healing = Random().nextInt(31) + 20; // 20-50 healing
-    _currentEncounterIcon = "🏕️";
-    _currentEncounterDescription =
-        "Found a safe spot to rest. Healed $healing HP.\n";
-
-    addToInventory("❤️ HP", healing);
-
-    _events.insert(
-      0,
-      Event(
-        icon: "🏕️",
-        title: "Rest",
-        description: "Found a safe spot to rest. Healed $healing HP.\n",
-      ),
-    );
-  }
-
-  void showSummary() {
-    _showingSummary = true;
-    _events.insert(
-      0,
-      Event(
-        icon: "🏁",
-        title: "Summary",
-        description: "Adventure completed!\n",
-      ),
-    );
-    notifyListeners();
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    _eventTimer.cancel();
-    super.dispose();
-  }
-}
-
-class Event {
-  final String icon;
-  final String title;
-  final String description;
-
-  Event({required this.icon, required this.title, required this.description});
 }
