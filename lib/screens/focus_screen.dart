@@ -1,19 +1,17 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
+import 'dart:math';
 
-class FocusScreen extends StatelessWidget {
-  const FocusScreen({super.key, required totalTime});
+class FocusScreen extends GetView<FocusController> {
+  const FocusScreen({Key? key, required int totalTime}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final focusController = Get.find<FocusController>();
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Focus Adventure'),
+        title: const Text('Focus Adventure',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             icon: const Icon(Icons.inventory),
@@ -37,30 +35,26 @@ class FocusScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.black, width: 2),
                         ),
-                        child: CircularTimer(
-                          timeRemaining: focusController.timeRemaining,
-                          totalTime: focusController.totalTime,
-                          size: 250,
-                        ),
+                        child: Obx(() => CircularTimer(
+                              timeRemaining: controller.timeRemaining,
+                              totalTime: controller.totalTime,
+                              size: 250,
+                            )),
                       ),
                       const SizedBox(height: 30),
-                      Obx(
-                        () => Text(
-                          focusController.currentEncounterIcon,
-                          style: const TextStyle(fontSize: 70),
-                        ),
-                      ),
+                      Obx(() => Text(
+                            controller.currentEncounterIcon,
+                            style: const TextStyle(fontSize: 70),
+                          )),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
-                        child: Obx(
-                          () => Text(
-                            focusController.currentEncounterDescription,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18, color: Colors.grey[800]),
-                          ),
-                        ),
+                        child: Obx(() => Text(
+                              controller.currentEncounterDescription,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.grey[800]),
+                            )),
                       ),
                     ],
                   ),
@@ -71,26 +65,26 @@ class FocusScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    Obx(() => _buildActionButton(
+                          onPressed: controller.toggleActive,
+                          label: controller.isActive ? 'Pause' : 'Focus',
+                          color: controller.isActive
+                              ? const Color.fromARGB(255, 255, 76, 76)
+                              : const Color.fromARGB(255, 0, 0, 0),
+                          icon: controller.isActive
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                        )),
                     _buildActionButton(
-                      onPressed: focusController.toggleActive,
-                      label: focusController.isActive ? 'Pause' : 'Focus',
-                      color: focusController.isActive
-                          ? Colors.orange
-                          : Colors.green,
-                      icon: focusController.isActive
-                          ? Icons.pause
-                          : Icons.play_arrow,
-                    ),
-                    _buildActionButton(
-                      onPressed: focusController.resetGame,
+                      onPressed: controller.resetFocus,
                       label: 'Reset',
-                      color: Colors.red,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                       icon: Icons.refresh,
                     ),
                     _buildActionButton(
-                      onPressed: () => _showSetTimeModal(context),
+                      onPressed: () => Get.back(),
                       label: 'Set Time',
-                      color: Colors.blue,
+                      color: const Color.fromARGB(255, 0, 0, 0),
                       icon: Icons.timer,
                     ),
                   ],
@@ -123,86 +117,66 @@ class FocusScreen extends StatelessWidget {
     );
   }
 
-  void _showSetTimeModal(BuildContext context) {
-    final focusController = Get.find<FocusController>();
-    int tempTime = focusController.totalTime.value ~/ 60;
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Set Focus Time',
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () => Text('$tempTime minutes',
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold)),
-                  ),
-                  Slider(
-                    value: tempTime.toDouble(),
-                    min: 1,
-                    max: 120,
-                    divisions: 119,
-                    onChanged: (double value) {
-                      setState(() {
-                        tempTime = value.round();
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    child: const Text('Set'),
-                    onPressed: () {
-                      focusController.setFocusTime(tempTime);
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   void _showInventory(BuildContext context) {
-    final focusController = Get.find<FocusController>();
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return InventoryDialog(inventory: focusController.inventory);
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: Obx(() => InventoryPopup(inventory: controller.inventory)),
+        );
       },
     );
   }
 }
 
-extension on int {
-  get value => null;
-}
+class CircularTimer extends StatelessWidget {
+  final int timeRemaining;
+  final int totalTime;
+  final double size;
 
-class InventoryDialog extends StatelessWidget {
-  final Map<String, int> inventory;
-
-  const InventoryDialog({super.key, required this.inventory});
+  const CircularTimer({
+    super.key,
+    required this.timeRemaining,
+    required this.totalTime,
+    this.size = 200,
+  });
 
   @override
   Widget build(BuildContext context) {
-    inventory.entries.toList();
-
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(20),
-      child: InventoryPopup(inventory: inventory),
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CircularProgressIndicator(
+            value: 1 - (timeRemaining / totalTime),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+            strokeWidth: 12,
+            backgroundColor: Colors.grey[200],
+          ),
+          Center(
+            child: Text(
+              formatTime(timeRemaining),
+              style: TextStyle(
+                fontSize: size / 4,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 0, 0, 0),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  String formatTime(int seconds) {
+    int minutes = max(0, seconds ~/ 60);
+    int remainingSeconds = max(0, seconds % 60);
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 }
 
@@ -304,52 +278,5 @@ class InventorySlot extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class CircularTimer extends StatelessWidget {
-  final int timeRemaining;
-  final int totalTime;
-  final double size;
-
-  const CircularTimer({super.key, 
-    required this.timeRemaining,
-    required this.totalTime,
-    this.size = 200,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          CircularProgressIndicator(
-            value: 1 - (timeRemaining / totalTime),
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-            strokeWidth: 12,
-            backgroundColor: Colors.grey[200],
-          ),
-          Center(
-            child: Text(
-              _formatTime(timeRemaining),
-              style: TextStyle(
-                fontSize: size / 4,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue[700],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatTime(int seconds) {
-    int minutes = max(0, seconds ~/ 60);
-    int remainingSeconds = max(0, seconds % 60);
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 }
