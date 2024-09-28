@@ -81,6 +81,7 @@ class AuthWrapper extends GetWidget<UserController> {
     });
   }
 }
+
 class PageControllerX extends GetxController {
   var pageIndex = 0.obs;
   PageController pageController = PageController();
@@ -113,10 +114,10 @@ class _OperatorScreenState extends State<OperatorScreen> {
         onPageChanged: (index) {
           controller.changePage(index); // อัปเดตสถานะเมื่อเปลี่ยนหน้า
         },
-        children: const <Widget>[
-          WorkScreen(),
+        children: <Widget>[
+          const WorkScreen(),
           FocusSetupScreen(),
-          QuestScreen(),
+          const QuestScreen(),
         ],
       ),
       bottomNavigationBar: Obx(
