@@ -72,7 +72,7 @@ class WorkAdventure extends StatelessWidget {
         selectedLabelStyle: TextStyle(color: Colors.black),
         selectedItemColor: Colors.black,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(),
+      textTheme: GoogleFonts.itimTextTheme(),
       colorScheme: ColorScheme.fromSeed(
         seedColor: Colors.white, // Choose a more distinct seed color
         brightness: Brightness.light,
