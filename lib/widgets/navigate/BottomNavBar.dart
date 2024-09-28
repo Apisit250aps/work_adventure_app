@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
@@ -46,7 +48,7 @@ class BottomNavBar extends StatelessWidget {
             icon: Boxicons.bx_time_five,
             isSelected: selectedIndex == 2,
             onTap: () {
-              Get.to(() => const FocusScreen());
+              Get.to(() => const FocusScreen(totalTime: null,));
             },
           ),
           NavItem(
