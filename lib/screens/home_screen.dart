@@ -22,7 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final name = TextEditingController();
   final className = TextEditingController();
 
-  final CharacterController charController = Get.find();
+  final CharacterController characterController = Get.find();
+  Future<List<Character>> fetchCharacter() async {
+    return await characterController.fetchCharacter();
+  }
 
   bool isLoading = false;
   bool isValid = true;
@@ -35,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       if (isValid) {
-        final success = await charController.createCharacter(
+        final success = await characterController.createCharacter(
           name.text,
           className.text,
         );
@@ -69,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    charController.loadCharacters();
+    characterController.loadCharacters();
   }
 
   @override
@@ -89,7 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          const CharacterLoader()
+          CharacterLoader(
+            characters: fetchCharacter(),
+          )
         ],
       ),
     );
@@ -221,7 +226,8 @@ class CharacterCard extends StatelessWidget {
 }
 
 class CharacterLoader extends StatefulWidget {
-  const CharacterLoader({super.key});
+  final Future<List<Character>> characters;
+  const CharacterLoader({super.key, required this.characters});
 
   @override
   State<CharacterLoader> createState() => _CharacterLoaderState();
@@ -230,14 +236,10 @@ class CharacterLoader extends StatefulWidget {
 class _CharacterLoaderState extends State<CharacterLoader> {
   final CharacterController characterController = Get.find();
 
-  Future<List<Character>> fetchCharacter() async {
-    return await characterController.fetchCharacter();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Character>>(
-      future: fetchCharacter(), // Call the future function
+      future: widget.characters, // Call the future function
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // While waiting for the data, show a loading spinner

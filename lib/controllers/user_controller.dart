@@ -9,9 +9,9 @@ import 'dart:convert';
 import 'package:work_adventure/utils/jwt_storage.dart';
 
 class UserController extends GetxController {
-  final RestServiceController _rest = Get.put(RestServiceController());
-  final ApiService _apiService = Get.put(ApiService());
-
+  final RestServiceController _rest = Get.find();
+  final ApiService _apiService = Get.find();
+  
   var token = ''.obs;
   var user = {}.obs;
   var characters = <Character>[].obs;

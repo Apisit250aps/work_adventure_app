@@ -3,7 +3,9 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
@@ -19,9 +21,37 @@ class WorkScreen extends StatefulWidget {
 class _WorkScreenState extends State<WorkScreen> {
   final UserController user = Get.find();
   final CharacterController characterController = Get.find();
+  final WorkController workController = Get.put(WorkController());
+
+  bool isLoading = false;
+
+  Future<void> onSubmit() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      if (_name.text.isEmpty) {
+        Get.snackbar("Form invalid", "Please fill in all required fields.");
+      } else {
+        // Logic to submit the form
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
   late Character character;
+
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _description = TextEditingController();
+  final TextEditingController _start = TextEditingController();
+  final TextEditingController _due = TextEditingController();
+  final TextEditingController _status = TextEditingController(text: "Pending");
 
   @override
   Widget build(BuildContext context) {
@@ -109,24 +139,77 @@ class _WorkScreenState extends State<WorkScreen> {
       builder: (BuildContext context) {
         return SheetContents(
           children: [
-            const SheetHeader(title: "New Work"),
+            const SheetHeader(
+              title: "New Work",
+            ),
             SheetBody(
               children: [
-                const InputLabel(label: "name"),
-                const InputLabel(label: "description"),
+                InputLabel(
+                  label: "name",
+                  controller: _name,
+                ),
+                InputLabel(
+                  label: "description",
+                  controller: _description,
+                ),
                 DateInputLabel(
                   label: 'Start Date',
                   onDateSelected: (DateTime date) {
-                    print('Selected date: ${date.toString()}');
-                    // Do something with the selected date
+                    _start.text = date.toString();
+                    print(_start.text);
                   },
                 ),
                 DateInputLabel(
                   label: 'Due Date',
                   onDateSelected: (DateTime date) {
-                    print('Selected date: ${date.toString()}');
-                    // Do something with the selected date
+                    _due.text = date.toString();
                   },
+                ),
+                Obx(
+                  () => Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: ToggleButtons(
+                      direction: Axis.horizontal,
+                      onPressed: (int index) {
+                        workController.updateStatus(index);
+                        setState(() {
+                          _status.text = workController
+                              .status[workController.selectedStatusIndex.value];
+
+                          print(_status.text);
+                        });
+                      },
+
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      selectedBorderColor: Colors.black,
+                      selectedColor: Colors.white,
+                      fillColor: Colors.black,
+                      color: Colors.black,
+                      constraints: const BoxConstraints(
+                        minHeight: 40.0,
+                        minWidth: 80.0,
+                      ),
+                      isSelected: List.generate(
+                          workController.status.length,
+                          (i) =>
+                              i ==
+                              workController.selectedStatusIndex
+                                  .value), // ตรวจสอบว่าตัวเลือกใดถูกเลือก
+                      children: workController.status.map((status) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                          ),
+                          child: Text(status),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                SquareButton(
+                  onClick: onSubmit,
+                  isLoading: isLoading,
+                  buttonText: "Create",
                 )
               ],
             )

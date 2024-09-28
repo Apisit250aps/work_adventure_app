@@ -9,6 +9,8 @@ import 'package:work_adventure/screens/focus_setup_screen.dart';
 import 'package:work_adventure/screens/home_screen.dart';
 import 'package:work_adventure/screens/quest_screen.dart';
 import 'package:work_adventure/screens/work_screen.dart';
+import 'package:work_adventure/services/api_service.dart';
+import 'package:work_adventure/services/rest_service.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -25,6 +27,8 @@ class WorkAdventure extends StatelessWidget {
       home: const AuthWrapper(),
       debugShowCheckedModeBanner: false,
       initialBinding: BindingsBuilder(() {
+        Get.put(RestServiceController());
+        Get.put(ApiService());
         Get.put(UserController());
         Get.put(CharacterController());
       }),
@@ -40,7 +44,7 @@ class WorkAdventure extends StatelessWidget {
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.white,
-        shape:  RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
       ),
