@@ -2,12 +2,25 @@ import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:math';
 
+class LogEntry {
+  final String icon;
+  final String title;
+  final String description;
+  final DateTime timestamp;
+
+  LogEntry({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.timestamp,
+  });
+}
+
 class FocusController extends GetxController {
   RxInt _timeRemaining = 0.obs;
   final RxInt _totalTime = 0.obs;
   final RxBool _isActive = false.obs;
-  final RxMap<String, int> _inventory = <String, int>{}.obs;
-  final RxList<Event> _events = <Event>[].obs;
+  final RxList<LogEntry> _adventureLog = <LogEntry>[].obs;
   final RxString _currentEncounterIcon = "🌟".obs;
   final RxString _currentEncounterDescription =
       "Waiting for adventure...\n".obs;
@@ -20,8 +33,8 @@ class FocusController extends GetxController {
   int get timeRemaining => _timeRemaining.value;
   int get totalTime => _totalTime.value;
   bool get isActive => _isActive.value;
-  Map<String, int> get inventory => _inventory;
-  List<Event> get events => _events;
+  List<LogEntry> get adventureLog =>
+      _adventureLog.toList(); // Changed to return a List<LogEntry>
   String get currentEncounterIcon => _currentEncounterIcon.value;
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
@@ -29,12 +42,12 @@ class FocusController extends GetxController {
   void initFocus(int minutes) {
     _totalTime.value = minutes * 60;
     _timeRemaining.value = _totalTime.value;
-    _inventory.clear();
-    _events.clear();
+    _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "Waiting for adventure...\n";
     _eventCount.value = 0;
     _showingSummary.value = false;
+    _addLogEntry("🏁", "Adventure Start", "Your journey begins!");
   }
 
   void toggleActive() {
@@ -74,12 +87,12 @@ class FocusController extends GetxController {
     _eventTimer?.cancel();
     _timeRemaining.value = _totalTime.value;
     _isActive.value = false;
-    _inventory.clear();
-    _events.clear();
+    _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "Waiting for adventure...\n";
     _eventCount.value = 0;
     _showingSummary.value = false;
+    _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
   }
 
   void generateEvent() {
@@ -101,12 +114,8 @@ class FocusController extends GetxController {
   void generateNothingEvent() {
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "Nothing happened...\n";
-    _events.insert(
-        0,
-        Event(
-            icon: "🌟",
-            title: "Peaceful",
-            description: "You continue your journey without incident."));
+    _addLogEntry(
+        "🌟", "Peaceful", "You continue your journey without incident.");
   }
 
   void generateEnemyEvent() {
@@ -127,16 +136,8 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value =
         "Battle with ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.";
 
-    addToInventory("💰 Gold", gold);
-    addToInventory("⚔️ EXP", exp);
-
-    _events.insert(
-        0,
-        Event(
-            icon: "⚔️",
-            title: "Battle",
-            description:
-                "Encountered a ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold."));
+    _addLogEntry("⚔️", "Battle",
+        "Encountered a ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.");
   }
 
   void generateTreasureEvent() {
@@ -156,16 +157,8 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value =
         "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.\n";
 
-    addToInventory(treasure, quantity);
-    addToInventory("💰 Gold", gold);
-
-    _events.insert(
-        0,
-        Event(
-            icon: "💎",
-            title: "Treasure",
-            description:
-                "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.\n"));
+    _addLogEntry("💎", "Treasure",
+        "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.");
   }
 
   void generateRestEvent() {
@@ -174,32 +167,24 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value =
         "Found a safe spot to rest. Healed $healing HP.\n";
 
-    addToInventory("❤️ HP", healing);
-
-    _events.insert(
-        0,
-        Event(
-            icon: "🏕️",
-            title: "Rest",
-            description: "Found a safe spot to rest. Healed $healing HP.\n"));
+    _addLogEntry(
+        "🏕️", "Rest", "Found a safe spot to rest. Healed $healing HP.");
   }
 
-  void addToInventory(String item, int quantity) {
-    if (_inventory.containsKey(item)) {
-      _inventory[item] = _inventory[item]! + quantity;
-    } else {
-      _inventory[item] = quantity;
-    }
+  void _addLogEntry(String icon, String title, String description) {
+    _adventureLog.insert(
+        0,
+        LogEntry(
+          icon: icon,
+          title: title,
+          description: description,
+          timestamp: DateTime.now(),
+        ));
   }
 
   void showSummary() {
     _showingSummary.value = true;
-    _events.insert(
-        0,
-        Event(
-            icon: "🏁",
-            title: "Summary",
-            description: "Adventure completed!\n"));
+    _addLogEntry("🏁", "Summary", "Adventure completed!");
   }
 
   @override
@@ -208,12 +193,4 @@ class FocusController extends GetxController {
     _eventTimer?.cancel();
     super.onClose();
   }
-}
-
-class Event {
-  final String icon;
-  final String title;
-  final String description;
-
-  Event({required this.icon, required this.title, required this.description});
 }

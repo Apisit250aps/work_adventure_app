@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'dart:math';
 
 class FocusScreen extends GetView<FocusController> {
-  const FocusScreen({Key? key, required int totalTime}) : super(key: key);
+  const FocusScreen({super.key, required int totalTime});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Focus Adventure',
             style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.inventory),
-            onPressed: () => _showInventory(context),
+            icon: const Icon(Boxicons.bx_book_bookmark),
+            onPressed: () => _showAdventureLog(context),
           ),
         ],
       ),
@@ -117,15 +119,21 @@ class FocusScreen extends GetView<FocusController> {
     );
   }
 
-  void _showInventory(BuildContext context) {
-    showDialog(
+  void _showAdventureLog(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(20),
-          child: Obx(() => InventoryPopup(inventory: controller.inventory)),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.2,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return AdventureLogBottomSheet(
+              scrollController: scrollController,
+            );
+          },
         );
       },
     );
@@ -154,7 +162,8 @@ class CircularTimer extends StatelessWidget {
         children: [
           CircularProgressIndicator(
             value: 1 - (timeRemaining / totalTime),
-            valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+            valueColor: const AlwaysStoppedAnimation<Color>(
+                Color.fromARGB(255, 0, 0, 0)),
             strokeWidth: 12,
             backgroundColor: Colors.grey[200],
           ),
@@ -180,101 +189,62 @@ class CircularTimer extends StatelessWidget {
   }
 }
 
-class InventoryPopup extends StatelessWidget {
-  final Map<String, int> inventory;
+class AdventureLogBottomSheet extends GetView<FocusController> {
+  final ScrollController scrollController;
 
-  const InventoryPopup({super.key, required this.inventory});
+  const AdventureLogBottomSheet({
+    super.key,
+    required this.scrollController,
+  });
 
   @override
   Widget build(BuildContext context) {
-    List<MapEntry<String, int>> inventoryList = inventory.entries.toList();
-
     return Container(
-      width: 300,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[800],
-        borderRadius: BorderRadius.circular(8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Inventory',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Container(
+            height: 4,
+            width: 40,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 16),
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: 200,
-            ),
-            child: GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 4,
-                mainAxisSpacing: 4,
-              ),
-              itemCount: inventoryList.length,
-              itemBuilder: (context, index) {
-                MapEntry<String, int> item = inventoryList[index];
-                return InventorySlot(item: item.key, quantity: item.value);
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.red,
-            ),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class InventorySlot extends StatelessWidget {
-  final String item;
-  final int quantity;
-
-  const InventorySlot({super.key, required this.item, required this.quantity});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[700],
-        border: Border.all(color: Colors.grey[600]!, width: 1),
-      ),
-      child: Stack(
-        children: [
-          Center(
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text(
-              item.split(' ')[0],
-              style: const TextStyle(fontSize: 20, color: Colors.white),
-            ),
-          ),
-          if (quantity > 1)
-            Positioned(
-              right: 2,
-              bottom: 2,
-              child: Text(
-                quantity.toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
+              'Adventure Log',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
+          ),
+          Expanded(
+            child: Obx(() => ListView.builder(
+                  controller: scrollController,
+                  itemCount: controller.adventureLog.length,
+                  itemBuilder: (context, index) {
+                    final entry = controller.adventureLog[index];
+                    return ListTile(
+                      leading: Text(
+                        entry.icon,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      title: Text(entry.description),
+                      subtitle: Text(
+                        '${entry.timestamp.hour.toString().padLeft(2, '0')}:${entry.timestamp.minute.toString().padLeft(2, '0')}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    );
+                  },
+                )),
+          ),
         ],
       ),
     );
