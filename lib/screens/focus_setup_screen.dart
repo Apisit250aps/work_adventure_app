@@ -7,6 +7,8 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
+import 'package:work_adventure/widgets/button/form_button.dart';
+import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 
 class FocusSetupScreen extends StatelessWidget {
   final FocusController controller = Get.put(FocusController());
@@ -277,6 +279,44 @@ class FocusSetupScreen extends StatelessWidget {
         ],
       );
     });
+  }
+}
+
+class CustomSlider extends StatelessWidget {
+  final double value;
+  final ValueChanged<double> onChanged;
+
+  const CustomSlider({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliderTheme(
+      data: SliderTheme.of(context).copyWith(
+        activeTrackColor: Colors.black,
+        inactiveTrackColor: Colors.grey[300],
+        trackShape: const RoundedRectSliderTrackShape(),
+        trackHeight: 2.0,
+        thumbShape: const RoundSliderThumbShape(
+          enabledThumbRadius: 8.0,
+        ),
+        thumbColor: Colors.black,
+        overlayColor: Colors.transparent,
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
+        tickMarkShape: const RoundSliderTickMarkShape(),
+        activeTickMarkColor: Colors.black,
+        inactiveTickMarkColor: Colors.transparent,
+        valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
+        valueIndicatorColor: Colors.black,
+        valueIndicatorTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 16.0,
+        ),
+      ),
+    );
   }
 }
 
