@@ -145,8 +145,7 @@ class CircularTimer extends StatelessWidget {
   final int totalTime;
   final double size;
 
-  const CircularTimer({
-    super.key,
+  const CircularTimer({super.key, 
     required this.timeRemaining,
     required this.totalTime,
     this.size = 200,
@@ -169,7 +168,7 @@ class CircularTimer extends StatelessWidget {
           ),
           Center(
             child: Text(
-              formatTime(timeRemaining),
+              _formatTime(timeRemaining),
               style: TextStyle(
                 fontSize: timeRemaining > 5999
                     ? size / 5

@@ -279,3 +279,7 @@ class FocusSetupScreen extends StatelessWidget {
     });
   }
 }
+
+extension on int {
+  get value => null;
+}
