@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
-import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
@@ -24,22 +23,18 @@ class _WorkScreenState extends State<WorkScreen> {
   // ใช้ .value เพื่อเข้าถึงค่าจริงของตัวแปร reactive
   late Character character;
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          AppBarNav(
+          const AppBarNav(
             title: "Work",
             actions: [
-              ActionButton(
-                icon:Boxicons.bx_message_square_add, // ใส่ไอคอนที่ต้องการ เช่น ไอคอนการเพิ่ม
-                onPressed: () {
-                  _showBottomSheet(context); // หรือฟังก์ชันอื่น ๆ ที่คุณต้องการ
-                },
+              IconButton.outlined(
+                onPressed: null,
+                icon: Icon(Boxicons.bx_menu),
               )
             ],
           ),
@@ -98,17 +93,19 @@ class _WorkScreenState extends State<WorkScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showBottomSheet(context);
+        },
+        child: const Icon(Boxicons.bx_message_square_add),
+      ),
     );
   }
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
       builder: (BuildContext context) {
         return SheetContents(
           children: [

@@ -33,6 +33,31 @@ class WorkAdventure extends StatelessWidget {
 
   ThemeData _buildTheme() {
     return ThemeData(
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        iconSize: 24,
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.white,
+        shape:  RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: ButtonStyle(
+          iconSize: const WidgetStatePropertyAll(24),
+          iconColor: const WidgetStatePropertyAll(Colors.black),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.black),
+              borderRadius: BorderRadius.circular(
+                8,
+              ),
+            ),
+          ),
+        ),
+      ),
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
@@ -81,6 +106,7 @@ class AuthWrapper extends GetWidget<UserController> {
     });
   }
 }
+
 class PageControllerX extends GetxController {
   var pageIndex = 0.obs;
   PageController pageController = PageController();
