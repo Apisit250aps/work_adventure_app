@@ -22,28 +22,23 @@ class WorkController extends GetxController {
 
   // Work variables
   final RxList<Work> workList = <Work>[].obs;
-  final RxInt currentWorkIndex = 0.obs;
-
-  late final Work work;
+  
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
 
-  void selectIndex(int index) {
-    work = workList[index];
-  }
 
   @override
   void onInit() {
+    super.onInit();
     characterId = characterController.character.id; // Directly assign here
     loadWorks();
-    super.onInit();
   }
 
   @override
   void onReady() {
-    print(workList); // Access normally without .value
+    print(workList);
     super.onReady();
   }
 
@@ -66,7 +61,7 @@ class WorkController extends GetxController {
   Future<List<Work>> fetchAllWork() async {
     try {
       isLoading.value = true;
-      String path = _rest.allWork;
+      String path = _rest.work;
       String endpoints = "$path/$characterId";
       final response = await _apiService.get(endpoints);
 
@@ -74,7 +69,6 @@ class WorkController extends GetxController {
         List<dynamic> jsonData = jsonDecode(response.body);
         List<Work> workData =
             jsonData.map((data) => Work.fromJson(data)).toList();
-        workList.value = workData;
         return workData;
       } else {
         throw Exception("Failed to fetch work: ${response.statusCode}");
@@ -139,6 +133,7 @@ class WorkController extends GetxController {
       return false;
     } finally {
       loadWorks();
+      update();
     }
   }
 }

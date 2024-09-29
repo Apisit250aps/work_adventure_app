@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/screens/task_screen.dart';
@@ -15,6 +16,7 @@ class WorkCard extends StatefulWidget {
 
 class _WorkCardState extends State<WorkCard> {
   WorkController workController = Get.find<WorkController>();
+  TasksController tasksController = Get.find<TasksController>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class _WorkCardState extends State<WorkCard> {
         _showDeleteMenu(context);
       },
       onTap: () {
-        workController.selectIndex(widget.index);
+        tasksController.fetchTasks(widget.work.id);
         Get.to(() => const TaskScreen());
       },
       child: Card.outlined(

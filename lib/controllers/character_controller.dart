@@ -47,7 +47,7 @@ class CharacterController extends GetxController {
   }
 
   Future<List<Character>> fetchCharacter() async {
-    final response = await _apiService.get(_rest.myCharacters);
+    final response = await _apiService.get(_rest.character);
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData

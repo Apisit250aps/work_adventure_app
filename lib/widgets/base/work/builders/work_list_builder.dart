@@ -17,7 +17,7 @@ class WorkListBuilder extends StatelessWidget {
         itemCount: works.length,
         itemBuilder: (context, index) {
           return WorkCard(
-            work: works[index], // ใช้ข้อมูลจาก snapshot
+            work: works[index],
             index: index,
           );
         },

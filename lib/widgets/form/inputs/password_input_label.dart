@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class PasswordInputLabel extends StatefulWidget {
@@ -66,7 +68,16 @@ class _PasswordInputLabelState extends State<PasswordInputLabel> {
                 vertical: 15,
               ),
               suffixIcon: IconButton(
-                style: const ButtonStyle(),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                  elevation: WidgetStateProperty.all(0),
+                  shape: WidgetStateProperty.all(
+                    const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    )),
+                  ),
+                ),
                 icon: Icon(
                   _obscureText ? Icons.visibility_off : Icons.visibility,
                   color: Colors.grey,

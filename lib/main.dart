@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
+import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
@@ -34,6 +35,7 @@ class WorkAdventure extends StatelessWidget {
         Get.put(UserController());
         Get.put(CharacterController());
         Get.delete<WorkController>();
+       
       }),
     );
   }
@@ -49,13 +51,12 @@ class WorkAdventure extends StatelessWidget {
         backgroundColor: Colors.white,
       ),
       datePickerTheme: const DatePickerThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
           ),
-        ),
-        backgroundColor: Colors.white
-      ),
+          backgroundColor: Colors.white),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
@@ -140,6 +141,7 @@ class OperatorScreen extends StatefulWidget {
 class _OperatorScreenState extends State<OperatorScreen> {
   final PageControllerX controller = Get.put(PageControllerX());
   final WorkController workController = Get.put(WorkController());
+  final TasksController tasksController = Get.put(TasksController());
   //
   final List<String> titleList = ["Work", "Focus", "Quests"];
   final List<Widget> pageWidget = [
