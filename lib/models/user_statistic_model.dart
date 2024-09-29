@@ -6,7 +6,7 @@ class UserStatistics {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  UserStatistics({
+  const UserStatistics({
     required this.totalExp,
     required this.totalCoin,
     required this.totalQuests,
@@ -36,4 +36,48 @@ class UserStatistics {
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
+
+  UserStatistics copyWith({
+    int? totalExp,
+    int? totalCoin,
+    int? totalQuests,
+    int? totalAchievements,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserStatistics(
+      totalExp: totalExp ?? this.totalExp,
+      totalCoin: totalCoin ?? this.totalCoin,
+      totalQuests: totalQuests ?? this.totalQuests,
+      totalAchievements: totalAchievements ?? this.totalAchievements,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'UserStatistics{totalExp: $totalExp, totalCoin: $totalCoin, totalQuests: $totalQuests, totalAchievements: $totalAchievements}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserStatistics &&
+          runtimeType == other.runtimeType &&
+          totalExp == other.totalExp &&
+          totalCoin == other.totalCoin &&
+          totalQuests == other.totalQuests &&
+          totalAchievements == other.totalAchievements &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt;
+
+  @override
+  int get hashCode =>
+      totalExp.hashCode ^
+      totalCoin.hashCode ^
+      totalQuests.hashCode ^
+      totalAchievements.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
 }

@@ -1,65 +1,109 @@
-// class Character {
-//   final String id;
-//   final String userId;
-//   final String name;
-//   final String className;
-//   final int? exp;
-//   final int? level;
-//   final int? coin;
-//   final int? health;
-//   final int? stamina;
-//   final int? focusPoint;  // เปลี่ยนชื่อจาก focus_point เป็น camelCase ตามมาตรฐาน Dart
-//   final DateTime createdAt;
-//   final DateTime updatedAt;
+import 'package:equatable/equatable.dart';
 
-//   Character({
-//     required this.id,
-//     required this.userId,
-//     required this.name,
-//     required this.className,
-//     this.exp,
-//     this.level,
-//     this.coin,
-//     this.health,
-//     this.stamina,
-//     this.focusPoint,
-//     required this.createdAt,
-//     required this.updatedAt,
-//   });
+class Character extends Equatable {
+  final String id;
+  final String name;
+  final int exp;
+  final int level;
+  final String className;
+  final int coin;
+  final int health;
+  final int stamina;
+  final int focusPoint;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-//   // ฟังก์ชันสำหรับการสร้าง instance จาก JSON
-//   factory Character.fromJson(Map<String, dynamic> json) {
-//     return Character(
-//       id: json['_id'] as String,
-//       userId: json['userId'] as String,
-//       name: json['name'] as String,
-//       className: json['className'] as String,
-//       exp: json['exp'] as int?,
-//       level: json['level'] as int?,
-//       coin: json['coin'] as int?,
-//       health: json['health'] as int?,
-//       stamina: json['stamina'] as int?,
-//       focusPoint: json['focus_point'] as int?,  // แปลงเป็น focusPoint ในคลาส
-//       createdAt: DateTime.parse(json['createdAt'] as String),
-//       updatedAt: DateTime.parse(json['updatedAt'] as String),
-//     );
-//   }
+  const Character({
+    required this.id,
+    required this.name,
+    required this.exp,
+    required this.level,
+    required this.className,
+    required this.coin,
+    required this.health,
+    required this.stamina,
+    required this.focusPoint,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
-//   // ฟังก์ชันสำหรับการแปลง instance เป็น JSON
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'id': id,
-//       'userId': userId,
-//       'name': name,
-//       'className': className,
-//       'exp': exp,
-//       'level': level,
-//       'coin': coin,
-//       'health': health,
-//       'stamina': stamina,
-//       'focus_point': focusPoint,  // แปลงเป็น focus_point ใน JSON
-//       'createdAt': createdAt.toIso8601String(),
-//       'updatedAt': updatedAt.toIso8601String(),
-//     };
-//   }
-// }
+  factory Character.fromJson(Map<String, dynamic> json) {
+    return Character(
+      id: json['_id'] as String,
+      name: json['name'] as String,
+      exp: json['exp'] as int,
+      level: json['level'] as int,
+      className: json['className'] as String,
+      coin: json['coin'] as int,
+      health: json['health'] as int,
+      stamina: json['stamina'] as int,
+      focusPoint: json['focus_point'] as int,
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'exp': exp,
+      'level': level,
+      'className': className,
+      'coin': coin,
+      'health': health,
+      'stamina': stamina,
+      'focus_point': focusPoint,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+
+  Character copyWith({
+    String? id,
+    String? name,
+    int? exp,
+    int? level,
+    String? className,
+    int? coin,
+    int? health,
+    int? stamina,
+    int? focusPoint,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Character(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      exp: exp ?? this.exp,
+      level: level ?? this.level,
+      className: className ?? this.className,
+      coin: coin ?? this.coin,
+      health: health ?? this.health,
+      stamina: stamina ?? this.stamina,
+      focusPoint: focusPoint ?? this.focusPoint,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Character{id: $id, name: $name, level: $level, className: $className}';
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        exp,
+        level,
+        className,
+        coin,
+        health,
+        stamina,
+        focusPoint,
+        createdAt,
+        updatedAt,
+      ];
+}

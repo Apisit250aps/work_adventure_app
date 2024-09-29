@@ -42,10 +42,6 @@ class WorkController extends GetxController {
     super.onReady();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   void loadWorks() async {
     isLoading.value = true; // เริ่มการโหลด

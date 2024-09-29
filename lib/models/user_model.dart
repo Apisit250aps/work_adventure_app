@@ -1,7 +1,5 @@
-import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/user_statistic_model.dart';
-
-
 
 class User {
   final String id;
@@ -13,7 +11,7 @@ class User {
   final UserStatistics userStatistics;
   final List<Character> characters;
 
-  User({
+  const User({
     required this.id,
     required this.username,
     required this.email,
@@ -52,4 +50,66 @@ class User {
       'characters': characters.map((character) => character.toJson()).toList(),
     };
   }
+
+  User copyWith({
+    String? id,
+    String? username,
+    String? email,
+    bool? isAdmin,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    UserStatistics? userStatistics,
+    List<Character>? characters,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      isAdmin: isAdmin ?? this.isAdmin,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      userStatistics: userStatistics ?? this.userStatistics,
+      characters: characters ?? this.characters,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User{id: $id, username: $username, email: $email, isAdmin: $isAdmin}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is User &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          username == other.username &&
+          email == other.email &&
+          isAdmin == other.isAdmin &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt &&
+          userStatistics == other.userStatistics &&
+          listEquals(characters, other.characters);
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      username.hashCode ^
+      email.hashCode ^
+      isAdmin.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      userStatistics.hashCode ^
+      characters.hashCode;
+}
+
+// Helper function for list comparison
+bool listEquals<T>(List<T>? a, List<T>? b) {
+  if (a == null) return b == null;
+  if (b == null || a.length != b.length) return false;
+  for (int i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

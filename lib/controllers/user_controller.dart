@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/user_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/main.dart';
-import 'package:work_adventure/models/character_statistic_model.dart';
+import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> onSubmit() async {
     setState(() {
       isLoading = true;
-      isValid = FormValid();
+      isValid = _FormValid();
     });
 
     try {
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  bool FormValid() {
+  bool _FormValid() {
     if (name.text.isEmpty) {
       Get.snackbar("Form is't valid!", "Input character name");
       return false;

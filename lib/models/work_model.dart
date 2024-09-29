@@ -5,11 +5,11 @@ class Work {
   final String? description;
   final DateTime? startDate;
   final DateTime? dueDate;
-  final String? status; // สามารถกำหนดเป็น "todo", "inprogress", หรือ "done"
+  final String? status; // "todo", "inprogress", หรือ "done"
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Work({
+  const Work({
     required this.id,
     required this.characterId,
     required this.name,
@@ -19,9 +19,14 @@ class Work {
     this.status,
     required this.createdAt,
     required this.updatedAt,
-  });
+  }) : assert(
+          status == null ||
+              status == 'todo' ||
+              status == 'inprogress' ||
+              status == 'done',
+          'Status must be null, "todo", "inprogress", or "done"',
+        );
 
-  // ฟังก์ชันสำหรับสร้าง instance จาก JSON
   factory Work.fromJson(Map<String, dynamic> json) {
     return Work(
       id: json['_id'] as String,
@@ -40,7 +45,6 @@ class Work {
     );
   }
 
-  // ฟังก์ชันสำหรับแปลง instance เป็น JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -54,4 +58,60 @@ class Work {
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
+
+  Work copyWith({
+    String? id,
+    String? characterId,
+    String? name,
+    String? description,
+    DateTime? startDate,
+    DateTime? dueDate,
+    String? status,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Work(
+      id: id ?? this.id,
+      characterId: characterId ?? this.characterId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      startDate: startDate ?? this.startDate,
+      dueDate: dueDate ?? this.dueDate,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Work{id: $id, name: $name, status: $status}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Work &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          characterId == other.characterId &&
+          name == other.name &&
+          description == other.description &&
+          startDate == other.startDate &&
+          dueDate == other.dueDate &&
+          status == other.status &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      characterId.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      startDate.hashCode ^
+      dueDate.hashCode ^
+      status.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
 }
