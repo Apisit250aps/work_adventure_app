@@ -5,12 +5,10 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/character_statistic_model.dart';
-import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/base/work/builders/work_list_builder.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
-import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
 class WorkScreen extends StatefulWidget {
@@ -36,10 +34,6 @@ class _WorkScreenState extends State<WorkScreen> {
   final TextEditingController _start = TextEditingController();
   final TextEditingController _due = TextEditingController();
   final TextEditingController _status = TextEditingController();
-
-  Future<List<Work>> fetchWork() async {
-    return await workController.fetchAllWork();
-  }
 
   Future<void> onSubmit() async {
     setState(() {
@@ -84,25 +78,15 @@ class _WorkScreenState extends State<WorkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: const CustomScrollView(
-        slivers: [
-          AppBarNav(
-            title: "Work",
-            actions: [
-              IconButton.outlined(
-                onPressed: null,
-                icon: Icon(Boxicons.bx_menu),
-              )
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('All tasks are'),
-            ),
-          ),
-          WorkLoader(),
-        ],
+      body: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+        ),
+        child: const Column(
+          children: [
+            WorkLoader(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -113,6 +97,7 @@ class _WorkScreenState extends State<WorkScreen> {
     );
   }
 
+//
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,

@@ -3,6 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/page_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
@@ -113,24 +114,8 @@ class AuthWrapper extends GetWidget<UserController> {
   }
 }
 
-class PageControllerX extends GetxController {
-  var pageIndex = 0.obs;
-  PageController pageController = PageController();
-
-  void changePage(int index) {
-    pageIndex.value = index;
-    pageController.jumpToPage(index);
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeInOut,
-    );
-  }
-}
-
 class OperatorScreen extends StatefulWidget {
   const OperatorScreen({super.key});
-  
 
   @override
   State<OperatorScreen> createState() => _OperatorScreenState();
@@ -139,19 +124,45 @@ class OperatorScreen extends StatefulWidget {
 class _OperatorScreenState extends State<OperatorScreen> {
   final PageControllerX controller = Get.put(PageControllerX());
   final WorkController workController = Get.put(WorkController());
+  //
+  final List<String> titleList = ["Work", "Focus", "Quests"];
+  final List<Widget> pageWidget = [
+    const WorkScreen(),
+    const FocusSetupScreen(),
+    const QuestScreen(),
+  ];
+
+  String onTitle = "Work";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          onTitle,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 36,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        actions: const [
+          IconButton.outlined(
+            onPressed: null,
+            icon: Icon(Boxicons.bx_menu),
+          )
+        ],
+      ),
       body: PageView(
         controller: controller.pageController,
         onPageChanged: (index) {
           controller.changePage(index); // อัปเดตสถานะเมื่อเปลี่ยนหน้า
+          setState(() {
+            onTitle = titleList[index];
+          });
         },
-        children: const <Widget>[
-          WorkScreen(),
-          FocusSetupScreen(),
-          QuestScreen(),
-        ],
+        children: pageWidget,
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
