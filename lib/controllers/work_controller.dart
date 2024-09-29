@@ -5,6 +5,7 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
+
 class WorkController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
@@ -18,6 +19,8 @@ class WorkController extends GetxController {
   var status = <String>["todo", "inprogress", "done"].obs;
   var selectedStatusIndex = 0.obs;
 
+  final Rx<Work?> selected = Rx<Work?>(null);
+
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
@@ -27,6 +30,10 @@ class WorkController extends GetxController {
     super.onInit();
     characterId = characterController.character.id;
     loadWorks();
+  }
+
+  void selectWork(Work work) {
+    selected.value = work;
   }
 
   void loadWorks() async {
@@ -50,6 +57,7 @@ class WorkController extends GetxController {
         List<dynamic> jsonData = jsonDecode(response.body);
         List<Work> workList =
             jsonData.map((data) => Work.fromJson(data)).toList();
+        allWork.value = workList;
         return workList;
       } else {
         throw Exception("Failed to fetch work: ${response.statusCode}");
@@ -69,14 +77,21 @@ class WorkController extends GetxController {
   ) async {
     String path = _rest.createWork;
     String endpoints = "$path/$characterId";
-    final response = await _apiService.post(endpoints, {
-      'name': name,
-      'description': description,
-      'start_date': start,
-      'due_date': due,
-      'status': status,
-    });
+    try {
+      final response = await _apiService.post(endpoints, {
+        'name': name,
+        'description': description,
+        'start_date': start,
+        'due_date': due,
+        'status': status,
+      });
 
-    return response.statusCode == 201;
+      return response.statusCode == 201;
+    } catch (e) {
+      print("Error creating work: $e");
+      return false;
+    } finally {
+      loadWorks();
+    }
   }
 }

@@ -11,43 +11,17 @@ class WorkListBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Work>>(
-      future: works as Future<List<Work>>, // เรียกใช้ Future สำหรับการดึงข้อมูล
-      builder: (context, snapshot) {
-        // สถานะรอข้อมูล
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        // สถานะเมื่อเกิดข้อผิดพลาด
-        if (snapshot.hasError) {
-          return const Center(child: Text("Error loading works"));
-        }
-
-        // เมื่อไม่มีงานแสดงว่ารายการว่าง
-        if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Center(child: Text("No works available"));
-        }
-
-        // เมื่อข้อมูลพร้อมจะแสดงผล
-        if (snapshot.hasData) {
-          return Flexible(
-            flex: 1,
-            child: ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return WorkCard(
-                  work: snapshot.data![index], // ใช้ข้อมูลจาก snapshot
-                  index: index,
-                );
-              },
-            ),
+    return Flexible(
+      flex: 1,
+      child: ListView.builder(
+        itemCount: works.length,
+        itemBuilder: (context, index) {
+          return WorkCard(
+            work: works[index], // ใช้ข้อมูลจาก snapshot
+            index: index,
           );
-        }
-
-        // สถานะเริ่มต้นเมื่อไม่มีข้อมูลอะไร
-        return const Center(child: Text("No data available"));
-      },
+        },
+      ),
     );
   }
 }
@@ -73,7 +47,6 @@ class _WorkLoaderState extends State<WorkLoader> {
     return FutureBuilder<List<Work>>(
       future: loadWorks(),
       builder: (context, snapshot) {
-       
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: SlimeLoading());
         }

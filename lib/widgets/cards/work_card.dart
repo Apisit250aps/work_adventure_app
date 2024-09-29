@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
+import 'package:work_adventure/screens/task_screen.dart';
 
 class WorkCard extends StatelessWidget {
   final Work work;
@@ -9,9 +12,14 @@ class WorkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WorkController workController = Get.find<WorkController>();
     return GestureDetector(
       onLongPress: () {
         _showDeleteMenu(context);
+      },
+      onTap: () {
+        workController.selectWork(work);
+        Get.to(() => const TaskScreen());
       },
       child: Card.outlined(
         margin: const EdgeInsets.symmetric(vertical: 5),
@@ -85,7 +93,7 @@ class WorkCard extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); 
+                Navigator.of(context).pop();
               },
               child: const Text('Delete'),
             ),

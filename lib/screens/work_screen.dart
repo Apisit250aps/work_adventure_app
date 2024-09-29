@@ -9,6 +9,7 @@ import 'package:work_adventure/widgets/base/work/builders/work_list_builder.dart
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
+import 'package:work_adventure/widgets/loading/slime_loading.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
 class WorkScreen extends StatefulWidget {
@@ -74,18 +75,34 @@ class _WorkScreenState extends State<WorkScreen> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-        ),
-        child: const Column(
-          children: [
-            WorkLoader(),
-          ],
+      body: RefreshIndicator(
+        onRefresh: workController.fetchAllWork,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
+          ),
+          child: Column(
+            children: [
+              Obx(() {
+                if (workController.isLoading.value) {
+                  // แสดง Loading Indicator เมื่อกำลังโหลดข้อมูล
+                  return const Center(child: SlimeLoading());
+                }
+                // ตรวจสอบว่ามีงานหรือไม่ ถ้าไม่มีให้แสดงข้อความว่าไม่มีงาน
+                if (workController.allWork.isEmpty) {
+                  return const Center(child: Text("No works available."));
+                }
+                // แสดงรายการงาน
+                return WorkListBuilder(works: workController.allWork);
+              }),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
