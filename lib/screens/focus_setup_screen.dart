@@ -15,6 +15,7 @@ class FocusSetupScreen extends StatelessWidget {
 
   FocusSetupScreen({super.key}) {
     controller.initFocus(10); // Initialize with 10 minutes
+    controller.initFocus(10); // Initialize with 10 minutes
   }
 
   @override
@@ -34,7 +35,11 @@ class FocusSetupScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildTimerFrame(),
+                  _buildTimerFrame(),
                   const SizedBox(height: 40),
+                  _buildTimeDisplay(),
+                  const SizedBox(height: 20),
+                  _buildFocusEstimate(),
                   _buildTimeDisplay(),
                   const SizedBox(height: 20),
                   _buildFocusEstimate(),
@@ -43,10 +48,13 @@ class FocusSetupScreen extends StatelessWidget {
                     onClick: () {
                       Get.to(() => const FocusScreen(
                             totalTime: 0,
+                      Get.to(() => const FocusScreen(
+                            totalTime: 0,
                           ));
                     },
                     isLoading: false,
                     buttonText: "Start Focus",
+                  ),
                   ),
                 ],
               ),
@@ -279,44 +287,6 @@ class FocusSetupScreen extends StatelessWidget {
         ],
       );
     });
-  }
-}
-
-class CustomSlider extends StatelessWidget {
-  final double value;
-  final ValueChanged<double> onChanged;
-
-  const CustomSlider({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-        activeTrackColor: Colors.black,
-        inactiveTrackColor: Colors.grey[300],
-        trackShape: const RoundedRectSliderTrackShape(),
-        trackHeight: 2.0,
-        thumbShape: const RoundSliderThumbShape(
-          enabledThumbRadius: 8.0,
-        ),
-        thumbColor: Colors.black,
-        overlayColor: Colors.transparent,
-        overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
-        tickMarkShape: const RoundSliderTickMarkShape(),
-        activeTickMarkColor: Colors.black,
-        inactiveTickMarkColor: Colors.transparent,
-        valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
-        valueIndicatorColor: Colors.black,
-        valueIndicatorTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 16.0,
-        ),
-      ),
-    );
   }
 }
 
