@@ -20,4 +20,5 @@ class RestServiceController extends GetxController {
   // work rest service
   String get allWork => '$base/work/all';
   String get createWork => '$base/work/create';
+  String get deleteWork => '$base/work/delete';
 }

@@ -40,6 +40,22 @@ class WorkAdventure extends StatelessWidget {
 
   ThemeData _buildTheme() {
     return ThemeData(
+      dialogTheme: const DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        backgroundColor: Colors.white,
+      ),
+      datePickerTheme: const DatePickerThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        backgroundColor: Colors.white
+      ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,

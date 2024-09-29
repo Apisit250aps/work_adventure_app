@@ -9,38 +9,54 @@ import 'package:work_adventure/services/rest_service.dart';
 class WorkController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
-  CharacterController characterController = Get.find();
+  final CharacterController characterController =
+      Get.find<CharacterController>();
 
-  late final String characterId;
-
+  // Character Variables
+  late String characterId; // No Rx, just a normal String
   final RxBool isLoading = false.obs;
-  final RxList<Work> allWork = <Work>[].obs;
 
-  var status = <String>["todo", "inprogress", "done"].obs;
+  // Static work variables
+  List<String> get status => <String>["todo", "inprogress", "done"];
   var selectedStatusIndex = 0.obs;
 
-  final Rx<Work?> selected = Rx<Work?>(null);
+  // Work variables
+  final RxList<Work> workList = <Work>[].obs;
+  final RxInt currentWorkIndex = 0.obs;
+
+  late final Work work;
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    characterId = characterController.character.id;
-    loadWorks();
+  void selectIndex(int index) {
+    work = workList[index];
   }
 
-  void selectWork(Work work) {
-    selected.value = work;
+  @override
+  void onInit() {
+    characterId = characterController.character.id; // Directly assign here
+    loadWorks();
+    super.onInit();
+  }
+
+  @override
+  void onReady() {
+    print(workList); // Access normally without .value
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 
   void loadWorks() async {
     isLoading.value = true; // เริ่มการโหลด
     final result = await fetchAllWork();
     if (result.isNotEmpty) {
-      allWork.value = result;
+      workList.value = result;
     } else {
       Get.snackbar("Error", "No works found or an error occurred.");
     }
@@ -49,22 +65,53 @@ class WorkController extends GetxController {
 
   Future<List<Work>> fetchAllWork() async {
     try {
+      isLoading.value = true;
       String path = _rest.allWork;
       String endpoints = "$path/$characterId";
       final response = await _apiService.get(endpoints);
 
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
-        List<Work> workList =
+        List<Work> workData =
             jsonData.map((data) => Work.fromJson(data)).toList();
-        allWork.value = workList;
-        return workList;
+        workList.value = workData;
+        return workData;
       } else {
         throw Exception("Failed to fetch work: ${response.statusCode}");
       }
     } catch (e) {
       print("Error fetching work: $e");
       return [];
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> deleteWork(String workId) async {
+    try {
+      // Set loading state to true
+      isLoading.value = true;
+
+      // Construct the endpoint for deletion (assumes _rest.deleteWork holds the base path)
+      String path = _rest.deleteWork;
+      String endpoint = "$path/$workId";
+
+      // Send DELETE request to the server
+      final response = await _apiService.delete(endpoint);
+
+      if (response.statusCode == 200) {
+        // Remove the deleted work from the local list
+        workList.removeWhere((work) => work.id == workId);
+        update(); // This will trigger a UI update (if using GetX state management)
+      } else {
+        throw Exception("Failed to delete work: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error deleting work: $e");
+    } finally {
+      // Set loading state to false
+      isLoading.value = false;
     }
   }
 

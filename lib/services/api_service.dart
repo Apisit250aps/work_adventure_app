@@ -26,4 +26,15 @@ class ApiService extends GetxController {
       body: json.encode(data),
     );
   }
+
+  Future<http.Response> delete(String endpoint) async {
+    final token = await JwtStorage.getToken();
+    return await http.delete(
+      Uri.parse(endpoint),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+  }
 }

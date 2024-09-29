@@ -75,8 +75,6 @@ class _WorkScreenState extends State<WorkScreen> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,16 +89,16 @@ class _WorkScreenState extends State<WorkScreen> {
             children: [
               Obx(() {
                 if (workController.isLoading.value) {
-                  // แสดง Loading Indicator เมื่อกำลังโหลดข้อมูล
+                  // Display loading indicator
                   return const Center(child: SlimeLoading());
                 }
-                // ตรวจสอบว่ามีงานหรือไม่ ถ้าไม่มีให้แสดงข้อความว่าไม่มีงาน
-                if (workController.allWork.isEmpty) {
+                if (workController.workList.isEmpty) {
+                  // Display no work message
                   return const Center(child: Text("No works available."));
                 }
-                // แสดงรายการงาน
-                return WorkListBuilder(works: workController.allWork);
-              }),
+                // Display the list of work items
+                return WorkListBuilder(works: workController.workList);
+              })
             ],
           ),
         ),

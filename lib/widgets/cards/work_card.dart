@@ -4,21 +4,26 @@ import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/screens/task_screen.dart';
 
-class WorkCard extends StatelessWidget {
+class WorkCard extends StatefulWidget {
   final Work work;
   final int index;
-
   const WorkCard({super.key, required this.work, required this.index});
 
   @override
+  State<WorkCard> createState() => _WorkCardState();
+}
+
+class _WorkCardState extends State<WorkCard> {
+  WorkController workController = Get.find<WorkController>();
+
+  @override
   Widget build(BuildContext context) {
-    WorkController workController = Get.find<WorkController>();
     return GestureDetector(
       onLongPress: () {
         _showDeleteMenu(context);
       },
       onTap: () {
-        workController.selectWork(work);
+        workController.selectIndex(widget.index);
         Get.to(() => const TaskScreen());
       },
       child: Card.outlined(
@@ -37,14 +42,14 @@ class WorkCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    work.name,
+                    widget.work.name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    _getTimeAgo(work.createdAt),
+                    _getTimeAgo(widget.work.createdAt),
                     style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
@@ -54,7 +59,7 @@ class WorkCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                work.description ?? 'No description provided.',
+                widget.work.description ?? 'No description provided.',
                 style: const TextStyle(fontSize: 16),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
@@ -93,6 +98,7 @@ class WorkCard extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
+                workController.deleteWork(widget.work.id);
                 Navigator.of(context).pop();
               },
               child: const Text('Delete'),
