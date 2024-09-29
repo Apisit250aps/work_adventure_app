@@ -145,7 +145,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
   final List<String> titleList = ["Work", "Focus", "Quests"];
   final List<Widget> pageWidget = [
     const WorkScreen(),
-    const FocusSetupScreen(),
+   FocusSetupScreen(),
     const QuestScreen(),
   ];
 

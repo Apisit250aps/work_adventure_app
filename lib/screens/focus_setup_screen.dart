@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/screens/focus_screen.dart';
-import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
@@ -24,9 +23,6 @@ class FocusSetupScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
-          const AppBarNav(
-            title: "Focus Setup",
-          ),
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
