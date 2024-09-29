@@ -171,7 +171,9 @@ class CircularTimer extends StatelessWidget {
             child: Text(
               formatTime(timeRemaining),
               style: TextStyle(
-                fontSize: size / 4,
+                fontSize: timeRemaining > 5999
+                    ? size / 5
+                    : size / 4, // Adjust font size for longer time
                 fontWeight: FontWeight.bold,
                 color: const Color.fromARGB(255, 0, 0, 0),
               ),
@@ -183,9 +185,16 @@ class CircularTimer extends StatelessWidget {
   }
 
   String formatTime(int seconds) {
-    int minutes = max(0, seconds ~/ 60);
-    int remainingSeconds = max(0, seconds % 60);
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    if (seconds > 5999) {
+      // More than 99 minutes and 59 seconds
+      int hours = max(0, seconds ~/ 3600);
+      int minutes = max(0, (seconds % 3600) ~/ 60);
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+    } else {
+      int minutes = max(0, seconds ~/ 60);
+      int remainingSeconds = max(0, seconds % 60);
+      return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    }
   }
 }
 
