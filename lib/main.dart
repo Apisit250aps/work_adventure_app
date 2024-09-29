@@ -35,13 +35,15 @@ class WorkAdventure extends StatelessWidget {
         Get.put(UserController());
         Get.put(CharacterController());
         Get.delete<WorkController>();
-       
       }),
     );
   }
 
   ThemeData _buildTheme() {
     return ThemeData(
+      cardTheme: const CardTheme(
+        color: Colors.white,
+      ),
       dialogTheme: const DialogTheme(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(

@@ -119,6 +119,7 @@ class WorkController extends GetxController {
     String path = _rest.createWork;
     String endpoints = "$path/$characterId";
     try {
+      
       final response = await _apiService.post(endpoints, {
         'name': name,
         'description': description,

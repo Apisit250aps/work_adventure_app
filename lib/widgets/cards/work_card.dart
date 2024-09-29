@@ -32,9 +32,7 @@ class _WorkCardState extends State<WorkCard> {
         margin: const EdgeInsets.symmetric(vertical: 5),
         color: Colors.white,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(

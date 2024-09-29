@@ -38,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       if (isValid) {
+        if (className.text.isEmpty) {
+          className.text = "Student";
+        }
         final success = await characterController.createCharacter(
           name.text,
           className.text,
@@ -60,10 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool FormValid() {
     if (name.text.isEmpty) {
       Get.snackbar("Form is't valid!", "Input character name");
-      return false;
-    }
-    if (className.text.isEmpty) {
-      Get.snackbar("Form is't valid!", "Input Class name");
       return false;
     }
     return true;
