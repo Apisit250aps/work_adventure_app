@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
-import 'package:work_adventure/main.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/widgets/builder/character/character_builder.dart';
 import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
-import 'package:work_adventure/widgets/loading/slime_loading.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
