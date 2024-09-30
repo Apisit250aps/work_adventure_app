@@ -54,7 +54,6 @@ class _TaskScreenState extends State<TaskScreen> {
                     child: CircularProgressIndicator(),
                   );
                 }
-
                 if (tasksController.tasks.isEmpty) {
                   return const Center(
                     child: Text('No tasks available.'),

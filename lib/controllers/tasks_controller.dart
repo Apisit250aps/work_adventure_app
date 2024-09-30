@@ -58,6 +58,8 @@ class TasksController extends GetxController {
     }
   }
 
+  
+
   Future<List<Task>> fetchTasks() async {
     isLoading.value = true;
     try {

@@ -93,7 +93,9 @@ class _WorkScreenState extends State<WorkScreen> {
                   // Display loading indicator
                   return Container(
                     padding: const EdgeInsets.all(10),
-                    child: const SlimeLoading(),
+                    child: const Center(
+                      child: SlimeLoading(),
+                    ),
                   );
                 }
                 if (workController.workList.isEmpty) {
