@@ -73,10 +73,7 @@ class WorkAdventure extends StatelessWidget {
           iconColor: const WidgetStatePropertyAll(Colors.black),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.black),
-              borderRadius: BorderRadius.circular(
-                8,
-              ),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
         ),
@@ -140,12 +137,12 @@ class OperatorScreen extends StatefulWidget {
 class _OperatorScreenState extends State<OperatorScreen> {
   final PageControllerX controller = Get.put(PageControllerX());
   final WorkController workController = Get.put(WorkController());
-  
+
   //
   final List<String> titleList = ["Work", "Focus", "Quests"];
   final List<Widget> pageWidget = [
     const WorkScreen(),
-   FocusSetupScreen(),
+    FocusSetupScreen(),
     const QuestScreen(),
   ];
 
@@ -164,9 +161,11 @@ class _OperatorScreenState extends State<OperatorScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: const [
+        actions: [
           IconButton.outlined(
-            onPressed: null,
+            onPressed: () {
+              print("");
+            },
             icon: Icon(Boxicons.bx_menu),
           )
         ],

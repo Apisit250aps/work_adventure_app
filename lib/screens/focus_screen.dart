@@ -16,7 +16,7 @@ class FocusScreen extends GetView<FocusController> {
         title: const Text('Focus Adventure',
             style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(
+          IconButton.outlined(
             icon: const Icon(Boxicons.bx_book_bookmark),
             onPressed: () => _showAdventureLog(context),
           ),
