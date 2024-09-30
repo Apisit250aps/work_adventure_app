@@ -76,7 +76,8 @@ class FocusSetupScreen extends StatelessWidget {
               int newTotalMinutes =
                   (controller.timeRemaining ~/ 3600) * 60 + value;
               controller.initFocus(
-                  newTotalMinutes.clamp(10, 480)); // 480 minutes = 8 hours
+                newTotalMinutes.clamp(10, 480),
+              ); // 480 minutes = 8 hours
             },
             label: 'minutes',
             initialItem: 10,
@@ -138,27 +139,29 @@ class FocusSetupScreen extends StatelessWidget {
   }
 
   Widget _buildTimeDisplay() {
-    return Obx(() => TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 300),
-          tween: Tween(begin: 0, end: 1),
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.scale(
-                scale: 0.5 + (value * 0.5),
-                child: child,
-              ),
-            );
-          },
-          child: Text(
-            '${(controller.timeRemaining ~/ 3600).toString().padLeft(2, '0')}:${((controller.timeRemaining ~/ 60) % 60).toString().padLeft(2, '0')}',
-            style: const TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+    return Obx(
+      () => TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 300),
+        tween: Tween(begin: 0, end: 1),
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Transform.scale(
+              scale: 0.5 + (value * 0.5),
+              child: child,
             ),
+          );
+        },
+        child: Text(
+          '${(controller.timeRemaining ~/ 3600).toString().padLeft(2, '0')}:${((controller.timeRemaining ~/ 60) % 60).toString().padLeft(2, '0')}',
+          style: const TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _buildFocusEstimate() {
@@ -278,6 +281,3 @@ class FocusSetupScreen extends StatelessWidget {
   }
 }
 
-extension on int {
-  get value => null;
-}

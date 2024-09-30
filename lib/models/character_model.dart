@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class Character extends Equatable {
+class Character {
   final String id;
   final String name;
   final int exp;
@@ -93,17 +91,33 @@ class Character extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        id,
-        name,
-        exp,
-        level,
-        className,
-        coin,
-        health,
-        stamina,
-        focusPoint,
-        createdAt,
-        updatedAt,
-      ];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Character &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          exp == other.exp &&
+          level == other.level &&
+          className == other.className &&
+          coin == other.coin &&
+          health == other.health &&
+          stamina == other.stamina &&
+          focusPoint == other.focusPoint &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      exp.hashCode ^
+      level.hashCode ^
+      className.hashCode ^
+      coin.hashCode ^
+      health.hashCode ^
+      stamina.hashCode ^
+      focusPoint.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
 }
