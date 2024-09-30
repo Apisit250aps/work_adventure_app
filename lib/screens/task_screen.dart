@@ -5,9 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
-import 'package:work_adventure/widgets/button/form_button.dart';
-import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
-import 'package:work_adventure/widgets/form/inputs/input_label.dart';
+import 'package:work_adventure/widgets/form/forms/task/task_create_form.dart';
 import 'package:work_adventure/widgets/sheets/sheet.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -18,10 +16,19 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  WorkController workController = Get.find<WorkController>();
-  TasksController tasksController = Get.find<TasksController>();
+  final WorkController workController = Get.find<WorkController>();
+  final TasksController tasksController = Get.put(TasksController());
+  @override
+  void initState() {
+    super.initState();
+    tasksController.loadTasks();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(workController.workSelected);
+    final task = tasksController.tasks;
+    print(" task >> $task");
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -35,7 +42,32 @@ class _TaskScreenState extends State<TaskScreen> {
           ),
         ),
       ),
-      body: TaskList(tasks: tasksController.tasks),
+      body: RefreshIndicator(
+        onRefresh: tasksController.fetchTasks,
+        child: Column(
+          children: [
+            Obx(
+              () {
+                if (tasksController.isLoading.value) {
+                  // แสดง CircularProgressIndicator ขณะโหลดข้อมูล
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                if (tasksController.tasks.isEmpty) {
+                  return const Center(
+                    child: Text('No tasks available.'),
+                  );
+                }
+                return Flexible(
+                  child: TaskList(tasks: tasksController.tasks),
+                );
+              },
+            )
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showBottomSheetCreateTask(context);
@@ -45,11 +77,6 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
-  final TextEditingController _difficulty = TextEditingController(text: "1");
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _description = TextEditingController();
-  final TextEditingController _start = TextEditingController();
-  final TextEditingController _due = TextEditingController();
 
   void _showBottomSheetCreateTask(BuildContext context) {
     showModalBottomSheet(
@@ -61,69 +88,7 @@ class _TaskScreenState extends State<TaskScreen> {
             const SheetHeader(title: "Add task"),
             SheetBody(
               children: [
-                InputLabel(
-                  label: "name",
-                  controller: _name,
-                ),
-                InputLabel(
-                  label: "description",
-                  controller: _description,
-                ),
-                DateInputLabel(
-                  label: 'Start Date',
-                  onDateSelected: (DateTime date) {
-                    _start.text = date.toString();
-                    print(_start.text);
-                  },
-                ),
-                DateInputLabel(
-                  label: 'Due Date',
-                  onDateSelected: (DateTime date) {
-                    _due.text = date.toString();
-                  },
-                ),
-                Obx(
-                  () => Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    child: ToggleButtons(
-                      direction: Axis.horizontal,
-                      onPressed: (int index) {
-                        tasksController.updateStatus(index);
-                        setState(() {
-                          _difficulty.text = tasksController.status[
-                              tasksController.selectedStatusIndex.value];
-                          print(_difficulty.text);
-                        });
-                      },
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      selectedBorderColor: Colors.black,
-                      selectedColor: Colors.white,
-                      fillColor: Colors.black,
-                      color: Colors.black,
-                      constraints: const BoxConstraints(
-                        minHeight: 40.0,
-                        minWidth: 80.0,
-                      ),
-                      isSelected: List.generate(
-                          tasksController.status.length,
-                          (i) =>
-                              i == tasksController.selectedStatusIndex.value),
-                      children: ["easy", "medium", "hard"].map((status) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                          ),
-                          child: Text(status),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                SquareButton(
-                  onClick: () {},
-                  isLoading: false,
-                  buttonText: "Create",
-                )
+                TaskCreateForm()
               ],
             )
           ],
@@ -133,17 +98,21 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 }
 
-class TaskList extends StatelessWidget {
+class TaskList extends StatefulWidget {
   final List<Task> tasks;
-
   const TaskList({super.key, required this.tasks});
 
   @override
+  State<TaskList> createState() => _TaskListState();
+}
+
+class _TaskListState extends State<TaskList> {
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: tasks.length,
+      itemCount: widget.tasks.length,
       itemBuilder: (context, index) {
-        final task = tasks[index];
+        final task = widget.tasks[index];
         return Card.outlined(
           margin: const EdgeInsets.symmetric(
             horizontal: 10,

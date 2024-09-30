@@ -12,8 +12,9 @@ class WorkListBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      flex: 1,
       child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(), 
         itemCount: works.length,
         itemBuilder: (context, index) {
           return WorkCard(

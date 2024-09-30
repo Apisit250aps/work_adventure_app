@@ -24,7 +24,7 @@ class _WorkScreenState extends State<WorkScreen> {
   final CharacterController characterController =
       Get.find<CharacterController>();
   final WorkController workController = Get.find<WorkController>();
- 
+
   //
   bool isLoading = false;
 
@@ -91,7 +91,10 @@ class _WorkScreenState extends State<WorkScreen> {
               Obx(() {
                 if (workController.isLoading.value) {
                   // Display loading indicator
-                  return const Center(child: SlimeLoading());
+                  return Container(
+                    padding: const EdgeInsets.all(10),
+                    child: const SlimeLoading(),
+                  );
                 }
                 if (workController.workList.isEmpty) {
                   // Display no work message

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
+import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
@@ -11,9 +12,13 @@ class TasksController extends GetxController {
   final ApiService _apiService = Get.find();
   WorkController workController = Get.find<WorkController>();
 
+  final RxBool isLoading = true.obs;
+
   // form variables
   List<String> get status => <String>["1", "2", "3"];
   var selectedStatusIndex = 0.obs;
+
+  Work get onWork => workController.workSelected.value;
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
@@ -21,8 +26,42 @@ class TasksController extends GetxController {
 
   RxList<Task> tasks = <Task>[].obs;
 
-  Future<List<Task>> fetchTasks(String workId) async {
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    loadTasks();
+  }
+
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+    isLoading.value = false;
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    print("Closed");
+  }
+
+  void loadTasks() async {
     try {
+      isLoading.value = true;
+      tasks.value = await fetchTasks();
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<List<Task>> fetchTasks() async {
+    isLoading.value = true;
+    try {
+      final workId = workController.workSelected.value.id;
       final String path = _rest.tasks; // Base path for tasks
       final String endpoint = "$path/$workId"; // Constructing the endpoint
       final response = await _apiService.get(endpoint); // Making the API call
@@ -56,6 +95,8 @@ class TasksController extends GetxController {
       // Log the error for debugging
       print('Error: $error');
       throw Exception('Failed to fetch tasks: $error');
+    } finally {
+      isLoading.value = false;
     }
   }
 }

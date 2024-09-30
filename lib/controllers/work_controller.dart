@@ -22,12 +22,17 @@ class WorkController extends GetxController {
 
   // Work variables
   final RxList<Work> workList = <Work>[].obs;
-  
+  final Rx<Work> workSelected = Work(
+          id: '',
+          characterId: '',
+          name: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now())
+      .obs;
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
-
 
   @override
   void onInit() {
@@ -42,7 +47,6 @@ class WorkController extends GetxController {
     super.onReady();
   }
 
-
   void loadWorks() async {
     isLoading.value = true; // เริ่มการโหลด
     final result = await fetchAllWork();
@@ -51,7 +55,11 @@ class WorkController extends GetxController {
     } else {
       Get.snackbar("Error", "No works found or an error occurred.");
     }
-    isLoading.value = false; // หยุดการโหลด
+    isLoading.value = false;
+  }
+
+  void selectIndex(int index) {
+    workSelected.value = workList[index];
   }
 
   Future<List<Work>> fetchAllWork() async {
@@ -115,7 +123,6 @@ class WorkController extends GetxController {
     String path = _rest.createWork;
     String endpoints = "$path/$characterId";
     try {
-      
       final response = await _apiService.post(endpoints, {
         'name': name,
         'description': description,
