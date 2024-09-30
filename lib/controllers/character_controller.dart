@@ -9,10 +9,21 @@ class CharacterController extends GetxController {
   final ApiService _apiService = Get.find();
 
   final RxList<Character> charactersSlot = <Character>[].obs;
-  final RxInt characterSelect = 0.obs;
+  final Rx<Character> characterSelect = Character(
+    id: '',
+    name: '',
+    exp: 0,
+    level: 0,
+    className: '',
+    coin: 0,
+    health: 0,
+    stamina: 0,
+    focusPoint: 0,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  ).obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-  Character get character => charactersSlot[characterSelect.value];
 
   @override
   void onInit() {
@@ -32,6 +43,10 @@ class CharacterController extends GetxController {
     print('onClose called');
     // ทำงานล้างข้อมูลเมื่อปิด widget
     super.onClose();
+  }
+
+  void selectIndex(int index) {
+    characterSelect.value = charactersSlot[index];
   }
 
   Future<void> loadCharacters() async {
@@ -79,9 +94,5 @@ class CharacterController extends GetxController {
     }
   }
 
-  void selectCharacter(int index) {
-    if (index >= 0 && index < charactersSlot.length) {
-      characterSelect.value = index;
-    }
-  }
+  
 }

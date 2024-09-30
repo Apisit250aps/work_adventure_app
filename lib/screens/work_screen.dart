@@ -5,7 +5,7 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/character_model.dart';
-import 'package:work_adventure/widgets/base/work/builders/work_list_builder.dart';
+import 'package:work_adventure/widgets/builder/work/work_builder.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/datepicker_label.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
@@ -103,7 +103,7 @@ class _WorkScreenState extends State<WorkScreen> {
                   return const Center(child: Text("No works available."));
                 }
                 // Display the list of work items
-                return WorkListBuilder(works: workController.workList);
+                return WorkBuilder(works: workController.workList);
               })
             ],
           ),

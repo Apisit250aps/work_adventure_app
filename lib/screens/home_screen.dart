@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/main.dart';
 import 'package:work_adventure/models/character_model.dart';
+import 'package:work_adventure/widgets/builder/character/character_builder.dart';
 import 'package:work_adventure/widgets/button/action_button.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/form/inputs/input_label.dart';
@@ -22,7 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final name = TextEditingController();
   final className = TextEditingController();
 
-  final CharacterController characterController = Get.find();
+  final CharacterController characterController =
+      Get.put(CharacterController());
   Future<List<Character>> fetchCharacter() async {
     return await characterController.fetchCharacter();
   }
@@ -85,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          CharacterLoader(
+          CharacterBuilder(
             characters: fetchCharacter(),
           )
         ],
@@ -139,135 +141,4 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class CharacterCard extends StatelessWidget {
-  final Character character;
-  final int index;
 
-  const CharacterCard(
-      {super.key, required this.character, required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    final CharacterController characterController = Get.find();
-    return GestureDetector(
-      onTap: () {
-        characterController.selectCharacter(index);
-        Get.to(() => const OperatorScreen());
-      },
-      child: Card.outlined(
-        color: Colors.white,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 5,
-        ),
-        child: Container(
-          width: 250,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.person, size: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    character.name,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              Text(
-                character.className,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 16),
-              _buildInfoRow(Icons.star, 'Level', character.level.toString()),
-              _buildInfoRow(Icons.flash_on, 'EXP', character.exp.toString()),
-              _buildInfoRow(
-                  Icons.favorite, 'Health', character.health.toString()),
-              _buildInfoRow(
-                  Icons.bolt, 'Stamina', character.stamina.toString()),
-              _buildInfoRow(
-                  Icons.monetization_on, 'Coins', character.coin.toString()),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 16),
-              const SizedBox(width: 4),
-              Text(label, style: const TextStyle(fontSize: 14)),
-            ],
-          ),
-          Text(value, style: const TextStyle(fontSize: 14)),
-        ],
-      ),
-    );
-  }
-}
-
-class CharacterLoader extends StatefulWidget {
-  final Future<List<Character>> characters;
-  const CharacterLoader({super.key, required this.characters});
-
-  @override
-  State<CharacterLoader> createState() => _CharacterLoaderState();
-}
-
-class _CharacterLoaderState extends State<CharacterLoader> {
-  final CharacterController characterController = Get.find();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Character>>(
-      future: widget.characters, // Call the future function
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // While waiting for the data, show a loading spinner
-          return const SliverToBoxAdapter(
-            child: Center(
-                child: SlimeLoading(
-              width: 32,
-            )),
-          );
-        } else if (snapshot.hasError) {
-          // If an error occurred, display an error message
-          return SliverToBoxAdapter(
-            child: Center(child: Text('Error: ${snapshot.error}')),
-          );
-        } else if (snapshot.hasData) {
-          // If data is available, build the SliverList
-          final characters = snapshot.data!;
-          return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return CharacterCard(
-                  character: characters[index],
-                  index: index,
-                );
-              },
-              childCount:
-                  characters.length, // Use the length of the fetched data
-            ),
-          );
-        } else {
-          return const SliverToBoxAdapter(
-            child: Center(child: Text('No data available.')),
-          );
-        }
-      },
-    );
-  }
-}

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
@@ -13,7 +14,7 @@ class WorkController extends GetxController {
       Get.find<CharacterController>();
 
   // Character Variables
-  late String characterId; // No Rx, just a normal String
+  Character get character => characterController.characterSelect.value;
   final RxBool isLoading = false.obs;
 
   // Static work variables
@@ -37,7 +38,6 @@ class WorkController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    characterId = characterController.character.id; // Directly assign here
     loadWorks();
   }
 
@@ -64,15 +64,18 @@ class WorkController extends GetxController {
 
   Future<List<Work>> fetchAllWork() async {
     try {
+      final characterId = character.id;
       isLoading.value = true;
       String path = _rest.work;
       String endpoints = "$path/$characterId";
+      print(">> $endpoints");
       final response = await _apiService.get(endpoints);
 
       if (response.statusCode == 200) {
         List<dynamic> jsonData = jsonDecode(response.body);
         List<Work> workData =
             jsonData.map((data) => Work.fromJson(data)).toList();
+        print(workData);
         return workData;
       } else {
         throw Exception("Failed to fetch work: ${response.statusCode}");
@@ -120,6 +123,7 @@ class WorkController extends GetxController {
     String due,
     String status,
   ) async {
+    final characterId = character.id;
     String path = _rest.createWork;
     String endpoints = "$path/$characterId";
     try {

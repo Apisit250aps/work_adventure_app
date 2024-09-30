@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
@@ -32,7 +31,6 @@ class WorkAdventure extends StatelessWidget {
         Get.put(RestServiceController());
         Get.put(ApiService());
         Get.put(UserController());
-        Get.put(CharacterController());
         Get.delete<WorkController>();
       }),
     );
