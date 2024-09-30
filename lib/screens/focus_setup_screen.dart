@@ -3,18 +3,25 @@ import 'package:get/get.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/screens/focus_screen.dart';
+<<<<<<< HEAD
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
 import 'package:work_adventure/widgets/button/form_button.dart';
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
 import 'package:work_adventure/widgets/navigate/AppNavBar.dart';
+import 'package:work_adventure/widgets/button/form_button.dart';
 
 class FocusSetupScreen extends StatelessWidget {
   final FocusController controller = Get.put(FocusController());
 
   FocusSetupScreen({super.key}) {
     controller.initFocus(10); // Initialize with 10 minutes
+<<<<<<< HEAD
     controller.initFocus(10); // Initialize with 10 minutes
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
   }
 
   @override
@@ -31,19 +38,55 @@ class FocusSetupScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildTimerFrame(),
+<<<<<<< HEAD
                   _buildTimerFrame(),
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
                   const SizedBox(height: 40),
                   _buildTimeDisplay(),
                   const SizedBox(height: 20),
                   _buildFocusEstimate(),
+<<<<<<< HEAD
+                  _buildTimeDisplay(),
+                  const SizedBox(height: 20),
+                  _buildFocusEstimate(),
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
+                  const SizedBox(height: 60),
+                  SquareButton(
+                    onClick: () {
+                      Get.to(() => const FocusScreen(
+                            totalTime: 0,
+<<<<<<< HEAD
+=======
+                          ));
+                    },
+                    isLoading: false,
+                    buttonText: "Start Focus",
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const AppBarNav(
+            title: "Focus Setup",
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildTimerFrame(),
+                  const SizedBox(height: 40),
                   _buildTimeDisplay(),
                   const SizedBox(height: 20),
                   _buildFocusEstimate(),
                   const SizedBox(height: 60),
                   SquareButton(
                     onClick: () {
-                      Get.to(() => const FocusScreen(
-                            totalTime: 0,
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
                       Get.to(() => const FocusScreen(
                             totalTime: 0,
                           ));
@@ -51,7 +94,10 @@ class FocusSetupScreen extends StatelessWidget {
                     isLoading: false,
                     buttonText: "Start Focus",
                   ),
+<<<<<<< HEAD
                   ),
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
                 ],
               ),
             ),
@@ -284,8 +330,11 @@ class FocusSetupScreen extends StatelessWidget {
       );
     });
   }
+<<<<<<< HEAD
 }
 
 extension on int {
   get value => null;
+=======
+>>>>>>> e2e5d600b6942bbd46445ca9cb051dc3b869e29f
 }
