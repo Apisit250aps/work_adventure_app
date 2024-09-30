@@ -11,6 +11,7 @@ class FocusScreen extends GetView<FocusController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: const Text('Focus Adventure',
             style: TextStyle(fontWeight: FontWeight.bold)),
@@ -145,7 +146,8 @@ class CircularTimer extends StatelessWidget {
   final int totalTime;
   final double size;
 
-  const CircularTimer({super.key, 
+  const CircularTimer({
+    super.key,
     required this.timeRemaining,
     required this.totalTime,
     this.size = 200,
@@ -168,7 +170,7 @@ class CircularTimer extends StatelessWidget {
           ),
           Center(
             child: Text(
-              _formatTime(timeRemaining),
+              formatTime(timeRemaining),
               style: TextStyle(
                 fontSize: timeRemaining > 5999
                     ? size / 5
