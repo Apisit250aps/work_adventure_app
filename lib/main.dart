@@ -166,7 +166,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
             onPressed: () {
               print("");
             },
-            icon: Icon(Boxicons.bx_menu),
+            icon: const Icon(Boxicons.bx_menu),
           )
         ],
       ),
