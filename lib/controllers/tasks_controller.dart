@@ -12,7 +12,7 @@ class TasksController extends GetxController {
   final ApiService _apiService = Get.find();
   WorkController workController = Get.find<WorkController>();
 
-  final RxBool isLoading = true.obs;
+  RxBool isLoading = true.obs;
 
   // form variables
   List<String> get status => <String>["1", "2", "3"];
@@ -58,8 +58,6 @@ class TasksController extends GetxController {
     }
   }
 
-  
-
   Future<List<Task>> fetchTasks() async {
     isLoading.value = true;
     try {
@@ -97,6 +95,35 @@ class TasksController extends GetxController {
       // Log the error for debugging
       print('Error: $error');
       throw Exception('Failed to fetch tasks: $error');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> createTask(String name, String description, String start,
+      String due, int difficulty) async {
+    try {
+      isLoading.value = true;
+      final workId = workController.workSelected.value.id;
+      final String path = _rest.createTask; // Base path for tasks
+      final String endpoint = "$path/$workId"; // Constructing the endpoint
+      final response = await _apiService.post(endpoint, {
+        "name": name,
+        "description": description,
+        "start_date": start,
+        "due_date": due,
+        "difficulty": difficulty,
+      });
+
+      if (response.statusCode == 201) {
+        // Decode the response body into a Map
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      print('Error: $error');
+      return false;
     } finally {
       isLoading.value = false;
     }
