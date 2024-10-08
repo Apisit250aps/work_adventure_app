@@ -101,6 +101,59 @@ class FocusController extends GetxController {
     _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
   }
 
+  int characterHP() {
+    int baseHp = 100;
+    int endurance = characterController.special.value.endurance;
+    int characterHp = baseHp + (endurance * 10);
+    return characterHp;
+  }
+
+  int characterStamina() {
+    int baseStamina = 100;
+    int strength = characterController.special.value.strength;
+    int characterStamina = baseStamina + (strength * 10);
+    return characterStamina;
+  }
+
+  int calculateEXP(int exp) {
+    int intelligent = characterController.special.value.intelligence;
+    int finalEXP = (exp + (exp * _getSpecialPercentage(intelligent))).round();
+    return finalEXP;
+  }
+
+  int calculateCoin(int coin) {
+    int perception = characterController.special.value.perception;
+    int luck = characterController.special.value.luck;
+    int finalCoin = (coin + ((coin * _getSpecialPercentage(luck)) * 5)).round();
+
+    if (Random().nextInt(100) + (perception / 2) <= 49) {
+      finalCoin = (finalCoin / 5).floor();
+    }
+
+    return finalCoin;
+  }
+
+  int calculateDamage(int damage, int strength) {
+    // กำหนดค่าคงที่สำหรับการปรับแต่ง
+    const double baseReduction = 0.1; // การลดดาเมจพื้นฐาน
+    const double maxReduction = 0.90; // การลดดาเมจสูงสุด
+    const double scalingFactor = 15; // ปัจจัยการปรับขนาด
+
+    // คำนวณการลดดาเมจแบบ logarithmic
+    double damageReductionPercentage = baseReduction +
+        (log(strength + 1) / log(scalingFactor)) *
+            (maxReduction - baseReduction);
+
+    // จำกัดค่าการลดดาเมจให้อยู่ระหว่าง baseReduction และ maxReduction
+    damageReductionPercentage =
+        damageReductionPercentage.clamp(baseReduction, maxReduction);
+
+    // คำนวณดาเมจสุดท้าย
+    int finalDamage = (damage * (1 - damageReductionPercentage)).round();
+
+    return finalDamage;
+  }
+
   void generateEvent() {
     _eventCount++;
     if (_eventCount.value % 20 == 0) {
@@ -124,6 +177,14 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value = "Nothing happened...\n";
     _addLogEntry(
         "🌟", "Peaceful", "You continue your journey without incident.");
+  }
+
+  // New method to calculate max health based on endurance
+  int calculateMaxHealth() {
+    int baseHealth = 100;
+    double enduranceBonus =
+        _getSpecialPercentage(characterController.special.value.endurance);
+    return (baseHealth * (1 + enduranceBonus)).round();
   }
 
   void generateEnemyEvent() {
