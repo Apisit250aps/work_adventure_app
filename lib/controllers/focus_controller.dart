@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:work_adventure/controllers/character_controller.dart';
 
 class LogEntry {
   final String icon;
