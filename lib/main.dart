@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:work_adventure/screens/auth/auth_screen.dart';
+import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/screens/auth/register_screen.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -16,9 +17,9 @@ class WorkAdventure extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 244, 245, 249),
+        scaffoldBackgroundColor: backgroundColor,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
+          seedColor: primaryColor,
         ),
         textTheme: GoogleFonts.promptTextTheme(),
         useMaterial3: true,
