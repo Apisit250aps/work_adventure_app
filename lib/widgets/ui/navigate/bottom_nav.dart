@@ -16,16 +16,18 @@ class BottomNavigation extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Boxicons.bx_home_circle),
-          activeIcon: Icon(Boxicons.bxs_home_circle),
-          label: 'Home',
+          icon: Icon(Boxicons.bx_home_heart),
+          activeIcon: Icon(Boxicons.bxs_home_heart),
+          label: '',
         ),
         BottomNavigationBarItem(
           icon: Icon(Boxicons.bx_time),
           activeIcon: Icon(Boxicons.bxs_time),
-          label: 'Focus',
+          label: '',
         ),
       ],
     );
