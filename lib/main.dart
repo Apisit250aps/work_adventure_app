@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:work_adventure/constant.dart';
-import 'package:work_adventure/screens/auth/register_screen.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -24,7 +24,7 @@ class WorkAdventure extends StatelessWidget {
         textTheme: GoogleFonts.promptTextTheme(),
         useMaterial3: true,
       ),
-      home: const AuthScreen(),
+      home: const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

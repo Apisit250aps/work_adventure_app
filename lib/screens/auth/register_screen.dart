@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/widgets/ui/forms/register_form.dart';
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +51,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Get.offAll(() => const LoginScreen());
+                    },
                   )
                 ],
               )
