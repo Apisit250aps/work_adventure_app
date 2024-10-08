@@ -18,6 +18,9 @@ class LogEntry {
 }
 
 class FocusController extends GetxController {
+  final CharacterController characterController =
+      Get.find<CharacterController>();
+
   RxInt _timeRemaining = 0.obs;
   final RxInt _totalTime = 0.obs;
   final RxBool _isActive = false.obs;
@@ -34,11 +37,13 @@ class FocusController extends GetxController {
   int get timeRemaining => _timeRemaining.value;
   int get totalTime => _totalTime.value;
   bool get isActive => _isActive.value;
-  List<LogEntry> get adventureLog =>
-      _adventureLog.toList(); // Changed to return a List<LogEntry>
+  List<LogEntry> get adventureLog => _adventureLog.toList();
   String get currentEncounterIcon => _currentEncounterIcon.value;
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
+
+  // New method to get Special values as percentages
+  double _getSpecialPercentage(int value) => value / 100;
 
   void initFocus(int minutes) {
     _totalTime.value = minutes * 60;
@@ -101,10 +106,12 @@ class FocusController extends GetxController {
     if (_eventCount.value % 20 == 0) {
       generateRestEvent();
     } else {
+      double luckBonus =
+          _getSpecialPercentage(characterController.special.value.luck);
       int ranNumber = Random().nextInt(100) + 1;
-      if (ranNumber <= 40) {
+      if (ranNumber <= (30 - luckBonus * 100).clamp(5, 30)) {
         generateNothingEvent();
-      } else if (ranNumber <= 90) {
+      } else if (ranNumber <= 95) {
         generateEnemyEvent();
       } else {
         generateTreasureEvent();
@@ -129,9 +136,22 @@ class FocusController extends GetxController {
       "🐺 Werewolf"
     ];
     String enemy = enemies[Random().nextInt(enemies.length)];
-    int damage = Random().nextInt(16) + 15;
-    int exp = Random().nextInt(16) + 5;
-    int gold = Random().nextInt(10) + 1;
+
+    double strengthBonus =
+        _getSpecialPercentage(characterController.special.value.strength);
+    double enduranceBonus =
+        _getSpecialPercentage(characterController.special.value.endurance);
+
+    int baseDamage = Random().nextInt(21) + 20;
+    int damage = (baseDamage * (1 - enduranceBonus)).round().clamp(1, 50);
+
+    int baseExp = Random().nextInt(21) + 10;
+    int exp = (baseExp * (1 + strengthBonus)).round();
+
+    int baseGold = Random().nextInt(15) + 5;
+    int gold = (baseGold *
+            (1 + _getSpecialPercentage(characterController.special.value.luck)))
+        .round();
 
     _currentEncounterIcon.value = enemy.split(" ")[0];
     _currentEncounterDescription.value =
@@ -151,8 +171,16 @@ class FocusController extends GetxController {
       "💍 Ring"
     ];
     String treasure = treasures[Random().nextInt(treasures.length)];
-    int quantity = Random().nextInt(3) + 1;
-    int gold = Random().nextInt(41) + 10;
+
+    double perceptionBonus =
+        _getSpecialPercentage(characterController.special.value.perception);
+    double luckBonus =
+        _getSpecialPercentage(characterController.special.value.luck);
+
+    int quantity =
+        (Random().nextInt(3) + 1 + (perceptionBonus * 2)).round().clamp(1, 5);
+    int baseGold = Random().nextInt(51) + 20;
+    int gold = (baseGold * (1 + luckBonus)).round();
 
     _currentEncounterIcon.value = treasure.split(" ")[0];
     _currentEncounterDescription.value =
@@ -163,7 +191,10 @@ class FocusController extends GetxController {
   }
 
   void generateRestEvent() {
-    int healing = Random().nextInt(31) + 20;
+    double intelligenceBonus =
+        _getSpecialPercentage(characterController.special.value.intelligence);
+    int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
+
     _currentEncounterIcon.value = "🏕️";
     _currentEncounterDescription.value =
         "Found a safe spot to rest. Healed $healing HP.\n";
