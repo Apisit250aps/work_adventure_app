@@ -23,7 +23,7 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.all(20),
         hintText: hintText,
         border: const OutlineInputBorder(
           borderSide: BorderSide.none,

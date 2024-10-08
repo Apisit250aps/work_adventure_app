@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:work_adventure/constant.dart';
-import 'package:work_adventure/screens/auth/login_screen.dart';
+import 'package:work_adventure/screens/operator_screen.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -16,15 +16,8 @@ class WorkAdventure extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        scaffoldBackgroundColor: backgroundColor,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryColor,
-        ),
-        textTheme: GoogleFonts.promptTextTheme(),
-        useMaterial3: true,
-      ),
-      home: const LoginScreen(),
+      theme: themeData,
+      home: const OperatorScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
