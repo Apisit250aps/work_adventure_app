@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/screens/character/character_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
@@ -12,46 +15,80 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final UserController userController = Get.find<UserController>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  void submit() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        await userController.login(
+            usernameController.text, passwordController.text);
+
+        Get.offAll(() => const CharacterScreen());
+      } catch (e) {
+        Get.snackbar(
+          'Login Error',
+          e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(0),
-      margin: const EdgeInsets.symmetric(
-        vertical: 10,
-      ),
-      child: Column(
-        children: [
-          LoginFormGroup(
-     
-            usernameController: usernameController,
-            passwordController: passwordController,
-          ),
-          GradientButton(
-            gradientColors: [
-              primaryColor,
-              secondaryColor,
-            ],
-            onPressed: () {
-               
-            },
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Sign In",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-                Icon(
-                  Boxicons.bx_chevron_right,
-                  color: Colors.white,
-                )
-              ],
+    return Form(
+      key: _formKey,
+      child: Container(
+        padding: const EdgeInsets.all(0),
+        margin: const EdgeInsets.symmetric(
+          vertical: 10,
+        ),
+        child: Column(
+          children: [
+            LoginFormGroup(
+              usernameController: usernameController,
+              passwordController: passwordController,
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : GradientButton(
+                    gradientColors: [
+                      primaryColor,
+                      secondaryColor,
+                    ],
+                    onPressed: submit,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Sign In",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(
+                          Boxicons.bx_chevron_right,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }
@@ -61,9 +98,7 @@ class LoginFormGroup extends StatelessWidget {
   final TextEditingController? usernameController;
   final TextEditingController? passwordController;
   const LoginFormGroup(
-      {super.key,
-      this.usernameController,
-      this.passwordController});
+      {super.key, this.usernameController, this.passwordController});
   @override
   Widget build(BuildContext context) {
     return Container(
