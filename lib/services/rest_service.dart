@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 
 class RestServiceController extends GetxController {
-  String get base => 'http://10.250.59.179:3000';
+  String get base => 'http://192.168.171.77:3000';
 
   //
 
   // auth rest service
-  String get auth => '$base/auth/';
+  String get auth => '$base/auth/check';
   String get login => '$base/auth/login/';
   String get register => '$base/auth/register/';
 

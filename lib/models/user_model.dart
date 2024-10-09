@@ -2,30 +2,23 @@ import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/user_statistic_model.dart';
 
 class User {
-  final String id;
-  final String username;
-  final String email;
-  final bool isAdmin;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final UserStatistics userStatistics;
-  final List<Character> characters;
+  final String? id;
+  final String? username;
+  final String? email;
+  final bool? isAdmin;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const User({
-    required this.id,
-    required this.username,
-    required this.email,
-    required this.isAdmin,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.userStatistics,
-    required this.characters,
+    this.id,
+    this.username,
+    this.email,
+    this.isAdmin,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    var characterList = json['characters'] as List;
-    List<Character> characters = characterList.map((i) => Character.fromJson(i)).toList();
-
     return User(
       id: json['_id'] as String,
       username: json['username'] as String,
@@ -33,8 +26,6 @@ class User {
       isAdmin: json['isAdmin'] as bool,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
-      userStatistics: UserStatistics.fromJson(json['userStatistics']),
-      characters: characters,
     );
   }
 
@@ -44,10 +35,8 @@ class User {
       'username': username,
       'email': email,
       'isAdmin': isAdmin,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-      'userStatistics': userStatistics.toJson(),
-      'characters': characters.map((character) => character.toJson()).toList(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -68,8 +57,6 @@ class User {
       isAdmin: isAdmin ?? this.isAdmin,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      userStatistics: userStatistics ?? this.userStatistics,
-      characters: characters ?? this.characters,
     );
   }
 
@@ -88,9 +75,7 @@ class User {
           email == other.email &&
           isAdmin == other.isAdmin &&
           createdAt == other.createdAt &&
-          updatedAt == other.updatedAt &&
-          userStatistics == other.userStatistics &&
-          listEquals(characters, other.characters);
+          updatedAt == other.updatedAt;
 
   @override
   int get hashCode =>
@@ -99,9 +84,7 @@ class User {
       email.hashCode ^
       isAdmin.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode ^
-      userStatistics.hashCode ^
-      characters.hashCode;
+      updatedAt.hashCode;
 }
 
 // Helper function for list comparison

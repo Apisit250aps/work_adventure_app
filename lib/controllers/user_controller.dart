@@ -13,9 +13,9 @@ class UserController extends GetxController {
   final ApiService _apiService = Get.find();
 
   var token = ''.obs;
-  var user = {}.obs;
+  final Rx<User?> user = null.obs;
   var characters = <Character>[].obs;
-  var isAuthenticated = false.obs;
+  final RxBool isAuthenticated = true.obs;
   final RxBool isLoading = false.obs;
 
   @override
@@ -30,14 +30,15 @@ class UserController extends GetxController {
     super.onReady();
     isLoading.value = false;
     print('onReady called');
-    // ใช้งานหลังจาก widget ถูกสร้างเสร็จแล้ว
+    print(isAuthenticated.value);
+    print(isLoading.value);
+    print(user);
   }
 
   @override
   void onClose() {
     print('onClose called');
     isLoading.value = false;
-    // ทำงานล้างข้อมูลเมื่อปิด widget
     super.onClose();
   }
 
@@ -47,16 +48,21 @@ class UserController extends GetxController {
     if (tokenStore != null && tokenStore.isNotEmpty) {
       token.value = tokenStore;
       final User? userData = await fetchUser();
-      user.value = userData?.toJson() ?? {};
-      isAuthenticated.value = true;
+      user.value = userData!;
+
+      if (user.value != null) {
+        isAuthenticated.value = true;
+      } else {
+        isAuthenticated.value = false;
+      }
     } else {
-      user.value = {};
+      user.value = null;
       isAuthenticated.value = false;
     }
     isLoading.value = false;
   }
 
-  Future<dynamic> register(
+  Future<bool> register(
     String email,
     String username,
     String password,
@@ -107,7 +113,7 @@ class UserController extends GetxController {
 
   Future<User?> fetchUser() async {
     try {
-      final response = await _apiService.get(_rest.userData);
+      final response = await _apiService.get(_rest.auth);
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         return User.fromJson(userData[0]);
@@ -116,6 +122,14 @@ class UserController extends GetxController {
     } catch (e) {
       print('Error fetching user: $e');
       return null;
+    }
+  }
+
+  Future<bool> checkAuthentication() async {
+    try {
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
