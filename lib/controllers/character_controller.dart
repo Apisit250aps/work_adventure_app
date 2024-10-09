@@ -8,21 +8,9 @@ class CharacterController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
   final RxList<Character> charactersSlot = <Character>[].obs;
-  final Rx<Character> characterSelect = Character(
-    id: '',
-    name: '',
-    exp: 0,
-    level: 0,
-    className: '',
-    coin: 0,
-    health: 0,
-    stamina: 0,
-    focusPoint: 0,
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ).obs;
-  final RxBool isLoading = false.obs;
-  final RxString errorMessage = ''.obs;
+  final Rx<Character> characterSelect = const Character().obs;
+  RxBool isLoading = true.obs;
+  RxString errorMessage = ''.obs;
 
   @override
   void onInit() {
@@ -93,6 +81,4 @@ class CharacterController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  
 }

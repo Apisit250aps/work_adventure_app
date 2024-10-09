@@ -33,35 +33,31 @@ class CharacterScreen extends GetView<CharacterController> {
       ),
       body: Center(
         child: Obx(() {
-          if (controller.charactersSlot.isEmpty) {
-            return const Text("No characters found.");
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (controller.errorMessage.isNotEmpty) {
+            return Center(child: Text(controller.errorMessage.value));
+          } else if (controller.charactersSlot.isEmpty) {
+            return const Center(child: Text('No characters available'));
           } else {
             return CarouselSlider.builder(
               itemCount: controller.charactersSlot.length,
-              itemBuilder:
-                  (BuildContext context, int itemIndex, int pageViewIndex) {
-                return GestureDetector(
+              itemBuilder: (context, index, realIndex) {
+                final character = controller.charactersSlot[index];
+                return CharacterCard(
+                  character: character,
                   onTap: () {
-                    controller.selectIndex(itemIndex);
+                    controller.selectIndex(index);
                     Get.toNamed('/operator');
                   },
-                  child: CharacterCard(
-                      character: controller.charactersSlot[itemIndex]),
                 );
               },
               options: CarouselOptions(
-                aspectRatio: 1 / 1,
-                viewportFraction: 0.8,
-                initialPage: 0,
-                enableInfiniteScroll: true,
-                reverse: false,
-                autoPlay: false,
-                autoPlayInterval: const Duration(seconds: 3),
-                autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                autoPlayCurve: Curves.fastOutSlowIn,
+                aspectRatio: 1,
                 enlargeCenterPage: true,
-                enlargeFactor: 0.3,
-                scrollDirection: Axis.horizontal,
+                onPageChanged: (index, reason) {
+                  controller.selectIndex(index);
+                },
               ),
             );
           }
@@ -80,25 +76,33 @@ class CharacterScreen extends GetView<CharacterController> {
 
 class CharacterCard extends StatelessWidget {
   final Character character;
+  final VoidCallback onTap; // รับ onTap เป็นพารามิเตอร์
 
-  const CharacterCard({super.key, required this.character});
+  const CharacterCard({
+    super.key,
+    required this.character,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          Image.asset("assets/images/slime_loading.gif"),
-          const SizedBox(height: 10),
-          Text(
-            character.name as String,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 36,
-            ),
-          )
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Image.asset("assets/images/slime_loading.gif"),
+            const SizedBox(height: 10),
+            Text(
+              character.name as String,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 36,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

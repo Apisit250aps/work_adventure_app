@@ -58,7 +58,7 @@ class WorkAdventure extends StatelessWidget {
 }
 
 class AuthWrapper extends GetWidget<UserController> {
-  const AuthWrapper({Key? key}) : super(key: key);
+  const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
