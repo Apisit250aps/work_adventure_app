@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/screens/character/character_screen.dart';
 import 'package:work_adventure/screens/operator_screen.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class WorkAdventure extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: themeData,
-      home: OperatorScreen(),
+      home: const CharacterScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
