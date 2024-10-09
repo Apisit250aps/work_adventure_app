@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/widgets/ui/forms/register_form.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     onTap: () {
-                      Get.offAll(() => const LoginScreen());
+                      Get.offAllNamed('/login');
                     },
                   )
                 ],

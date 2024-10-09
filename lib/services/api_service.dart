@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'dart:convert';
 import 'package:work_adventure/utils/jwt_storage.dart';
 
@@ -10,7 +9,6 @@ class ApiService extends GetxController {
     try {
       final response = await apiCall();
       if (response.statusCode == 403) {
-        // Token expired or invalid, logout the user
         await logout();
         throw Exception('Token expired. User logged out.');
       }
@@ -62,14 +60,8 @@ class ApiService extends GetxController {
 
   Future<bool> logout() async {
     try {
-      // Clear local storage
       await JwtStorage.deleteToken();
-
-      // Clear controller state
-
-      // Navigate to login screen
-      Get.offAll(() => const LoginScreen());
-
+      Get.offAllNamed('/login');
       return true;
     } catch (e) {
       print('Error during logout: $e');

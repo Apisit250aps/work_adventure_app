@@ -7,58 +7,60 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:work_adventure/utils/jwt_storage.dart';
-import 'package:work_adventure/screens/auth/login_screen.dart';
 
 class UserController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
 
-  var token = ''.obs;
+  final RxString token = ''.obs;
   final Rx<User?> user = Rx<User?>(null);
-  var characters = <Character>[].obs;
-  RxBool isAuthenticated = true.obs;
-  RxBool isLoading = true.obs;
+  final RxList<Character> characters = <Character>[].obs;
+  final RxBool isAuthenticated = false.obs;
+  final RxBool isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
+    ever(isAuthenticated, _handleAuthChanged);
     _loadToken();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    print('onReady called');
-    print("isAuthenticated $isAuthenticated");
-    print("user $user");
-  }
-
-  @override
-  void onClose() {
-    print('onClose called');
-    super.onClose();
-  }
-
-  void _loadToken() async {
-    isLoading.value = true;
-    final String? tokenStore = await JwtStorage.getToken();
-    if (tokenStore != null && tokenStore.isNotEmpty) {
-      token.value = tokenStore;
-      final User? userData = await fetchUser();
-      user.value = userData;
-      print("user $user");
+  void _handleAuthChanged(bool isAuth) {
+    if (isAuth) {
+      Get.offAllNamed('/characters');
     } else {
-      user.value = null;
-      isAuthenticated.value = false;
+      Get.offAllNamed('/login');
     }
-    isLoading.value = false;
   }
 
-  Future<bool> register(
-    String email,
-    String username,
-    String password,
-  ) async {
+  Future<void> _loadToken() async {
+    isLoading.value = true;
+    try {
+      final String? tokenStore = await JwtStorage.getToken();
+      if (tokenStore != null && tokenStore.isNotEmpty) {
+        token.value = tokenStore;
+        final User? userData = await fetchUser();
+        user.value = userData;
+        isAuthenticated.value = userData != null;
+      } else {
+        _clearUserData();
+      }
+    } catch (e) {
+      print('Error loading token: $e');
+      _clearUserData();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _clearUserData() {
+    token.value = '';
+    user.value = null;
+    characters.clear();
+    isAuthenticated.value = false;
+  }
+
+  Future<bool> register(String email, String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse(_rest.register),
@@ -71,6 +73,7 @@ class UserController extends GetxController {
       );
       return response.statusCode == 201;
     } catch (e) {
+      print('Error during registration: $e');
       return false;
     }
   }
@@ -84,34 +87,25 @@ class UserController extends GetxController {
       );
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        final token = responseData['token'];
-        if (token != null) {
-          await JwtStorage.saveToken(token);
-          this.token.value = token;
-          _loadToken();
+        final newToken = responseData['token'];
+        if (newToken != null) {
+          await JwtStorage.saveToken(newToken);
+          token.value = newToken;
+          await _loadToken();
           return true;
         }
       }
       return false;
     } catch (e) {
+      print('Error during login: $e');
       return false;
     }
   }
 
   Future<bool> logout() async {
     try {
-      // Clear local storage
       await JwtStorage.deleteToken();
-
-      // Clear controller state
-      token.value = '';
-      user.value = null;
-      characters.clear();
-      isAuthenticated.value = false;
-
-      // Navigate to login screen
-      Get.offAll(() => const LoginScreen());
-
+      _clearUserData();
       return true;
     } catch (e) {
       print('Error during logout: $e');
@@ -134,10 +128,6 @@ class UserController extends GetxController {
   }
 
   Future<bool> checkAuthentication() async {
-    try {
-      return isAuthenticated.value;
-    } catch (e) {
-      return false;
-    }
+    return isAuthenticated.value;
   }
 }

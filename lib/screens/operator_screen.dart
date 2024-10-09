@@ -8,14 +8,9 @@ import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/work/work_screen.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
 
-class OperatorScreen extends StatelessWidget {
-  // เปลี่ยนเป็น StatelessWidget
+class OperatorScreen extends GetView<PageControllerX> {
   OperatorScreen({super.key});
 
-  final PageControllerX controller = Get.put(PageControllerX());
-  final UserController userController = Get.find<UserController>();
-
-  // ใช้ Obx และ GetX จัดการสถานะของ pageIndex
   final List<String> titleList = ["Work", "Focus"];
   final List<Widget> pageWidget = [
     const WorkScreen(),
@@ -24,6 +19,8 @@ class OperatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userController = Get.find<UserController>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -41,32 +38,26 @@ class OperatorScreen extends StatelessWidget {
           IconButton(
             onPressed: userController.logout,
             style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(baseColor),
-                elevation: const WidgetStatePropertyAll(5),
-                iconSize: const WidgetStatePropertyAll(28)),
+              backgroundColor: WidgetStateProperty.all(baseColor),
+              elevation: const WidgetStatePropertyAll(5),
+              iconSize: const WidgetStatePropertyAll(28),
+            ),
             icon: const Icon(
               Boxicons.bx_dots_vertical_rounded,
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
         ],
       ),
       body: PageView(
         controller: controller.pageController,
-        onPageChanged: (index) {
-          controller.changePage(index); // ใช้ GetX controller ในการเปลี่ยนหน้า
-        },
+        onPageChanged: controller.changePage,
         children: pageWidget,
       ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              primaryColor,
-              secondaryColor,
-            ],
+            colors: [primaryColor, secondaryColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -76,12 +67,9 @@ class OperatorScreen extends StatelessWidget {
           onPressed: () {
             // Add your onPressed action here
           },
-          backgroundColor: Colors.transparent, // ทำให้พื้นหลังโปร่งใส
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          child: const Icon(
-            Boxicons.bx_plus,
-            color: Colors.white,
-          ),
+          child: const Icon(Boxicons.bx_plus, color: Colors.white),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

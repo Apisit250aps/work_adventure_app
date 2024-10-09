@@ -7,7 +7,6 @@ import 'package:work_adventure/services/rest_service.dart';
 class CharacterController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
-
   final RxList<Character> charactersSlot = <Character>[].obs;
   final Rx<Character> characterSelect = Character(
     id: '',
@@ -47,6 +46,7 @@ class CharacterController extends GetxController {
 
   void selectIndex(int index) {
     characterSelect.value = charactersSlot[index];
+    print(characterSelect);
   }
 
   Future<void> loadCharacters() async {

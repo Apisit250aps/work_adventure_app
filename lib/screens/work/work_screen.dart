@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/widgets/ui/collapses/collapse.dart';
 
 class WorkScreen extends StatelessWidget {
@@ -6,6 +8,7 @@ class WorkScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WorkController workController = Get.put(WorkController());
     return SingleChildScrollView(
       child: Column(
         children: [
