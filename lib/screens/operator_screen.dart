@@ -7,24 +7,18 @@ import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/work/work_screen.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
 
-class OperatorScreen extends StatefulWidget {
-  const OperatorScreen({super.key});
+class OperatorScreen extends StatelessWidget {
+  // เปลี่ยนเป็น StatelessWidget
+  OperatorScreen({super.key});
 
-  @override
-  State<OperatorScreen> createState() => _OperatorScreenState();
-}
-
-class _OperatorScreenState extends State<OperatorScreen> {
   final PageControllerX controller = Get.put(PageControllerX());
 
-  //
+  // ใช้ Obx และ GetX จัดการสถานะของ pageIndex
   final List<String> titleList = ["Work", "Focus"];
   final List<Widget> pageWidget = [
     const WorkScreen(),
     const FocusScreen(),
   ];
-
-  String onTitle = "Work";
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +26,13 @@ class _OperatorScreenState extends State<OperatorScreen> {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         centerTitle: true,
-        title: Text(
-          titleList[controller.pageIndex.value],
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
+        title: Obx(
+          () => Text(
+            titleList[controller.pageIndex.value],
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         actions: [
@@ -58,10 +54,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
       body: PageView(
         controller: controller.pageController,
         onPageChanged: (index) {
-          controller.changePage(index);
-          setState(() {
-            onTitle = titleList[index];
-          });
+          controller.changePage(index); // ใช้ GetX controller ในการเปลี่ยนหน้า
         },
         children: pageWidget,
       ),

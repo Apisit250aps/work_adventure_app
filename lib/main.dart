@@ -16,7 +16,7 @@ class WorkAdventure extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: themeData,
-      home: const OperatorScreen(),
+      home: OperatorScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
