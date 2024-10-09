@@ -5,6 +5,7 @@ class CollapseContent extends StatefulWidget {
   final String title;
   final Widget child;
   final bool initiallyExpanded;
+  
   const CollapseContent({
     super.key,
     required this.title,
@@ -43,24 +44,25 @@ class _CollapseContentState extends State<CollapseContent> {
               children: <Widget>[
                 Text(
                   widget.title,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Icon(
                   _isExpanded ? Icons.expand_less : Icons.expand_more,
-                  
-                  
                 ),
               ],
             ),
           ),
         ),
         AnimatedContainer(
-          duration: const Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 300),
           height: _isExpanded ? null : 0,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: widget.child,
+          child: AnimatedOpacity(
+            opacity: _isExpanded ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 300),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: widget.child,
+            ),
           ),
         ),
       ],

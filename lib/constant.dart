@@ -10,7 +10,6 @@ Color textColor = const Color.fromARGB(255, 43, 52, 64);
 
 ThemeData themeData = ThemeData(
   scaffoldBackgroundColor: backgroundColor,
-  
   colorScheme: ColorScheme.fromSeed(
     seedColor: primaryColor,
   ),

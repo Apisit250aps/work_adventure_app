@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/screens/operator_screen.dart';
 
