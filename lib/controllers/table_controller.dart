@@ -28,33 +28,37 @@ class TableController extends GetxController {
     };
   }
 
-  int specialPercentage(int value) => value ~/ 100;
+  int percentage(int value) => (value / 100).round();
   int characterHP() => 100 + (special['e']! * 10);
   int characterStamina() => 100 + (special['s']! * 10);
 
   int rollDice() {
-    int rollD21 = random.nextInt(21) + 1;
-    if (rollD21 == 21) return rollD21 = 1000;
-    return rollD21;
+    int count = (special['c']! + special['l']!) ~/ 21;
+    final random = Random();
+    List<int> rolls = List.generate(count, (_) {
+      int roll = random.nextInt(21) + 1;
+      return (roll == 21) ? 100 : roll;
+    });
+
+    return rolls.reduce((a, b) => a > b ? a : b);
   }
 
   int specialRoll(String attribute) {
     if (!special.containsKey(attribute)) return 0;
-    int specialDice = (random.nextInt(special[attribute]!) + 1) ~/ 10;
+    int specialDice = (random.nextInt(special[attribute]!) / 10).round();
     int specialMain = special[attribute]!;
-    int finalDice =
-        specialDice + (specialDice * specialPercentage(special['l']!));
-    return specialMain + finalDice;
+    return specialMain + specialDice;
   }
 
   int calculateEXP(int exp) {
-    return exp + (exp * specialPercentage(specialRoll("i")));
+    return exp + (exp * percentage(specialRoll("i")));
   }
 
   int calculateCoin(int coin) {
-    int finalCoin = coin + ((coin * specialPercentage(specialRoll("l"))) * 2);
-    if (rollDice() + ((specialRoll("p"))) <= 25) {
-      finalCoin ~/= 2;
+    int finalCoin = coin + ((coin * percentage(specialRoll("l"))) * 2);
+    if (rollDice() + ((specialRoll("p"))) <=
+        10 + (characterController.calculateLevel()) ~/ 2) {
+      finalCoin ~/= 3;
     }
     return finalCoin;
   }
@@ -67,11 +71,11 @@ class TableController extends GetxController {
 
     double reductionPercentage = baseReduction +
         (maxReduction - baseReduction) *
-            (1 - exp(-scalingFactor * special['s']!));
+            (1 - exp(-scalingFactor * specialRoll("s")));
 
     if (special['s']! >= 80) {
       double lateGameMultiplier =
-          1 + (special['s']! - 80) / 20 * (lateGameBoost - 1);
+          1 + (specialRoll("s") - 80) / 20 * (lateGameBoost - 1);
       reductionPercentage *= lateGameMultiplier;
     }
 
