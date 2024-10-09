@@ -12,7 +12,6 @@ class CharacterScreen extends StatelessWidget {
     final UserController userController = Get.find<UserController>();
     final CharacterController characterController =
         Get.put(CharacterController());
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -31,12 +30,15 @@ class CharacterScreen extends StatelessWidget {
           )
         ],
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Characters"),
-          ],
+      body: Obx(
+        () => ListView.builder(
+          itemCount: characterController.charactersSlot.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(
+                  characterController.charactersSlot[index].name as String),
+            );
+          },
         ),
       ),
     );
