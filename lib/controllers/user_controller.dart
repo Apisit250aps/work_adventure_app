@@ -7,38 +7,35 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:work_adventure/utils/jwt_storage.dart';
+import 'package:work_adventure/screens/auth/login_screen.dart';
 
 class UserController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
 
   var token = ''.obs;
-  final Rx<User?> user = null.obs;
+  final Rx<User?> user = Rx<User?>(null);
   var characters = <Character>[].obs;
-  final RxBool isAuthenticated = true.obs;
-  final RxBool isLoading = false.obs;
+  RxBool isAuthenticated = true.obs;
+  RxBool isLoading = true.obs;
 
   @override
   void onInit() {
     super.onInit();
-    isLoading.value = true;
     _loadToken();
   }
 
   @override
   void onReady() {
     super.onReady();
-    isLoading.value = false;
     print('onReady called');
-    print(isAuthenticated.value);
-    print(isLoading.value);
-    print(user);
+    print("isAuthenticated $isAuthenticated");
+    print("user $user");
   }
 
   @override
   void onClose() {
     print('onClose called');
-    isLoading.value = false;
     super.onClose();
   }
 
@@ -48,13 +45,8 @@ class UserController extends GetxController {
     if (tokenStore != null && tokenStore.isNotEmpty) {
       token.value = tokenStore;
       final User? userData = await fetchUser();
-      user.value = userData!;
-
-      if (user.value != null) {
-        isAuthenticated.value = true;
-      } else {
-        isAuthenticated.value = false;
-      }
+      user.value = userData;
+      print("user $user");
     } else {
       user.value = null;
       isAuthenticated.value = false;
@@ -77,11 +69,7 @@ class UserController extends GetxController {
           'password': password,
         }),
       );
-      if (response.statusCode == 201) {
-        return true;
-      } else {
-        return false;
-      }
+      return response.statusCode == 201;
     } catch (e) {
       return false;
     }
@@ -99,14 +87,34 @@ class UserController extends GetxController {
         final token = responseData['token'];
         if (token != null) {
           await JwtStorage.saveToken(token);
+          this.token.value = token;
+          _loadToken();
           return true;
-        } else {
-          return false;
         }
-      } else {
-        return false;
       }
+      return false;
     } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> logout() async {
+    try {
+      // Clear local storage
+      await JwtStorage.deleteToken();
+
+      // Clear controller state
+      token.value = '';
+      user.value = null;
+      characters.clear();
+      isAuthenticated.value = false;
+
+      // Navigate to login screen
+      Get.offAll(() => const LoginScreen());
+
+      return true;
+    } catch (e) {
+      print('Error during logout: $e');
       return false;
     }
   }
@@ -116,7 +124,7 @@ class UserController extends GetxController {
       final response = await _apiService.get(_rest.auth);
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
-        return User.fromJson(userData[0]);
+        return User.fromJson(userData);
       }
       return null;
     } catch (e) {
@@ -127,7 +135,7 @@ class UserController extends GetxController {
 
   Future<bool> checkAuthentication() async {
     try {
-      return true;
+      return isAuthenticated.value;
     } catch (e) {
       return false;
     }

@@ -1,28 +1,28 @@
 class Character {
-  final String id;
-  final String name;
-  final int exp;
-  final int level;
-  final String className;
-  final int coin;
-  final int health;
-  final int stamina;
-  final int focusPoint;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? id;
+  final String? name;
+  final int? exp;
+  final int? level;
+  final String? className;
+  final int? coin;
+  final int? health;
+  final int? stamina;
+  final int? focusPoint;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const Character({
-    required this.id,
-    required this.name,
-    required this.exp,
-    required this.level,
-    required this.className,
-    required this.coin,
-    required this.health,
-    required this.stamina,
-    required this.focusPoint,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.name,
+    this.exp,
+    this.level,
+    this.className,
+    this.coin,
+    this.health,
+    this.stamina,
+    this.focusPoint,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -52,8 +52,8 @@ class Character {
       'health': health,
       'stamina': stamina,
       'focus_point': focusPoint,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 

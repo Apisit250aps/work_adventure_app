@@ -38,11 +38,11 @@ class AuthWrapper extends GetWidget<UserController> {
       if (controller.isLoading.value) {
         return const Scaffold(
           body: Center(
-            child: Text("loading"),
+            child: CircularProgressIndicator(),
           ),
         );
-      } else if (controller.user.value != null) {
-        return const CharacterScreen(); 
+      } else if (controller.isAuthenticated.value) {
+        return const CharacterScreen();
       } else {
         return const LoginScreen();
       }

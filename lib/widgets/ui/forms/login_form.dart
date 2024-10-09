@@ -64,15 +64,15 @@ class _LoginFormState extends State<LoginForm> {
               passwordController: passwordController,
             ),
             const SizedBox(height: 20),
-            _isLoading
-                ? const CircularProgressIndicator()
-                : GradientButton(
-                    gradientColors: [
-                      primaryColor,
-                      secondaryColor,
-                    ],
-                    onPressed: submit,
-                    child: const Row(
+            GradientButton(
+              gradientColors: [
+                primaryColor,
+                secondaryColor,
+              ],
+              onPressed: submit,
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
@@ -86,7 +86,7 @@ class _LoginFormState extends State<LoginForm> {
                         )
                       ],
                     ),
-                  ),
+            ),
           ],
         ),
       ),

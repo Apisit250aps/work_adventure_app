@@ -3,6 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/work/work_screen.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
@@ -12,6 +13,7 @@ class OperatorScreen extends StatelessWidget {
   OperatorScreen({super.key});
 
   final PageControllerX controller = Get.put(PageControllerX());
+  final UserController userController = Get.find<UserController>();
 
   // ใช้ Obx และ GetX จัดการสถานะของ pageIndex
   final List<String> titleList = ["Work", "Focus"];
@@ -37,7 +39,7 @@ class OperatorScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: userController.logout,
             style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(baseColor),
                 elevation: const WidgetStatePropertyAll(5),
