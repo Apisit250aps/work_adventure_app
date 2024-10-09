@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/spacial_model.dart';
@@ -107,5 +108,14 @@ class CharacterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  int calculateLevel() {
+    int exp = (characterSelect.value.exp);
+    const double base = 1.045;
+    const double C = 10000;
+
+    int level = (log(exp / C + 1) / log(base) + 1).round();
+    return level;
   }
 }

@@ -5,16 +5,10 @@ import 'package:work_adventure/controllers/character_controller.dart';
 class TableController extends GetxController {
   final CharacterController characterController =
       Get.find<CharacterController>();
-  final Random rd = Random();
+  final Random random = Random();
 
   // SPECIAL attributes
-  late final int strength;
-  late final int perception;
-  late final int endurance;
-  late final int charisma;
-  late final int intelligence;
-  late final int agility;
-  late final int luck;
+  late final Map<String, int> special;
 
   @override
   void onInit() {
@@ -23,55 +17,66 @@ class TableController extends GetxController {
   }
 
   void _initializeSpecialAttributes() {
-    strength = characterController.special.value.strength;
-    perception = characterController.special.value.perception;
-    endurance = characterController.special.value.endurance;
-    charisma = characterController.special.value.charisma;
-    intelligence = characterController.special.value.intelligence;
-    agility = characterController.special.value.agility;
-    luck = characterController.special.value.luck;
+    special = {
+      's': characterController.special.value.strength,
+      'p': characterController.special.value.perception,
+      'e': characterController.special.value.endurance,
+      'c': characterController.special.value.charisma,
+      'i': characterController.special.value.intelligence,
+      'a': characterController.special.value.agility,
+      'l': characterController.special.value.luck,
+    };
   }
 
-  int specialPercentage(int value) => (value ~/ 100);
+  int specialPercentage(int value) => value ~/ 100;
+  int characterHP() => 100 + (special['e']! * 10);
+  int characterStamina() => 100 + (special['s']! * 10);
 
-  int rollDice() => rd.nextInt(100) + 1;
-
-  int characterHP() {
-    const int baseHp = 100;
-    return baseHp + (endurance * 10);
+  int rollDice() {
+    int rollD21 = random.nextInt(21) + 1;
+    if (rollD21 == 21) return rollD21 = 1000;
+    return rollD21;
   }
 
-  int characterStamina() {
-    const int baseStamina = 100;
-    return baseStamina + (strength * 10);
+  int specialRoll(String attribute) {
+    if (!special.containsKey(attribute)) return 0;
+    int specialDice = (random.nextInt(special[attribute]!) + 1) ~/ 10;
+    int specialMain = special[attribute]!;
+    int finalDice =
+        specialDice + (specialDice * specialPercentage(special['l']!));
+    return specialMain + finalDice;
   }
 
   int calculateEXP(int exp) {
-    return exp + (exp * specialPercentage(intelligence));
+    return exp + (exp * specialPercentage(specialRoll("i")));
   }
 
   int calculateCoin(int coin) {
-    int finalCoin = (coin + ((coin * specialPercentage(luck)) * 5));
-
-    if (rollDice() + (perception ~/ 2) <= 49) {
-      finalCoin ~/= 5;
+    int finalCoin = coin + ((coin * specialPercentage(specialRoll("l"))) * 2);
+    if (rollDice() + ((specialRoll("p"))) <= 25) {
+      finalCoin ~/= 2;
     }
-
     return finalCoin;
   }
 
   int calculateDamage(int damage) {
-    const double baseReduction = 0.1;
-    const double maxReduction = 0.90;
-    const double scalingFactor = 15;
+    const baseReduction = 0.05;
+    const maxReduction = 0.80;
+    const scalingFactor = 0.025;
+    const lateGameBoost = 1.5;
 
-    double damageReductionPercentage = baseReduction +
-        (log(strength + 1) / log(scalingFactor)) *
-            (maxReduction - baseReduction);
+    double reductionPercentage = baseReduction +
+        (maxReduction - baseReduction) *
+            (1 - exp(-scalingFactor * special['s']!));
 
-    damageReductionPercentage =
-        damageReductionPercentage.clamp(baseReduction, maxReduction);
+    if (special['s']! >= 80) {
+      double lateGameMultiplier =
+          1 + (special['s']! - 80) / 20 * (lateGameBoost - 1);
+      reductionPercentage *= lateGameMultiplier;
+    }
 
-    return (damage * (1 - damageReductionPercentage)).toInt();
+    reductionPercentage =
+        reductionPercentage.clamp(baseReduction, maxReduction);
+    return (damage * (1 - reductionPercentage)).toInt();
   }
 }
