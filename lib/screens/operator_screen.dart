@@ -24,6 +24,7 @@ class OperatorScreen extends GetView<PageControllerX> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Obx(
           () => Text(
