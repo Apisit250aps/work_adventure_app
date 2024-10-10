@@ -29,8 +29,8 @@ class TableController extends GetxController {
   }
 
   int percentage(int value) => (value / 100).round();
-  int characterHP() => 100 + (special['e']! * 10);
-  int characterStamina() => 100 + (special['s']! * 10);
+  int characterHP() => (special['e']! * 10) + (special['s']! ~/ 2);
+  int characterStamina() => (special['s']! * 10);
 
   int rollDice() {
     int count = (special['c']! + special['l']!) ~/ 21;
