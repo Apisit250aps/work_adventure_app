@@ -30,22 +30,29 @@ class TableController extends GetxController {
 
   int percentage(int value) => (value / 100).round();
   int characterHP() => (special['e']! * 10) + (special['s']! ~/ 2);
-  int characterStamina() => (special['s']! * 10);
+  int characterStamina() => (special['s']!).clamp(5, 100);
 
   int rollDice() {
-    int count = (special['c']! + special['l']!) ~/ 21;
-    final random = Random();
+    int count = ((special['c']!) ~/ 21).clamp(1, 3);
     List<int> rolls = List.generate(count, (_) {
-      int roll = random.nextInt(21) + 1;
-      return (roll == 21) ? 100 : roll;
+      int roll = Random().nextInt(21) + 1;
+      return (roll == 21)
+          ? 100
+          : (roll == 1)
+              ? 0
+              : roll;
     });
 
-    return rolls.reduce((a, b) => a > b ? a : b);
+    return rolls.reduce((a, b) => (a == 0)
+        ? 0
+        : a > b
+            ? a
+            : b);
   }
 
   int specialRoll(String attribute) {
     if (!special.containsKey(attribute)) return 0;
-    int specialDice = (random.nextInt(special[attribute]!) / 10).round();
+    int specialDice = (random.nextInt(21) / 10).round();
     int specialMain = special[attribute]!;
     return specialMain + specialDice;
   }
@@ -55,9 +62,9 @@ class TableController extends GetxController {
   }
 
   int calculateCoin(int coin) {
-    int finalCoin = coin + ((coin * percentage(specialRoll("l"))) * 2);
+    int finalCoin = coin + ((coin * percentage(specialRoll("l"))) ~/ 0.65);
     if (rollDice() + ((specialRoll("p"))) <=
-        10 + (characterController.calculateLevel()) ~/ 2) {
+        12 + (characterController.calculateLevel()) ~/ 3) {
       finalCoin ~/= 3;
     }
     return finalCoin;
