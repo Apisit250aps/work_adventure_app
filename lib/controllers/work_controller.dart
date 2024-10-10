@@ -12,28 +12,21 @@ class WorkController extends GetxController {
   final ApiService _apiService = Get.find();
   final CharacterController characterController =
       Get.find<CharacterController>();
-
-  // Character Variables
-  Character get character => characterController.characterSelect.value;
+  
   final RxBool isLoading = false.obs;
-
-  // Static work variables
   List<String> get status => <String>["todo", "inprogress", "done"];
   var selectedStatusIndex = 0.obs;
 
-  // Work variables
+
   final RxList<Work> workList = <Work>[].obs;
-  final Rx<Work> workSelected = Work(
-          id: '',
-          characterId: '',
-          name: '',
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now())
-      .obs;
+  final Rx<Work> workSelected = const Work().obs;
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
+  
+  Character get character => characterController.characterSelect.value;
+
 
   @override
   void onInit() {
@@ -48,12 +41,10 @@ class WorkController extends GetxController {
   }
 
   void loadWorks() async {
-    isLoading.value = true; // เริ่มการโหลด
+    isLoading.value = true;
     final result = await fetchAllWork();
     if (result.isNotEmpty) {
       workList.value = result;
-    } else {
-      Get.snackbar("Error", "No works found or an error occurred.");
     }
     isLoading.value = false;
   }

@@ -1,24 +1,24 @@
 class Work {
-  final String id;
-  final String characterId;
-  final String name;
+  final String? id;
+  final String? characterId;
+  final String? name;
   final String? description;
   final DateTime? startDate;
   final DateTime? dueDate;
   final String? status; // "todo", "inprogress", หรือ "done"
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const Work({
-    required this.id,
-    required this.characterId,
-    required this.name,
+    this.id,
+    this.characterId,
+    this.name,
     this.description,
     this.startDate,
     this.dueDate,
     this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   }) : assert(
           status == null ||
               status == 'todo' ||
@@ -54,8 +54,8 @@ class Work {
       'start_date': startDate?.toIso8601String(),
       'due_date': dueDate?.toIso8601String(),
       'status': status,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 

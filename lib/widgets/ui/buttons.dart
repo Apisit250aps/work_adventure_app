@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class GradientButton extends StatelessWidget {
@@ -12,7 +11,10 @@ class GradientButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding = const EdgeInsets.all(10),
-    this.gradientColors = const [Colors.red, Colors.yellow],
+    this.gradientColors = const [
+      Color.fromARGB(255, 233, 174, 202),
+      Color.fromARGB(255, 148, 187, 233),
+    ],
   });
 
   @override
