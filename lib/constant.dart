@@ -10,6 +10,10 @@ Color textColor = const Color.fromARGB(255, 43, 52, 64);
 
 ThemeData themeData = ThemeData(
   scaffoldBackgroundColor: backgroundColor,
+  appBarTheme: AppBarTheme(
+    backgroundColor: backgroundColor,
+    elevation: 0
+  ),
   colorScheme: ColorScheme.fromSeed(
     seedColor: primaryColor,
   ),
@@ -18,7 +22,10 @@ ThemeData themeData = ThemeData(
     elevation: 0,
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: baseColor
+    backgroundColor: baseColor,
+  ),
+  bottomSheetTheme: BottomSheetThemeData(
+    backgroundColor: backgroundColor,
   ),
   useMaterial3: true,
 );

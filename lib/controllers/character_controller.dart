@@ -60,13 +60,21 @@ class CharacterController extends GetxController {
     throw Exception('Failed to fetch characters: ${response.statusCode}');
   }
 
-  Future<bool> createCharacter(String name, String className) async {
+  Future<bool> createCharacter(
+    String name,
+    String className,
+    int avatarIndex,
+  ) async {
     isLoading.value = true;
     errorMessage.value = '';
     try {
       final response = await _apiService.post(
         _rest.createCharacter,
-        {'name': name, 'className': className},
+        {
+          'name': name,
+          'className': className,
+          "avatarIndex": avatarIndex,
+        },
       );
 
       if (response.statusCode == 201) {

@@ -11,7 +11,7 @@ class GradientButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.child,
-    this.padding = const EdgeInsets.all(15),
+    this.padding = const EdgeInsets.all(10),
     this.gradientColors = const [Colors.red, Colors.yellow],
   });
 

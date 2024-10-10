@@ -31,45 +31,64 @@ class CharacterScreen extends GetView<CharacterController> {
           )
         ],
       ),
-      body: Center(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (controller.errorMessage.isNotEmpty) {
-            return Center(child: Text(controller.errorMessage.value));
-          } else if (controller.charactersSlot.isEmpty) {
-            return const Center(child: Text('No characters available'));
-          } else {
-            return CarouselSlider.builder(
-              itemCount: controller.charactersSlot.length,
-              itemBuilder: (context, index, realIndex) {
-                final character = controller.charactersSlot[index];
-                return CharacterCard(
-                  character: character,
-                  onTap: () {
-                    controller.selectIndex(index);
-                    Get.toNamed('/operator');
-                  },
-                );
-              },
-              options: CarouselOptions(
-                aspectRatio: 1,
-                enlargeCenterPage: true,
-                onPageChanged: (index, reason) {
-                  controller.selectIndex(index);
+      body: RefreshIndicator(
+        onRefresh: controller.loadCharacters,
+        child: Center(
+          child: Obx(() {
+            if (controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (controller.errorMessage.isNotEmpty) {
+              return Center(child: Text(controller.errorMessage.value));
+            } else if (controller.charactersSlot.isEmpty) {
+              return const Center(child: Text('No characters available'));
+            } else {
+              return CarouselSlider.builder(
+                itemCount: controller.charactersSlot.length,
+                itemBuilder: (context, index, realIndex) {
+                  final character = controller.charactersSlot[index];
+                  return CharacterCard(
+                    character: character,
+                    onTap: () {
+                      controller.selectIndex(index);
+                      Get.toNamed('/operator');
+                    },
+                  );
                 },
-              ),
-            );
-          }
-        }),
+                options: CarouselOptions(
+                  aspectRatio: 1,
+                  enlargeCenterPage: true,
+                  onPageChanged: (index, reason) {
+                    controller.selectIndex(index);
+                  },
+                ),
+              );
+            }
+          }),
+        ),
       ),
       floatingActionButton: GradientFloatingActionButton(
         onPressed: () {
-          // Add your onPressed action here
+          Get.offNamed("/characterCreate");
         },
         icon: const Icon(Boxicons.bx_plus, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  void createCharacterSheets(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 1,
+          child: const Column(
+            children: [],
+          ),
+        );
+      },
     );
   }
 }

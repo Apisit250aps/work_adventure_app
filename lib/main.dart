@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/screens/character/character_screen.dart';
+import 'package:work_adventure/screens/character/character_create_screen.dart';
 import 'package:work_adventure/screens/operator_screen.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
@@ -36,7 +38,11 @@ class WorkAdventure extends StatelessWidget {
         GetPage(
           name: '/characters',
           page: () => const CharacterScreen(),
-          binding: CharacterBinding(),
+          // binding: CharacterBinding(),
+        ),
+        GetPage(
+          name: '/characterCreate',
+          page: () => const CharacterCreateScreen(),
         ),
         GetPage(
           name: '/login',
@@ -51,6 +57,7 @@ class WorkAdventure extends StatelessWidget {
         Get.put(RestServiceController());
         Get.put(ApiService());
         Get.put(UserController());
+        Get.put(CharacterController());
       }),
       debugShowCheckedModeBanner: false,
     );
@@ -70,16 +77,15 @@ class AuthWrapper extends GetWidget<UserController> {
           ),
         );
       } else if (controller.isAuthenticated.value) {
-        // ใช้ GetX routing แทนการ return screen โดยตรง
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Get.offAllNamed('/characters');
         });
-        return Container(); // หรือ loading indicator ถ้าต้องการ
+        return Container();
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Get.offAllNamed('/login');
         });
-        return Container(); // หรือ loading indicator ถ้าต้องการ
+        return Container();
       }
     });
   }
