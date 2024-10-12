@@ -121,6 +121,30 @@ class TableController extends GetxController {
   }
 
   // การคำนวณเควส
+  int selectQuest() {
+    final int dice = singleDiceRoll();
+    final int charismaQuest = specialRoll("c") ~/ 15;
+
+    final List<int> difficultyLevels = [
+      (1 + charismaQuest ~/ 2).clamp(1, 6),
+      (3 + charismaQuest).clamp(3, 10),
+      (12 - charismaQuest).clamp(4, 12),
+      (5 - charismaQuest ~/ 2).clamp(1, 5)
+    ];
+
+    final List<int> sortedLevels = List.from(difficultyLevels)..sort();
+
+    final index = dice >= sortedLevels[3]
+        ? sortedLevels[3]
+        : dice >= sortedLevels[2]
+            ? sortedLevels[2]
+            : dice >= sortedLevels[1]
+                ? sortedLevels[1]
+                : sortedLevels[0];
+
+    return difficultyLevels.indexOf(index);
+  }
+
   (int, int) calculateQuest(int difficulty) {
     const questRewards = [
       [30, 50], // EXP, Coin สำหรับเควสธรรมดา

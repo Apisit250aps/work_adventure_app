@@ -119,41 +119,39 @@ class FocusController extends GetxController {
     }
   }
 
-  // void generateVillageEvent() {
-  //   final villageTypes = [
-  //     "🏘️ หมู่บ้านชาวนา",
-  //     "🏠 หมู่บ้านชาวประมง",
-  //     "🏚️ หมู่บ้านนักรบ",
-  //     "🏰 หมู่บ้านพ่อมด",
-  //     "🗻 หมู่บ้านกลางภูเขา"
-  //   ];
+  void generateVillageEvent() {
+    final villageTypes = [
+      "🏘️ หมู่บ้านชาวนา",
+      "🏠 หมู่บ้านชาวประมง",
+      "🏚️ หมู่บ้านนักรบ",
+      "🏰 หมู่บ้านพ่อมด",
+      "🗻 หมู่บ้านกลางภูเขา"
+    ];
 
-  //   final questDifficulties = [
-  //     "ง่าย",
-  //     "ปานกลาง",
-  //     "ท้าทาย",
-  //     "เกือบเป็นไปไม่ได้"
-  //   ];
+    final questDifficulties = [
+      "ง่าย",
+      "ปานกลาง",
+      "ท้าทาย",
+      "เกือบเป็นไปไม่ได้"
+    ];
 
-  //   final villageType = villageTypes[Random().nextInt(villageTypes.length)];
-  //   final questDifficulty =
-  //       questDifficulties[Random().nextInt(questDifficulties.length)];
+    final villageType = villageTypes[Random().nextInt(villageTypes.length)];
+    final questDifficulty = TableController().selectQuest();
 
-  //   String questDescription =
-  //       generateQuest(questDifficulties.indexOf(questDifficulty));
+    // String questDescription =
+    //     generateQuest(questDifficulties.indexOf(questDifficulty));
 
-  //   _currentEncounterIcon.value = "🏡";
-  //   _currentEncounterDescription.value = """
-  //   $villageType
-  //   เควส: $questDescription
-  //   ความยาก: $questDifficulty
-  //   รางวัล: $expReward EXP, $goldReward ทองคำ
+    // _currentEncounterIcon.value = "🏡";
+    // _currentEncounterDescription.value = """
+    // $villageType
+    // เควส: $questDescription
+    // ความยาก: $questDifficulty
+    // รางวัล: $expReward EXP, $goldReward ทองคำ
 
-  //   """;
+    // """;
 
-  //   _addLogEntry(
-  //       "🏡", "Village", "พบ $villageType และได้รับเควส: $questDescription");
-  // }
+    _addLogEntry("🏡", "Village", "พบ $villageType และได้รับเควส: ");
+  }
 
   void generateNothingEvent() {
     _currentEncounterIcon.value = "🌟";
