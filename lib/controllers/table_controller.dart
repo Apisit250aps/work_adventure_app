@@ -28,26 +28,21 @@ class TableController extends GetxController {
     };
   }
 
-  int percentage(int value) => (value / 100).round();
+  // ฟังก์ชันยูทิลิตี้
+  int _percentage(int value) => (value / 100).round();
 
-  int characterHP() => (special['e']! * 10) + special['s']! ~/ 2;
+  double get _levelMultiplier =>
+      pow(1.1, _characterController.calculateLevel() / 10) * 10;
 
-  int characterStamina() => (special['s']! ~/ 2).clamp(5, 50);
+  // สถานะตัวละคร
+  int calculateCharacterHP() => special['e']! * 10 + special['s']! ~/ 2;
+  int calculateCharacterStamina() => (special['s']! ~/ 2).clamp(5, 50);
 
-  double levelMultiplier =
-      (pow(1.1, CharacterController().calculateLevel() / 10) * 10);
-
-  //ทอยลูกเต๋า
+  // การทอยลูกเต๋า
   int rollDice() {
     final count = (special['c']! ~/ 21).clamp(1, 3);
     return List.generate(count, (_) => singleDiceRoll())
-        .reduce((a, b) => a == 0 && b != 100
-            ? 0
-            : a == 0 && b == 100
-                ? 20
-                : a > b
-                    ? a
-                    : b);
+        .reduce((a, b) => _compareDiceRolls(a, b));
   }
 
   int singleDiceRoll() {
@@ -59,25 +54,28 @@ class TableController extends GetxController {
             : roll;
   }
 
+  int _compareDiceRolls(int a, int b) {
+    if (a == 0 && b != 100) return 0;
+    if (a == 0 && b == 100) return 20;
+    return a > b ? a : b;
+  }
+
   int specialRoll(String attribute) {
     if (!special.containsKey(attribute)) return 0;
     final specialDice = (_random.nextInt(21) / 10).round();
     return special[attribute]! + specialDice;
   }
-  //----------------------------------------------------------------
 
-  //คำนวณการได้ EXP
-  int calculateEXP(int exp) {
-    return ((exp + (exp * percentage(specialRoll('i')))) * levelMultiplier)
-        .round();
-  }
-  //----------------------------------------------------------------
+  // การคำนวณประสบการณ์
+  int calculateEXP(int exp) =>
+      ((exp + (exp * _percentage(specialRoll('i')))) * _levelMultiplier)
+          .round();
 
-  //คำนวณการได้ coins
+  // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
-    final luckBonus = percentage(specialRoll('l'));
-    int coinBase = (coin * (levelMultiplier).round());
-    int finalCoin = (coinBase + ((coinBase * luckBonus) ~/ 0.65));
+    final luckBonus = _percentage(specialRoll('l'));
+    int coinBase = (coin * _levelMultiplier).round();
+    int finalCoin = coinBase + ((coinBase * luckBonus) ~/ 0.65);
 
     if (_shouldReduceCoin(difficulty)) {
       finalCoin ~/= 3;
@@ -86,12 +84,11 @@ class TableController extends GetxController {
   }
 
   bool _shouldReduceCoin(int difficulty) {
-    final threshold = (12 + (levelMultiplier * (difficulty + 2))).round();
+    final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
     return rollDice() + specialRoll('p') <= threshold;
   }
-  //----------------------------------------------------------------
 
-  //คำนวณการลด Damage
+  // การคำนวณความเสียหาย
   int calculateDamage(int damage) {
     const baseReduction = 0.05;
     const maxReduction = 0.80;
@@ -123,26 +120,21 @@ class TableController extends GetxController {
     return 1 + (strengthRoll - 80) / 20 * (lateGameBoost - 1);
   }
 
-  //คำนวณเควส
+  // การคำนวณเควส
   (int, int) calculateQuest(int difficulty) {
-    final questRewards = [
-      [30, 50], // EXP, Coin for Common quest
-      [60, 150], // for Uncommon quest
-      [120, 300], // for Rare quest
-      [240, 600] // for God quest
+    const questRewards = [
+      [30, 50], // EXP, Coin สำหรับเควสธรรมดา
+      [60, 150], // สำหรับเควสไม่ธรรมดา
+      [120, 300], // สำหรับเควสหายาก
+      [240, 600] // สำหรับเควสระดับเทพ
     ];
 
-    int exp = (questRewards[difficulty][0] * levelMultiplier).round();
-    int gold = (questRewards[difficulty][1] * levelMultiplier).round();
+    int exp = (questRewards[difficulty][0] * _levelMultiplier).round();
+    int gold = (questRewards[difficulty][1] * _levelMultiplier).round();
 
-    int expReward = exp + (exp * percentage(specialRoll("i")));
-    int goldReward = gold + (gold * percentage(specialRoll("c")));
+    int expReward = exp + (exp * _percentage(specialRoll("i")));
+    int goldReward = gold + (gold * _percentage(specialRoll("c")));
 
     return (expReward, goldReward);
   }
 }
-
-
-//----------------------------------------------------------------
-
-
