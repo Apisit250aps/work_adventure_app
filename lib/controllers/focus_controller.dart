@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/table_controller.dart';
 
 class LogEntry {
   final String icon;
@@ -41,6 +42,7 @@ class FocusController extends GetxController {
   String get currentEncounterIcon => _currentEncounterIcon.value;
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
+  int rollOne = TableController().singleDiceRoll();
 
   // New method to get Special values as percentages
   double _getSpecialPercentage(int value) => value / 100;
@@ -101,8 +103,6 @@ class FocusController extends GetxController {
     _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
   }
 
-  
-
   void generateEvent() {
     _eventCount++;
     if (_eventCount.value % 20 == 0) {
@@ -115,8 +115,6 @@ class FocusController extends GetxController {
         generateNothingEvent();
       } else if (ranNumber <= 95) {
         generateEnemyEvent();
-      } else {
-        generateTreasureEvent();
       }
     }
   }
@@ -128,76 +126,103 @@ class FocusController extends GetxController {
         "🌟", "Peaceful", "You continue your journey without incident.");
   }
 
-  // New method to calculate max health based on endurance
-  int calculateMaxHealth() {
-    int baseHealth = 100;
-    double enduranceBonus =
-        _getSpecialPercentage(characterController.special.value.endurance);
-    return (baseHealth * (1 + enduranceBonus)).round();
-  }
-
   void generateEnemyEvent() {
-    List<String> enemies = [
-      "👹 Ogre",
-      "🐉 Dragon",
-      "💀 Skeleton",
-      "🧟‍♂️ Zombie",
-      "🦇 Vampire",
-      "🐺 Werewolf"
+    final enemyTypes = [
+      [
+        "🐺 หมาป่าจิ๋ว",
+        "🦇 ค้างคาวราตรี",
+        "🐗 หมูป่าพิฆาต",
+        "🦊 จิ้งจอกไฟ",
+        "🐍 อสรพิษ"
+      ],
+      [
+        "🧟 ซอมบี้ราชา",
+        "💀 โครงกระดูกอมตะ",
+        "🧛 แวมไพร์เลือดเย็น",
+        "🐲 มังกรไฟนรก",
+        "🧙 พ่อมดมรณะ"
+      ],
+      [
+        "🐉 มังกรทมิฬ",
+        "💀 ราชาลิชอนธการ",
+        "🌑 ปีศาจแห่งความมืด",
+        "🧛🏻‍♂️ เจ้าแวมไพร์ไร้พ่าย",
+        "🧙🏻‍♂️ จอมมารแห่งความหายนะ"
+      ],
+      [
+        "💀 มอร์ติส เรกซ์ ราชาแห่งวิญญาณ",
+        "⏳ คโรโนส เทพแห่งกาลเวลาที่หยุดนิ่ง",
+        "🗡️ เซอร์กริมบาลด์ อัศวินแห่งความมืด",
+        "🌙 ลูนาเรีย เทพธิดาแห่งจันทราและความฝัน",
+        "🧙‍♂️ อาซาเซล จอมเวทแห่งความรู้อนันต์"
+      ]
     ];
-    String enemy = enemies[Random().nextInt(enemies.length)];
 
-    double strengthBonus =
-        _getSpecialPercentage(characterController.special.value.strength);
-    double enduranceBonus =
-        _getSpecialPercentage(characterController.special.value.endurance);
-
-    int baseDamage = Random().nextInt(21) + 20;
-    int damage = (baseDamage * (1 - enduranceBonus)).round().clamp(1, 50);
-
-    int baseExp = Random().nextInt(21) + 10;
-    int exp = (baseExp * (1 + strengthBonus)).round();
-
-    int baseGold = Random().nextInt(15) + 5;
-    int gold = (baseGold *
-            (1 + _getSpecialPercentage(characterController.special.value.luck)))
-        .round();
-
-    _currentEncounterIcon.value = enemy.split(" ")[0];
-    _currentEncounterDescription.value =
-        "Battle with ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.";
-
-    _addLogEntry("⚔️", "Battle",
-        "Encountered a ${enemy.split(" ")[1]}! Took $damage damage. Gained $exp EXP and $gold Gold.");
-  }
-
-  void generateTreasureEvent() {
-    List<String> treasures = [
-      "💎 Gem",
-      "🗡️ Sword",
-      "🛡️ Shield",
-      "📜 Scroll",
-      "🔮 Magic Orb",
-      "💍 Ring"
+    final index = rollOne >= 13
+        ? 0
+        : rollOne >= 7
+            ? 1
+            : rollOne >= 2
+                ? 2
+                : 3;
+    final multipliers = [
+      [1, 1, 1], // EXP, Coin, Damage for Common
+      [2, 3, 3], // for Uncommon
+      [4, 6, 6], // for Rare
+      [8, 12, 10] // for God
     ];
-    String treasure = treasures[Random().nextInt(treasures.length)];
 
-    double perceptionBonus =
-        _getSpecialPercentage(characterController.special.value.perception);
-    double luckBonus =
-        _getSpecialPercentage(characterController.special.value.luck);
+    final baseValue = (rollOne + 5).clamp(5, 15);
+    final enemyCoin = baseValue * multipliers[index][1];
+    final enemyDamage = baseValue * multipliers[index][2];
+    final enemyEXP = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 
-    int quantity =
-        (Random().nextInt(3) + 1 + (perceptionBonus * 2)).round().clamp(1, 5);
-    int baseGold = Random().nextInt(51) + 20;
-    int gold = (baseGold * (1 + luckBonus)).round();
+    final enemy = enemyTypes[index][Random().nextInt(enemyTypes[index].length)];
+    final parts = enemy.split(" ");
+    _currentEncounterIcon.value = parts[0];
+    final enemyName = parts.sublist(1).join(" ");
 
-    _currentEncounterIcon.value = treasure.split(" ")[0];
-    _currentEncounterDescription.value =
-        "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.\n";
+    final List<List<String>> battleDescriptionsByLevel = [
+      // Common (index 0)
+      [
+        "ต่อกร $enemyName! ⚔️ เสียเลือด $enemyDamage ชัยชนะเป็นของท่าน ✨ ได้ $enemyEXP EXP $enemyCoin ทองคำ",
+        "ดาบปะทะ $enemyName 🗡️ บาดแผล $enemyDamage ท่านเอาชนะได้ 💪 รับ $enemyEXP EXP $enemyCoin เหรียญ",
+        "$enemyName โจมตี! 💥 เสียหาย $enemyDamage ท่านผ่านด่านนี้ไปได้ 🛡️ คว้า $enemyEXP EXP $enemyCoin ทอง",
+        "ศึก $enemyName! 🏹 โดนโจมตี $enemyDamage ท่านเอาชนะได้ 🎉 ได้รับ $enemyEXP EXP $enemyCoin ทองคำ",
+        "ปะทะ $enemyName 🔪 เสียเลือด $enemyDamage ท่านคว้าชัยชนะ 🏆 รับ $enemyEXP EXP $enemyCoin เหรียญทอง"
+      ],
+      // Uncommon (index 1)
+      [
+        "ดวลดาบ $enemyName! ⚔️ บาดเจ็บ $enemyDamage ท่านเอาชนะได้ 💪 คว้า $enemyEXP EXP $enemyCoin ทองคำ",
+        "$enemyName โหมโจมตี! 🌪️ เสียเลือด $enemyDamage ท่านต้านทานได้ 🛡️ รับ $enemyEXP EXP $enemyCoin เหรียญ",
+        "ศึกเดือด $enemyName! 🔥 โดนถล่ม $enemyDamage ท่านชนะในที่สุด ✨ ได้ $enemyEXP EXP $enemyCoin ทอง",
+        "ต่อสู้ $enemyName! 💢 บาดแผลลึก $enemyDamage ท่านเอาชนะได้ 🎊 คว้า $enemyEXP EXP $enemyCoin ทองคำ",
+        "ปะทะดุ $enemyName 💀 เสียหาย $enemyDamage ท่านผ่านด่านมาได้ 🌟 รับ $enemyEXP EXP $enemyCoin เหรียญทอง"
+      ],
+      // Rare (index 2)
+      [
+        "ศึกใหญ่ $enemyName! 🐉 เลือดท่วม $enemyDamage ท่านเอาชนะได้ 🏅 คว้า $enemyEXP EXP $enemyCoin ทองคำ",
+        "$enemyName อสูรร้าย! 👹 บาดเจ็บสาหัส $enemyDamage ท่านไม่ยอมแพ้ 💪🔥 ได้ $enemyEXP EXP $enemyCoin ทอง",
+        "ดวลเดือด $enemyName! ⚡ เกือบสิ้นใจ $enemyDamage ท่านลุกขึ้นสู้ �Phoenix รับ $enemyEXP EXP $enemyCoin เหรียญ",
+        "ต่อกร $enemyName ผู้ทรงพลัง! 💥 โดนถล่ม $enemyDamage ท่านชนะได้ 🎇 คว้า $enemyEXP EXP $enemyCoin ทองคำ",
+        "ศึกมหากาพย์ $enemyName! 🌋 สาหัส $enemyDamage ท่านพลิกสถานการณ์ 🌠 ได้ $enemyEXP EXP $enemyCoin ทอง"
+      ],
+      // God (index 3)
+      [
+        "ท้าชนเทพ $enemyName! 🌟 เกือบพ่ายแพ้ $enemyDamage ท่านชนะอย่างเหลือเชื่อ 🏆🌈 ได้ $enemyEXP EXP $enemyCoin ทองคำ",
+        "ศึกแห่งตำนาน $enemyName! 🔱 บาดเจ็บสาหัส $enemyDamage ท่านเอาชนะได้ 🌠💫 คว้า $enemyEXP EXP $enemyCoin ทอง",
+        "ปะทะ $enemyName เทพเจ้า! ⚡🌩️ โดนถล่ม $enemyDamage ท่านพลิกโผชนะ 🌈🏅 รับ $enemyEXP EXP $enemyCoin เหรียญทอง",
+        "ดวลเทพ $enemyName! 🌞 เลือดท่วมกาย $enemyDamage ท่านก้าวข้ามขีดจำกัด 🚀💥 ได้ $enemyEXP EXP $enemyCoin ทองคำ",
+        "$enemyName มหาเทพ! 🌌 เกือบสิ้นชีพ $enemyDamage ท่านชนะอย่างอัศจรรย์ 🎇✨ คว้า $enemyEXP EXP $enemyCoin ทอง"
+      ]
+    ];
 
-    _addLogEntry("💎", "Treasure",
-        "Found ${quantity}x ${treasure.split(" ")[1]}! Gained $gold Gold.");
+// ใช้งานในฟังก์ชัน generateEnemyEvent
+    final battleDescription = battleDescriptionsByLevel[index]
+        [Random().nextInt(battleDescriptionsByLevel[index].length)];
+    _currentEncounterDescription.value = battleDescription;
+    _addLogEntry(
+        "⚔️", "Battle", "Encountered a $enemyName! $battleDescription");
   }
 
   void generateRestEvent() {

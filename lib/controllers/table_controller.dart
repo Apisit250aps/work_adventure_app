@@ -37,15 +37,17 @@ class TableController extends GetxController {
   //ทอยลูกเต๋า
   int rollDice() {
     final count = (special['c']! ~/ 21).clamp(1, 3);
-    return List.generate(count, (_) => _singleDiceRoll())
-        .reduce((a, b) => a == 0
+    return List.generate(count, (_) => singleDiceRoll())
+        .reduce((a, b) => a == 0 && b != 100
             ? 0
-            : a > b
-                ? a
-                : b);
+            : a == 0 && b == 100
+                ? 20
+                : a > b
+                    ? a
+                    : b);
   }
 
-  int _singleDiceRoll() {
+  int singleDiceRoll() {
     final roll = _random.nextInt(21) + 1;
     return roll == 21
         ? 100
