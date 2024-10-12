@@ -119,6 +119,42 @@ class FocusController extends GetxController {
     }
   }
 
+  // void generateVillageEvent() {
+  //   final villageTypes = [
+  //     "🏘️ หมู่บ้านชาวนา",
+  //     "🏠 หมู่บ้านชาวประมง",
+  //     "🏚️ หมู่บ้านนักรบ",
+  //     "🏰 หมู่บ้านพ่อมด",
+  //     "🗻 หมู่บ้านกลางภูเขา"
+  //   ];
+
+  //   final questDifficulties = [
+  //     "ง่าย",
+  //     "ปานกลาง",
+  //     "ท้าทาย",
+  //     "เกือบเป็นไปไม่ได้"
+  //   ];
+
+  //   final villageType = villageTypes[Random().nextInt(villageTypes.length)];
+  //   final questDifficulty =
+  //       questDifficulties[Random().nextInt(questDifficulties.length)];
+
+  //   String questDescription =
+  //       generateQuest(questDifficulties.indexOf(questDifficulty));
+
+  //   _currentEncounterIcon.value = "🏡";
+  //   _currentEncounterDescription.value = """
+  //   $villageType
+  //   เควส: $questDescription
+  //   ความยาก: $questDifficulty
+  //   รางวัล: $expReward EXP, $goldReward ทองคำ
+
+  //   """;
+
+  //   _addLogEntry(
+  //       "🏡", "Village", "พบ $villageType และได้รับเควส: $questDescription");
+  // }
+
   void generateNothingEvent() {
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "Nothing happened...\n";
@@ -173,9 +209,14 @@ class FocusController extends GetxController {
     ];
 
     final baseValue = (rollOne + 5).clamp(5, 15);
-    final enemyCoin = baseValue * multipliers[index][1];
-    final enemyDamage = baseValue * multipliers[index][2];
-    final enemyEXP = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
+
+    int coin = baseValue * multipliers[index][1];
+    int damage = baseValue * multipliers[index][2];
+    int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
+
+    final enemyCoin = TableController().calculateCoin(coin, index);
+    final enemyDamage = TableController().calculateDamage(damage);
+    final enemyEXP = TableController().calculateEXP(exp);
 
     final enemy = enemyTypes[index][Random().nextInt(enemyTypes[index].length)];
     final parts = enemy.split(" ");

@@ -34,6 +34,9 @@ class TableController extends GetxController {
 
   int characterStamina() => (special['s']! ~/ 2).clamp(5, 50);
 
+  double levelMultiplier =
+      (pow(1.1, CharacterController().calculateLevel() / 10) * 10);
+
   //ทอยลูกเต๋า
   int rollDice() {
     final count = (special['c']! ~/ 21).clamp(1, 3);
@@ -65,23 +68,25 @@ class TableController extends GetxController {
 
   //คำนวณการได้ EXP
   int calculateEXP(int exp) {
-    return exp + (exp * percentage(specialRoll('i')));
+    return ((exp + (exp * percentage(specialRoll('i')))) * levelMultiplier)
+        .round();
   }
   //----------------------------------------------------------------
 
   //คำนวณการได้ coins
-  int calculateCoin(int coin) {
+  int calculateCoin(int coin, int difficulty) {
     final luckBonus = percentage(specialRoll('l'));
-    int finalCoin = coin + ((coin * luckBonus) ~/ 0.65);
+    int coinBase = (coin * (levelMultiplier).round());
+    int finalCoin = (coinBase + ((coinBase * luckBonus) ~/ 0.65));
 
-    if (_shouldReduceCoin()) {
+    if (_shouldReduceCoin(difficulty)) {
       finalCoin ~/= 3;
     }
     return finalCoin;
   }
 
-  bool _shouldReduceCoin() {
-    final threshold = 12 + (_characterController.calculateLevel() ~/ 3);
+  bool _shouldReduceCoin(int difficulty) {
+    final threshold = (12 + (levelMultiplier * (difficulty + 2))).round();
     return rollDice() + specialRoll('p') <= threshold;
   }
   //----------------------------------------------------------------
@@ -117,6 +122,27 @@ class TableController extends GetxController {
   double _calculateLateGameMultiplier(int strengthRoll, double lateGameBoost) {
     return 1 + (strengthRoll - 80) / 20 * (lateGameBoost - 1);
   }
+
+  //คำนวณเควส
+  (int, int) calculateQuest(int difficulty) {
+    final questRewards = [
+      [30, 50], // EXP, Coin for Common quest
+      [60, 150], // for Uncommon quest
+      [120, 300], // for Rare quest
+      [240, 600] // for God quest
+    ];
+
+    int exp = (questRewards[difficulty][0] * levelMultiplier).round();
+    int gold = (questRewards[difficulty][1] * levelMultiplier).round();
+
+    int expReward = exp + (exp * percentage(specialRoll("i")));
+    int goldReward = gold + (gold * percentage(specialRoll("c")));
+
+    return (expReward, goldReward);
+  }
 }
 
+
 //----------------------------------------------------------------
+
+
