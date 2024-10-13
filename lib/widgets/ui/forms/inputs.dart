@@ -163,12 +163,12 @@ class CustomSingleSelectToggle extends StatefulWidget {
   final TextStyle? labelStyle;
 
   const CustomSingleSelectToggle({
-    Key? key,
+    super.key,
     required this.options,
     required this.onSelected,
     this.isVertical = false,
     this.labelStyle,
-  }) : super(key: key);
+  });
 
   @override
   _CustomSingleSelectToggleState createState() => _CustomSingleSelectToggleState();

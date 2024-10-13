@@ -8,6 +8,7 @@ import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/screens/character/character_screen.dart';
 import 'package:work_adventure/screens/character/character_create_screen.dart';
 import 'package:work_adventure/screens/operator_screen.dart';
+import 'package:work_adventure/screens/todo/task_screen.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
@@ -51,6 +52,11 @@ class WorkAdventure extends StatelessWidget {
         GetPage(
           name: '/register',
           page: () => const RegisterScreen(),
+        ),
+        GetPage(
+          name: '/tasks',
+          page: () => const TaskScreen(),
+          binding: TaskBinding(),
         )
       ],
       initialBinding: BindingsBuilder(() {

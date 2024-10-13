@@ -12,11 +12,10 @@ class WorkController extends GetxController {
   final ApiService _apiService = Get.find();
   final CharacterController characterController =
       Get.find<CharacterController>();
-  
+
   final RxBool isLoading = false.obs;
   List<String> get status => <String>["todo", "inprogress", "done"];
   var selectedStatusIndex = 0.obs;
-
 
   final RxList<Work> workList = <Work>[].obs;
   final Rx<Work> workSelected = const Work().obs;
@@ -24,10 +23,10 @@ class WorkController extends GetxController {
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
   }
-  
+
   Character get character => characterController.characterSelect.value;
-
-
+  Work get work => workSelected.value;
+  
   @override
   void onInit() {
     super.onInit();
@@ -51,6 +50,7 @@ class WorkController extends GetxController {
 
   void selectIndex(int index) {
     workSelected.value = workList[index];
+    print(workSelected);
   }
 
   Future<List<Work>> fetchAllWork() async {

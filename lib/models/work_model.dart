@@ -1,3 +1,5 @@
+import 'package:work_adventure/models/task_model.dart';
+
 class Work {
   final String? id;
   final String? characterId;
@@ -9,6 +11,8 @@ class Work {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  final List<dynamic>? tasks;
+
   const Work({
     this.id,
     this.characterId,
@@ -19,6 +23,7 @@ class Work {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.tasks,
   }) : assert(
           status == null ||
               status == 'todo' ||
@@ -28,6 +33,7 @@ class Work {
         );
 
   factory Work.fromJson(Map<String, dynamic> json) {
+    final task = json['tasks']?.map((task) => Task.fromJson(task)).toList();
     return Work(
       id: json['_id'] as String,
       characterId: json['characterId'] as String,
@@ -42,6 +48,7 @@ class Work {
       status: json['status'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      tasks: task,
     );
   }
 
@@ -56,6 +63,7 @@ class Work {
       'status': status,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'tasks': tasks,
     };
   }
 
@@ -69,6 +77,7 @@ class Work {
     String? status,
     DateTime? createdAt,
     DateTime? updatedAt,
+    List<Task>? tasks,
   }) {
     return Work(
       id: id ?? this.id,
@@ -80,6 +89,7 @@ class Work {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      tasks: tasks?? this.tasks,
     );
   }
 

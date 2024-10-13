@@ -5,12 +5,13 @@ class CollapseContent extends StatefulWidget {
   final String title;
   final Widget child;
   final bool initiallyExpanded;
-  
+  final VoidCallback? onDoubleTap;
+
   const CollapseContent({
     super.key,
     required this.title,
     required this.child,
-    this.initiallyExpanded = false,
+    this.initiallyExpanded = false, this.onDoubleTap,
   });
 
   @override
@@ -36,6 +37,7 @@ class _CollapseContentState extends State<CollapseContent> {
               _isExpanded = !_isExpanded;
             });
           },
+          onDoubleTap: widget.onDoubleTap,
           child: Container(
             color: backgroundColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -44,7 +46,8 @@ class _CollapseContentState extends State<CollapseContent> {
               children: <Widget>[
                 Text(
                   widget.title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Icon(
                   _isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -60,7 +63,12 @@ class _CollapseContentState extends State<CollapseContent> {
             opacity: _isExpanded ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 300),
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 0,
+              ),
+              height: 200,
+              
               child: widget.child,
             ),
           ),

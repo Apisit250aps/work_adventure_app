@@ -95,18 +95,21 @@ class CharacterScreen extends GetView<CharacterController> {
 
 class CharacterCard extends StatelessWidget {
   final Character character;
-  final VoidCallback onTap; // รับ onTap เป็นพารามิเตอร์
+  final VoidCallback? onTap; // รับ onTap เป็นพารามิเตอร์
+  final VoidCallback? onDoubleTap;
 
   const CharacterCard({
     super.key,
     required this.character,
-    required this.onTap,
+    this.onTap,
+    this.onDoubleTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onDoubleTap: onDoubleTap,
       child: Container(
         padding: const EdgeInsets.all(10),
         child: Column(

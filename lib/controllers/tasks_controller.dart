@@ -18,7 +18,7 @@ class TasksController extends GetxController {
   List<String> get status => <String>["1", "2", "3"];
   var selectedStatusIndex = 0.obs;
 
-  Work get onWork => workController.workSelected.value;
+  Work get onWork => workController.work;
 
   void updateStatus(int index) {
     selectedStatusIndex.value = index;
@@ -61,7 +61,7 @@ class TasksController extends GetxController {
   Future<List<Task>> fetchTasks() async {
     isLoading.value = true;
     try {
-      final workId = workController.workSelected.value.id;
+      final workId = onWork.id;
       final String path = _rest.tasks; // Base path for tasks
       final String endpoint = "$path/$workId"; // Constructing the endpoint
       final response = await _apiService.get(endpoint); // Making the API call
