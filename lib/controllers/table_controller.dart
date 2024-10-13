@@ -145,15 +145,10 @@ class TableController extends GetxController {
 
     final List<int> sortedLevels = List.from(difficultyLevels)..sort();
 
-    final index = dice >= sortedLevels[3]
-        ? sortedLevels[3]
-        : dice >= sortedLevels[2]
-            ? sortedLevels[2]
-            : dice >= sortedLevels[1]
-                ? sortedLevels[1]
-                : sortedLevels[0];
+    final selectedChance = sortedLevels.lastWhere((chance) => dice >= chance,
+        orElse: () => sortedLevels.first);
 
-    return difficultyLevels.indexOf(index);
+    return difficultyLevels.indexOf(selectedChance);
   }
 
   (int, int) questReward(int difficulty) {
@@ -179,5 +174,35 @@ class TableController extends GetxController {
     final baseEnemyCount = 50 - (50 * percentage);
     final adjustedEnemyCount = baseEnemyCount ~/ (difficulty + 1);
     return adjustedEnemyCount.clamp(3, 50);
+  }
+
+  // การคำนวณศัตรู
+  int getEnemyIndex(int questNumber) {
+    final dice = singleDiceRoll().clamp(1, 100);
+    final characterLevel = CharacterController().calculateLevel() ~/ 20;
+
+    // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
+    final List<int> enemyChance = [
+      (13 - characterLevel).clamp(1, 6), // Common
+      (7 - characterLevel).clamp(3, 10), // Uncommon
+      (2 + characterLevel).clamp(4, 12), // Rare
+      (1 + characterLevel).clamp(1, 5) // God
+    ];
+
+    // ถ้าทอยลูกเต๋าได้ 11 หรือมากกว่า ให้ใช้ระดับเควสเป็นตัวกำหนด
+    if (dice >= 11) {
+      return questNumber;
+    }
+
+    // เรียงลำดับโอกาสจากน้อยไปมาก
+    final sortedEnemyChance = List.from(enemyChance)..sort();
+
+    // เลือกประเภทศัตรูตามผลลูกเต๋า
+    final selectedChance = sortedEnemyChance.lastWhere(
+        (chance) => dice >= chance,
+        orElse: () => sortedEnemyChance.first);
+
+    // หาดัชนีของประเภทศัตรูที่ถูกเลือก
+    return enemyChance.indexOf(selectedChance);
   }
 }

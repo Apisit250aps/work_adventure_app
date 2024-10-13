@@ -51,6 +51,8 @@ class FocusController extends GetxController {
   int rollOne = 0;
   String enemyQuestName = "";
   int enemyQuestCounter = 0;
+  bool questIsActive = false;
+  int questNumber = 21;
   final enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
@@ -263,12 +265,7 @@ class FocusController extends GetxController {
     return questDifficulties[difficulty];
   }
 
-  int _getEnemyIndex(int roll) {
-    if (roll >= 13) return 0;
-    if (roll >= 7) return 1;
-    if (roll >= 2) return 2;
-    return 3;
-  }
+  
 
   String _getRandomEnemy(int index) {
     return enemy[index][Random().nextInt(enemy[index].length)];
