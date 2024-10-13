@@ -121,7 +121,7 @@ class TaskScreen extends GetWidget<TasksController> {
 
 class TaskListTile extends GetWidget<TasksController> {
   final Task task;
-  const TaskListTile(this.task, {Key? key}) : super(key: key);
+  const TaskListTile(this.task, {super.key});
 
   @override
   Widget build(BuildContext context) {
