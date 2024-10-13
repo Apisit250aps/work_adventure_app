@@ -74,7 +74,7 @@ class _TaskCreateFormState extends State<TaskCreateForm> {
                     controller: taskDueController,
                   ),
                   CustomSingleSelectToggle(
-                    options: ["Easy", "Medium", "Hard"],
+                    options: const ["Easy", "Medium", "Hard"],
                     onSelected: (index) {
                       print('Selected fruit: ${tasksController.status[index]}');
                       taskDifficultyController.text =

@@ -26,7 +26,7 @@ class WorkController extends GetxController {
 
   Character get character => characterController.characterSelect.value;
   Work get work => workSelected.value;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -51,6 +51,15 @@ class WorkController extends GetxController {
   void selectIndex(int index) {
     workSelected.value = workList[index];
     print(workSelected);
+  }
+
+  Future<void> refreshWorks() async {
+    isLoading.value = true;
+    final result = await fetchAllWork();
+    if (result.isNotEmpty) {
+      workList.value = result;
+    }
+    isLoading.value = false;
   }
 
   Future<List<Work>> fetchAllWork() async {

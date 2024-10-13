@@ -3,7 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
-import 'package:work_adventure/screens/character/character_screen.dart';
+import 'package:work_adventure/main.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
@@ -31,7 +31,7 @@ class _LoginFormState extends State<LoginForm> {
         await userController.login(
             usernameController.text, passwordController.text);
 
-        Get.offAll(() => const CharacterScreen());
+        Get.offAll(() => const AuthWrapper());
       } catch (e) {
         Get.snackbar(
           'Login Error',

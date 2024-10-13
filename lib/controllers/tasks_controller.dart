@@ -17,6 +17,11 @@ class TasksController extends GetxController {
   // form variables
   List<String> get status => <String>["1", "2", "3"];
   var selectedStatusIndex = 0.obs;
+  List<String> taskDiffs = <String>["Easy", "Medium", "Hard"];
+
+  String diffs(int d) {
+    return taskDiffs[d - 1];
+  }
 
   Work get onWork => workController.work;
 
@@ -24,7 +29,10 @@ class TasksController extends GetxController {
     selectedStatusIndex.value = index;
   }
 
-  RxList<Task> tasks = <Task>[].obs;
+  final RxList<Task> tasks = <Task>[].obs;
+  RxList<Task> get todoTasks =>
+      tasks.where((task) => !task.isDone).toList().obs;
+  RxList<Task> get doneTasks => tasks.where((task) => task.isDone).toList().obs;
 
   @override
   void onInit() {
@@ -100,6 +108,30 @@ class TasksController extends GetxController {
     }
   }
 
+  Future<void> updateTask(Task task) async {
+    try {
+      final taskId = task.id;
+      final path = _rest.updateTask; // Base path for tasks
+      final String endpoint = "$path/$taskId"; // Constructing the endpoint
+
+      final response = await _apiService.put(endpoint, task.toJson());
+      if (response.statusCode == 200) {
+        final index = tasks.indexWhere((t) => t.id == task.id);
+        if (index != -1) {
+          tasks[index] = task;
+          tasks.refresh();
+          todoTasks.refresh();
+          doneTasks.refresh();
+        }
+      } else {
+        throw Exception('Failed to update task: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error updating task: $e');
+      rethrow;
+    }
+  }
+
   Future<bool> createTask(String name, String description, String start,
       String due, int difficulty) async {
     try {
@@ -117,9 +149,9 @@ class TasksController extends GetxController {
 
       if (response.statusCode == 201) {
         // Decode the response body into a Map
+        loadTasks();
         return true;
       }
-
       return false;
     } catch (error) {
       print('Error: $error');
@@ -128,4 +160,6 @@ class TasksController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  toggleTaskStatus(task) {}
 }

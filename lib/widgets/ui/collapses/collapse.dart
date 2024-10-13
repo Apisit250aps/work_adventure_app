@@ -6,12 +6,15 @@ class CollapseContent extends StatefulWidget {
   final Widget child;
   final bool initiallyExpanded;
   final VoidCallback? onDoubleTap;
+  final VoidCallback? onLongPress;
 
   const CollapseContent({
     super.key,
     required this.title,
     required this.child,
-    this.initiallyExpanded = false, this.onDoubleTap,
+    this.initiallyExpanded = false,
+    this.onDoubleTap,
+    this.onLongPress,
   });
 
   @override
@@ -38,6 +41,7 @@ class _CollapseContentState extends State<CollapseContent> {
             });
           },
           onDoubleTap: widget.onDoubleTap,
+          onLongPress: widget.onLongPress,
           child: Container(
             color: backgroundColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -68,7 +72,6 @@ class _CollapseContentState extends State<CollapseContent> {
                 horizontal: 0,
               ),
               height: 200,
-              
               child: widget.child,
             ),
           ),
