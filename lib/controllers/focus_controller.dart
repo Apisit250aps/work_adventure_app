@@ -138,8 +138,17 @@ class FocusController extends GetxController {
     });
   }
 
+  late final int _eventIntervalSeconds;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _eventIntervalSeconds = _tableController.timeEventRun();
+    _startEventTimer();
+  }
+
   void _startEventTimer() {
-    _eventTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+    _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
       if (_isActive.value && _timeRemaining.value > 0) {
         generateEvent();
       }
@@ -182,6 +191,7 @@ class FocusController extends GetxController {
   void _generateVillageEvent() {
     final villageType = _getRandomVillageType();
     final questDifficulty = _tableController.selectQuest();
+    questNumber = questDifficulty;
     final questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
     enemyQuestCounter = enemyCount;
@@ -205,7 +215,7 @@ class FocusController extends GetxController {
 
   void _generateEnemyEvent() {
     rollOne = _tableController.singleDiceRoll();
-    final index = _getEnemyIndex(rollOne);
+    final index = TableController().getEnemyIndex(questNumber, questIsActive);
     final enemy = _getRandomEnemy(index);
     final (enemyCoin, enemyDamage, enemyEXP) = _calculateEnemyStats(index);
 
@@ -264,8 +274,6 @@ class FocusController extends GetxController {
     final questDifficulties = ["ง่าย", "ปานกลาง", "ท้าทาย", "เป็นไปไม่ได้"];
     return questDifficulties[difficulty];
   }
-
-  
 
   String _getRandomEnemy(int index) {
     return enemy[index][Random().nextInt(enemy[index].length)];

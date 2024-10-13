@@ -177,7 +177,7 @@ class TableController extends GetxController {
   }
 
   // การคำนวณศัตรู
-  int getEnemyIndex(int questNumber) {
+  int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
     final characterLevel = CharacterController().calculateLevel() ~/ 20;
 
@@ -189,9 +189,11 @@ class TableController extends GetxController {
       (1 + characterLevel).clamp(1, 5) // God
     ];
 
-    // ถ้าทอยลูกเต๋าได้ 11 หรือมากกว่า ให้ใช้ระดับเควสเป็นตัวกำหนด
-    if (dice >= 11) {
-      return questNumber;
+    if (isActive) {
+      // ถ้าทอยลูกเต๋าได้ 11 หรือมากกว่า ให้ใช้ระดับเควสเป็นตัวกำหนด
+      if (dice >= 11) {
+        return questNumber;
+      }
     }
 
     // เรียงลำดับโอกาสจากน้อยไปมาก
@@ -204,5 +206,12 @@ class TableController extends GetxController {
 
     // หาดัชนีของประเภทศัตรูที่ถูกเลือก
     return enemyChance.indexOf(selectedChance);
+  }
+
+  int timeEventRun() {
+    int baseTimeEvent = 10;
+    int agilityPerTime = special["a"]! ~/ 10;
+    int timeEvent = baseTimeEvent - agilityPerTime;
+    return timeEvent;
   }
 }
