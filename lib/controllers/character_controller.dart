@@ -18,7 +18,7 @@ class CharacterController extends GetxController {
     endurance: 7,
     charisma: 3,
     intelligence: 3,
-    agility: 7,
+    agility: 100,
     luck: 20,
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),

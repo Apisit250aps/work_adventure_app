@@ -53,6 +53,7 @@ class FocusController extends GetxController {
   int enemyQuestCounter = 0;
   bool questIsActive = false;
   int questNumber = 21;
+
   final enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
@@ -93,6 +94,12 @@ class FocusController extends GetxController {
   }
 
   // Toggle active state
+  @override
+  void onInit() {
+    super.onInit();
+    _eventIntervalSeconds = _tableController.timeEventRun();
+  }
+
   void toggleActive() {
     _isActive.toggle();
     if (_isActive.value) {
@@ -103,15 +110,23 @@ class FocusController extends GetxController {
     }
   }
 
-  // Reset focus session
-  void resetFocus() {
-    _stopTimers();
-    _timeRemaining.value = _totalTime.value;
-    _resetSessionState();
-    _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
+  void _startEventTimer() {
+    // Cancel existing timer if any
+    _eventTimer?.cancel();
+
+    _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
+      if (_isActive.value && _timeRemaining.value > 0) {
+        generateEvent();
+      }
+    });
   }
 
-  // Generate events
+  void _stopTimers() {
+    _timer?.cancel();
+    _eventTimer?.cancel();
+  }
+
+  // Keep generateEvent() as is
   void generateEvent() {
     _eventCount++;
     if (_eventCount.value % 20 == 0) {
@@ -119,6 +134,14 @@ class FocusController extends GetxController {
     } else {
       _generateRandomEvent();
     }
+  }
+
+  // Reset focus session
+  void resetFocus() {
+    _stopTimers();
+    _timeRemaining.value = _totalTime.value;
+    _resetSessionState();
+    _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
   }
 
   // Show summary
@@ -139,26 +162,6 @@ class FocusController extends GetxController {
   }
 
   late final int _eventIntervalSeconds;
-
-  @override
-  void onInit() {
-    super.onInit();
-    _eventIntervalSeconds = _tableController.timeEventRun();
-    _startEventTimer();
-  }
-
-  void _startEventTimer() {
-    _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
-      if (_isActive.value && _timeRemaining.value > 0) {
-        generateEvent();
-      }
-    });
-  }
-
-  void _stopTimers() {
-    _timer?.cancel();
-    _eventTimer?.cancel();
-  }
 
   void _endSession() {
     _stopTimers();
@@ -324,9 +327,9 @@ class FocusController extends GetxController {
         "$enemy จิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ 🏆$exp EXP $coin Gold"
       ],
       [
-        "$enemy ร่างท่านแตกดับ $damage\nชำแหละศัตรูออกจากความจริง 🏆$exp EXP $coin Gold",
-        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดล้างศัตรูพ้นสรรพสิ่ง 💫$exp EXP $coin Gold",
-        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากทุกความเป็นไปได้ 🎇$exp EXP $coin Gold",
+        "$enemy ร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง 🏆$exp EXP $coin Gold",
+        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง 💫$exp EXP $coin Gold",
+        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ 🎇$exp EXP $coin Gold",
         "$enemy ท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน 🌠$exp EXP $coin Gold",
         "$enemy ท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ 👑$exp EXP $coin Gold"
       ]

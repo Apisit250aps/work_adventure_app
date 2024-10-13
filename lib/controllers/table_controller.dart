@@ -218,7 +218,7 @@ class TableController extends GetxController {
   int timeEventRun() {
     int baseTimeEvent = 10;
     int agilityPerTime = (special["a"]! / 10).round();
-    int timeEvent = baseTimeEvent - agilityPerTime;
+    int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 10);
     return timeEvent;
   }
 }
