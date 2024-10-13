@@ -215,6 +215,7 @@ class TableController extends GetxController {
     return enemyChance.indexOf(selectedChance);
   }
 
+  // ความเร็วการเจอเหตุการณ์
   int timeEventRun() {
     int baseTimeEvent = 10;
     int agilityPerTime = (special["a"]! / 10).round();

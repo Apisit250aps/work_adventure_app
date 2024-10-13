@@ -49,10 +49,15 @@ class FocusController extends GetxController {
 
   // Other variables
   int rollOne = 0;
+
+  // Quest
   String enemyQuestName = "";
   int enemyQuestCounter = 0;
   bool questIsActive = false;
   int questNumber = 21;
+  int questGold = 0;
+  int questExp = 0;
+  int questEnemyNumber = 0;
 
   final enemy = [
     [
@@ -74,14 +79,14 @@ class FocusController extends GetxController {
       "💀 ราชาลิชอนธการ",
       "🌑 ปีศาจแห่งความมืด",
       "🧛🏻‍♂️ เจ้าแวมไพร์ไร้พ่าย",
-      "🧙🏻‍♂️ จอมมารแห่งความหายนะ"
+      "🧙🏻‍♂️ จอมมารแห่งหายนะ"
     ],
     [
       "💀 ราชันวิญญาณ",
       "⏳ เทพแห่งกาลเวลา",
       "🗡️ อัศวินแห่งความมืด",
       "🌙 เทพจันทราและความฝัน",
-      "🧙‍♂️ จอมเวทความรู้อนันต์"
+      "🧙‍♂️ จอมเวทแห่งอนันต์"
     ]
   ];
 
@@ -186,12 +191,15 @@ class FocusController extends GetxController {
       _generateNothingEvent();
     } else if (ranNumber <= 95) {
       _generateEnemyEvent();
-    } else {
+    } else if (questIsActive == false) {
       _generateVillageEvent();
+    } else {
+      _generateEnemyEvent();
     }
   }
 
   void _generateVillageEvent() {
+    questIsActive = true;
     final villageType = _getRandomVillageType();
     final questDifficulty = _tableController.selectQuest();
     questNumber = questDifficulty;
@@ -199,6 +207,9 @@ class FocusController extends GetxController {
     final enemyCount = _tableController.enemyCount(questDifficulty);
     enemyQuestCounter = enemyCount;
     final (exp, gold) = _tableController.questReward(questDifficulty);
+    questExp = exp;
+    questGold = gold;
+    questEnemyNumber = enemyCount;
 
     _updateEncounter("🏡", """
     $villageType
@@ -211,7 +222,8 @@ class FocusController extends GetxController {
   }
 
   void _generateNothingEvent() {
-    _updateEncounter("🌟", "Nothing happened...\n");
+    _updateEncounter("🌲🌲🌲",
+        "คุณก้าวเท้าเดินไปบนเส้นทางอันเงียบสงบไม่มีสิ่งใดมารบกวนการเดินทางอันแสนผ่อนคลายของคุณ");
     _addLogEntry(
         "🌟", "Peaceful", "You continue your journey without incident.");
   }
@@ -229,12 +241,23 @@ class FocusController extends GetxController {
         "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
   }
 
+  void questSlayer(
+    String name,
+  ) {
+    if (name == enemyQuestName) {
+      enemyQuestCounter += 1;
+    }
+
+    if (enemyQuestCounter == questEnemyNumber) {}
+  }
+
   void _generateRestEvent() {
     double intelligenceBonus =
         _getSpecialPercentage(_characterController.special.value.intelligence);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
 
-    _updateEncounter("🏕️", "Found a safe spot to rest. Healed $healing HP.\n");
+    _updateEncounter("🏕️",
+        "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย");
     _addLogEntry(
         "🏕️", "Rest", "Found a safe spot to rest. Healed $healing HP.");
   }
@@ -306,32 +329,32 @@ class FocusController extends GetxController {
       int index, String enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "$enemy เลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ ✨$exp EXP $coin Gold",
-        "$enemy กระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น 💪$exp EXP $coin Gold",
-        "$enemy เนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น 🎉$exp EXP $coin Gold",
-        "$enemy เลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ 👑$exp EXP $coin Gold",
-        "$enemy แผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ 🏆$exp EXP $coin Gold"
+        "$enemy เลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ $exp 🧿 $coin 💰",
+        "$enemy กระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น $exp 🧿 $coin 💰",
+        "$enemy เนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น $exp 🧿 $coin 💰",
+        "$enemy เลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ $exp 🧿 $coin 💰",
+        "$enemy แผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy เลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ 💪$exp EXP $coin Gold",
-        "$enemy ร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น 🛡️$exp EXP $coin Gold",
-        "$enemy กระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ 🎖️$exp EXP $coin Gold",
-        "$enemy เนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก 🏅$exp EXP $coin Gold",
-        "$enemy ร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ 🌟$exp EXP $coin Gold"
+        "$enemy เลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ $exp 🧿 $coin 💰",
+        "$enemy ร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น $exp 🧿 $coin 💰",
+        "$enemy กระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ $exp 🧿 $coin 💰",
+        "$enemy เนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก $exp 🧿 $coin 💰",
+        "$enemy ร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy โลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก 🏅$exp EXP $coin Gold",
-        "$enemy ร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ 🔥$exp EXP $coin Gold",
-        "$enemy เนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า 🎇$exp EXP $coin Gold",
-        "$enemy ตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ 🌠$exp EXP $coin Gold",
-        "$enemy จิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ 🏆$exp EXP $coin Gold"
+        "$enemy โลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก $exp 🧿 $coin 💰",
+        "$enemy ร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ $exp 🧿 $coin 💰",
+        "$enemy เนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp 🧿 $coin 💰",
+        "$enemy ตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ $exp 🧿 $coin 💰",
+        "$enemy จิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy ร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง 🏆$exp EXP $coin Gold",
-        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง 💫$exp EXP $coin Gold",
-        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ 🎇$exp EXP $coin Gold",
-        "$enemy ท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน 🌠$exp EXP $coin Gold",
-        "$enemy ท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ 👑$exp EXP $coin Gold"
+        "$enemy ร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง $exp 🧿 $coin 💰",
+        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง $exp 🧿 $coin 💰",
+        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ $exp 🧿 $coin 💰",
+        "$enemy ท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน $exp 🧿 $coin 💰",
+        "$enemy ท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ $exp 🧿 $coin 💰"
       ]
     ];
 
