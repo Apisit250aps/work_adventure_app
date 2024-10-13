@@ -76,11 +76,11 @@ class FocusController extends GetxController {
       "🧙🏻‍♂️ จอมมารแห่งความหายนะ"
     ],
     [
-      "💀 มอร์ติส เรกซ์ ราชาแห่งวิญญาณ",
-      "⏳ คโรโนส เทพแห่งกาลเวลาที่หยุดนิ่ง",
-      "🗡️ เซอร์กริมบาลด์ อัศวินแห่งความมืด",
-      "🌙 ลูนาเรีย เทพธิดาแห่งจันทราและความฝัน",
-      "🧙‍♂️ อาซาเซล จอมเวทแห่งความรู้อนันต์"
+      "💀 ราชันวิญญาณ",
+      "⏳ เทพแห่งกาลเวลา",
+      "🗡️ อัศวินแห่งความมืด",
+      "🌙 เทพจันทราและความฝัน",
+      "🧙‍♂️ จอมเวทความรู้อนันต์"
     ]
   ];
 
@@ -303,22 +303,35 @@ class FocusController extends GetxController {
       int index, String enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "ต่อกร $enemy! ⚔️ เสียเลือด $damage ชัยชนะเป็นของท่าน ✨ ได้ $exp EXP $coin ทองคำ",
-        "ดาบปะทะ $enemy 🗡️ บาดแผล $damage ท่านเอาชนะได้ 💪 รับ $exp EXP $coin เหรียญ"
+        "$enemy เลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ ✨$exp EXP $coin Gold",
+        "$enemy กระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น 💪$exp EXP $coin Gold",
+        "$enemy เนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น 🎉$exp EXP $coin Gold",
+        "$enemy เลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ 👑$exp EXP $coin Gold",
+        "$enemy แผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ 🏆$exp EXP $coin Gold"
       ],
       [
-        "ดวลดาบ $enemy! ⚔️ บาดเจ็บ $damage ท่านเอาชนะได้ 💪 คว้า $exp EXP $coin ทองคำ",
-        "$enemy โหมโจมตี! 🌪️ เสียเลือด $damage ท่านต้านทานได้ 🛡️ รับ $exp EXP $coin เหรียญ"
+        "$enemy เลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ 💪$exp EXP $coin Gold",
+        "$enemy ร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น 🛡️$exp EXP $coin Gold",
+        "$enemy กระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ 🎖️$exp EXP $coin Gold",
+        "$enemy เนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก 🏅$exp EXP $coin Gold",
+        "$enemy ร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ 🌟$exp EXP $coin Gold"
       ],
       [
-        "ศึกใหญ่ $enemy! 🐉 เลือดท่วม $damage ท่านเอาชนะได้ 🏅 คว้า $exp EXP $coin ทองคำ",
-        "$enemy อสูรร้าย! 👹 บาดเจ็บสาหัส $damage ท่านไม่ยอมแพ้ 💪🔥 ได้ $exp EXP $coin ทอง"
+        "$enemy โลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก 🏅$exp EXP $coin Gold",
+        "$enemy ร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ 🔥$exp EXP $coin Gold",
+        "$enemy เนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า 🎇$exp EXP $coin Gold",
+        "$enemy ตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ 🌠$exp EXP $coin Gold",
+        "$enemy จิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ 🏆$exp EXP $coin Gold"
       ],
       [
-        "ท้าชนเทพ $enemy! 🌟 เกือบพ่ายแพ้ $damage ท่านชนะอย่างเหลือเชื่อ 🏆🌈 ได้ $exp EXP $coin ทองคำ",
-        "ศึกแห่งตำนาน $enemy! 🔱 บาดเจ็บสาหัส $damage ท่านเอาชนะได้ 🌠💫 คว้า $exp EXP $coin ทอง"
-      ],
+        "$enemy ร่างท่านแตกดับ $damage\nชำแหละศัตรูออกจากความจริง 🏆$exp EXP $coin Gold",
+        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดล้างศัตรูพ้นสรรพสิ่ง 💫$exp EXP $coin Gold",
+        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากทุกความเป็นไปได้ 🎇$exp EXP $coin Gold",
+        "$enemy ท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน 🌠$exp EXP $coin Gold",
+        "$enemy ท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ 👑$exp EXP $coin Gold"
+      ]
     ];
+
     return battleDescriptions[index]
         [Random().nextInt(battleDescriptions[index].length)];
   }

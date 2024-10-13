@@ -30,7 +30,7 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get _levelMultiplier =>
-      pow(1.1, _characterController.calculateLevel() / 10) * 10;
+      pow(1.1, _characterController.calculateLevel() / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
   int calculateCharacterHP() => special['e']! * 10 + special['s']! ~/ 2;
@@ -141,10 +141,19 @@ class TableController extends GetxController {
       (5 - charismaQuest ~/ 2).clamp(1, 5)
     ];
 
-    final List<int> sortedLevels = List.from(difficultyLevels)..sort();
+    final List<int> sorted = List.from(difficultyLevels)..sort();
 
-    final selectedChance = sortedLevels.lastWhere((chance) => dice >= chance,
-        orElse: () => sortedLevels.first);
+    int selectedChance = 3;
+    if (dice <= sorted[3]) {
+      selectedChance = sorted[3];
+    } else {
+      for (int i = 2; i < sorted.length; i--) {
+        if (dice <= sorted[i] + sorted[i + 1]) {
+          selectedChance = sorted[i];
+          break;
+        }
+      }
+    }
 
     return difficultyLevels.indexOf(selectedChance);
   }
@@ -177,14 +186,14 @@ class TableController extends GetxController {
   // การคำนวณศัตรู
   int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
-    final characterLevel = CharacterController().calculateLevel() ~/ 20;
+    final characterLevel = _characterController.calculateLevel() ~/ 20;
 
     // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
     final List<int> enemyChance = [
-      (13 - characterLevel).clamp(1, 6), // Common
-      (7 - characterLevel).clamp(3, 10), // Uncommon
-      (2 + characterLevel).clamp(4, 12), // Rare
-      (1 + characterLevel).clamp(1, 5) // God
+      (12 - characterLevel).clamp(7, 12), // Common
+      (6 - characterLevel ~/ 1.5).clamp(1, 6), // Uncommon
+      (2 + characterLevel ~/ 1.5).clamp(2, 7), // Rare
+      (1 + characterLevel).clamp(1, 6) // God
     ];
 
     if (isActive) {
@@ -195,12 +204,20 @@ class TableController extends GetxController {
     }
 
     // เรียงลำดับโอกาสจากน้อยไปมาก
-    final sortedEnemyChance = List.from(enemyChance)..sort();
+    final sorted = List.from(enemyChance)..sort();
 
     // เลือกประเภทศัตรูตามผลลูกเต๋า
-    final selectedChance = sortedEnemyChance.lastWhere(
-        (chance) => dice >= chance,
-        orElse: () => sortedEnemyChance.first);
+    int selectedChance = 3;
+    if (dice <= sorted[3]) {
+      selectedChance = sorted[3];
+    } else {
+      for (int i = 2; i < sorted.length; i--) {
+        if (dice <= sorted[i] + sorted[i + 1]) {
+          selectedChance = sorted[i];
+          break;
+        }
+      }
+    }
 
     // หาดัชนีของประเภทศัตรูที่ถูกเลือก
     return enemyChance.indexOf(selectedChance);
@@ -208,7 +225,7 @@ class TableController extends GetxController {
 
   int timeEventRun() {
     int baseTimeEvent = 10;
-    int agilityPerTime = special["a"]! ~/ 10;
+    int agilityPerTime = (special["a"]! / 10).round();
     int timeEvent = baseTimeEvent - agilityPerTime;
     return timeEvent;
   }
