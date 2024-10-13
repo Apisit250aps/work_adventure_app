@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class RestServiceController extends GetxController {
-  String get base => 'http://192.168.1.44:3000';
+  String get base => 'http://192.168.126.77:3000';
 
   //
 
