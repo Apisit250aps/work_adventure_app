@@ -29,11 +29,8 @@ class TasksController extends GetxController {
     selectedStatusIndex.value = index;
   }
 
-  final RxList<Task> tasks = <Task>[].obs;
-  RxList<Task> get todoTasks =>
-      tasks.where((task) => !task.isDone).toList().obs;
-  RxList<Task> get doneTasks => tasks.where((task) => task.isDone).toList().obs;
-
+  RxList<Task> tasks = <Task>[].obs;
+ 
   @override
   void onInit() {
     // TODO: implement onInit
@@ -109,6 +106,7 @@ class TasksController extends GetxController {
   }
 
   Future<void> updateTask(Task task) async {
+    isLoading.value = true;
     try {
       final taskId = task.id;
       final path = _rest.updateTask; // Base path for tasks
@@ -120,8 +118,7 @@ class TasksController extends GetxController {
         if (index != -1) {
           tasks[index] = task;
           tasks.refresh();
-          todoTasks.refresh();
-          doneTasks.refresh();
+  
         }
       } else {
         throw Exception('Failed to update task: ${response.statusCode}');
@@ -129,6 +126,9 @@ class TasksController extends GetxController {
     } catch (e) {
       print('Error updating task: $e');
       rethrow;
+    }
+    finally {
+      isLoading.value = false;
     }
   }
 

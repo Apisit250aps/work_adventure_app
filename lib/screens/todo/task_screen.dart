@@ -69,8 +69,8 @@ class TaskScreen extends GetWidget<TasksController> {
         ),
         body: TabBarView(
           children: [
-            _buildTaskList(() => controller.todoTasks),
-            _buildTaskList(() => controller.doneTasks),
+            _buildTaskList(false),
+            _buildTaskList(true),
           ],
         ),
         floatingActionButton: const TaskFloatingActionButton(),
@@ -79,12 +79,13 @@ class TaskScreen extends GetWidget<TasksController> {
     );
   }
 
-  Widget _buildTaskList(List<Task> Function() taskSelector) {
+  Widget _buildTaskList(bool isDone) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
-      final tasks = taskSelector();
+      final tasks =
+          controller.tasks.where((task) => task.isDone == isDone).toList();
       return ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) => TaskListTile(tasks[index]),
