@@ -43,6 +43,8 @@ class FocusController extends GetxController {
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
   int rollOne = TableController().singleDiceRoll();
+  String enemyQuestName = "";
+  int enemyQuestCounter = 0;
 
   // New method to get Special values as percentages
   double _getSpecialPercentage(int value) => value / 100;
@@ -128,27 +130,58 @@ class FocusController extends GetxController {
       "🗻 หมู่บ้านกลางภูเขา"
     ];
 
-    final questDifficulties = [
-      "ง่าย",
-      "ปานกลาง",
-      "ท้าทาย",
-      "เกือบเป็นไปไม่ได้"
+    final enemyQuest = [
+      [
+        "🐺 หมาป่าจิ๋ว",
+        "🦇 ค้างคาวราตรี",
+        "🐗 หมูป่าพิฆาต",
+        "🦊 จิ้งจอกไฟ",
+        "🐍 อสรพิษ"
+      ],
+      [
+        "🧟 ซอมบี้ราชา",
+        "💀 โครงกระดูกอมตะ",
+        "🧛 แวมไพร์เลือดเย็น",
+        "🐲 มังกรไฟนรก",
+        "🧙 พ่อมดมรณะ"
+      ],
+      [
+        "🐉 มังกรทมิฬ",
+        "💀 ราชาลิชอนธการ",
+        "🌑 ปีศาจแห่งความมืด",
+        "🧛🏻‍♂️ เจ้าแวมไพร์ไร้พ่าย",
+        "🧙🏻‍♂️ จอมมารแห่งความหายนะ"
+      ],
+      [
+        "💀 มอร์ติส เรกซ์ ราชาแห่งวิญญาณ",
+        "⏳ คโรโนส เทพแห่งกาลเวลาที่หยุดนิ่ง",
+        "🗡️ เซอร์กริมบาลด์ อัศวินแห่งความมืด",
+        "🌙 ลูนาเรีย เทพธิดาแห่งจันทราและความฝัน",
+        "🧙‍♂️ อาซาเซล จอมเวทแห่งความรู้อนันต์"
+      ]
     ];
+
+    final questDifficulties = ["ง่าย", "ปานกลาง", "ท้าทาย", "เป็นไปไม่ได้"];
 
     final villageType = villageTypes[Random().nextInt(villageTypes.length)];
     final questDifficulty = TableController().selectQuest();
 
-    // String questDescription =
-    //     generateQuest(questDifficulties.indexOf(questDifficulty));
+    String questDescription = enemyQuest[questDifficulty]
+        [Random().nextInt(enemyQuest[questDifficulty].length)];
 
-    // _currentEncounterIcon.value = "🏡";
-    // _currentEncounterDescription.value = """
-    // $villageType
-    // เควส: $questDescription
-    // ความยาก: $questDifficulty
-    // รางวัล: $expReward EXP, $goldReward ทองคำ
+    int enemyCount = TableController().enemyCount(questDifficulty);
+    enemyQuestCounter = enemyCount;
 
-    // """;
+    var (exp, gold) = TableController().questReward(questDifficulty);
+
+    _currentEncounterIcon.value = "🏡";
+    _currentEncounterDescription.value = """
+    $villageType
+    เควส: กำจัด $questDescription $enemyCount ตัว
+    ความยาก: ${questDifficulties[questDifficulty]}
+    รางวัล: $exp EXP, $gold ทองคำ
+
+    """;
 
     _addLogEntry("🏡", "Village", "พบ $villageType และได้รับเควส: ");
   }

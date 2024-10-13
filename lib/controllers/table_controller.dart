@@ -29,7 +29,7 @@ class TableController extends GetxController {
   }
 
   // ฟังก์ชันยูทิลิตี้
-  int _percentage(int value) => (value / 100).round();
+  double _percentage(int value) => (value / 100);
 
   double get _levelMultiplier =>
       pow(1.1, _characterController.calculateLevel() / 10) * 10;
@@ -41,17 +41,20 @@ class TableController extends GetxController {
   // การทอยลูกเต๋า
   int rollDice() {
     final count = (special['c']! ~/ 21).clamp(1, 3);
-    return List.generate(count, (_) => singleDiceRoll())
+    int dice = singleDiceRoll();
+    double specialRollPercentage = _percentage(specialRoll("l"));
+    int totalRoll =
+        (dice + (dice * specialRollPercentage).floor()).clamp(0, 21);
+
+    return List.generate(count, (_) => totalRoll)
         .reduce((a, b) => _compareDiceRolls(a, b));
   }
 
   int singleDiceRoll() {
-    final roll = _random.nextInt(21) + 1;
-    return roll == 21
-        ? 100
-        : roll == 1
-            ? 0
-            : roll;
+    int normalRoll = _random.nextInt(20) + 1;
+    if (normalRoll == 21) return 100;
+    if (normalRoll == 1) return 0;
+    return normalRoll;
   }
 
   int _compareDiceRolls(int a, int b) {
@@ -62,7 +65,9 @@ class TableController extends GetxController {
 
   int specialRoll(String attribute) {
     if (!special.containsKey(attribute)) return 0;
-    final specialDice = (_random.nextInt(21) / 10).round();
+    final luckBonus = (special["l"]! ~/ 1.5);
+    final specialDice =
+        (_random.nextInt((special[attribute]! + luckBonus + 1)) / 10).round();
     return special[attribute]! + specialDice;
   }
 
@@ -88,7 +93,7 @@ class TableController extends GetxController {
     return rollDice() + specialRoll('p') <= threshold;
   }
 
-  // การคำนวณความเสียหาย
+  // การคำนวณลดความเสียหาย
   int calculateDamage(int damage) {
     const baseReduction = 0.05;
     const maxReduction = 0.80;
@@ -120,6 +125,12 @@ class TableController extends GetxController {
     return 1 + (strengthRoll - 80) / 20 * (lateGameBoost - 1);
   }
 
+  // การคำนวณลดความเสียหาย
+  int hpReduction(int damage) {
+    int characterHP = calculateCharacterHP();
+    return (characterHP - damage).clamp(0, double.infinity).toInt();
+  }
+
   // การคำนวณเควส
   int selectQuest() {
     final int dice = singleDiceRoll();
@@ -145,7 +156,7 @@ class TableController extends GetxController {
     return difficultyLevels.indexOf(index);
   }
 
-  (int, int) calculateQuest(int difficulty) {
+  (int, int) questReward(int difficulty) {
     const questRewards = [
       [30, 50], // EXP, Coin สำหรับเควสธรรมดา
       [60, 150], // สำหรับเควสไม่ธรรมดา
@@ -156,9 +167,17 @@ class TableController extends GetxController {
     int exp = (questRewards[difficulty][0] * _levelMultiplier).round();
     int gold = (questRewards[difficulty][1] * _levelMultiplier).round();
 
-    int expReward = exp + (exp * _percentage(specialRoll("i")));
-    int goldReward = gold + (gold * _percentage(specialRoll("c")));
+    int expReward = (exp + (exp * _percentage(specialRoll("i")))).round();
+    int goldReward = (gold + (gold * _percentage(specialRoll("c")))).round();
 
     return (expReward, goldReward);
+  }
+
+  int enemyCount(int difficulty) {
+    final agilityPerEnemy = specialRoll("a");
+    final percentage = _percentage(agilityPerEnemy);
+    final baseEnemyCount = 50 - (50 * percentage);
+    final adjustedEnemyCount = baseEnemyCount ~/ (difficulty + 1);
+    return adjustedEnemyCount.clamp(3, 50);
   }
 }
