@@ -7,11 +7,9 @@ class TableController extends GetxController {
       Get.find<CharacterController>();
   final Random _random = Random();
 
-  late final Map<String, int> special;
+  Map<String, int> special = {};
 
-  @override
-  void onInit() {
-    super.onInit();
+  TableController() {
     _initializeSpecialAttributes();
   }
 
