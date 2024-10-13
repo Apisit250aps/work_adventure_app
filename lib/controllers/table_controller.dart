@@ -143,17 +143,13 @@ class TableController extends GetxController {
 
     final List<int> sorted = List.from(difficultyLevels)..sort();
 
-    int selectedChance = 3;
-    if (dice <= sorted[3]) {
-      selectedChance = sorted[3];
-    } else {
-      for (int i = 2; i < sorted.length; i--) {
-        if (dice <= sorted[i] + sorted[i + 1]) {
-          selectedChance = sorted[i];
-          break;
-        }
-      }
-    }
+    int selectedChance = dice <= sorted[3]
+        ? sorted[3]
+        : dice <= sorted[2] + sorted[3]
+            ? sorted[2]
+            : dice <= sorted[1] + sorted[2]
+                ? sorted[1]
+                : sorted[0];
 
     return difficultyLevels.indexOf(selectedChance);
   }
@@ -207,17 +203,13 @@ class TableController extends GetxController {
     final sorted = List.from(enemyChance)..sort();
 
     // เลือกประเภทศัตรูตามผลลูกเต๋า
-    int selectedChance = 3;
-    if (dice <= sorted[3]) {
-      selectedChance = sorted[3];
-    } else {
-      for (int i = 2; i < sorted.length; i--) {
-        if (dice <= sorted[i] + sorted[i + 1]) {
-          selectedChance = sorted[i];
-          break;
-        }
-      }
-    }
+    int selectedChance = dice <= sorted[3]
+        ? sorted[3]
+        : dice <= sorted[2] + sorted[3]
+            ? sorted[2]
+            : dice <= sorted[1] + sorted[2]
+                ? sorted[1]
+                : sorted[0];
 
     // หาดัชนีของประเภทศัตรูที่ถูกเลือก
     return enemyChance.indexOf(selectedChance);
