@@ -13,78 +13,54 @@ class FocusScreen extends GetView<FocusController> {
     return Container(
       color: backgroundColor,
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Stack(
           children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black, width: 2),
-                      ),
-                      child: Obx(
-                        () => CircularTimer(
-                          timeRemaining: controller.timeRemaining,
-                          totalTime: controller.totalTime,
-                          size: 250,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black, width: 2),
+                          ),
+                          child: Obx(
+                            () => CircularTimer(
+                              timeRemaining: controller.timeRemaining,
+                              totalTime: controller.totalTime,
+                              size: 250,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 30),
+                        Obx(
+                          () => Text(
+                            controller.currentEncounterIcon,
+                            style: const TextStyle(fontSize: 70),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Obx(() => Text(
+                                controller.currentEncounterDescription,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.grey[800]),
+                              )),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 30),
-                    Obx(
-                      () => Text(
-                        controller.currentEncounterIcon,
-                        style: const TextStyle(fontSize: 70),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: Obx(() => Text(
-                            controller.currentEncounterDescription,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18, color: Colors.grey[800]),
-                          )),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(bottom: 20),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //     children: [
-            //       Obx(() => _buildActionButton(
-            //             onPressed: controller.toggleActive,
-            //             label: controller.isActive ? 'Pause' : 'Focus',
-            //             color: controller.isActive
-            //                 ? const Color.fromARGB(255, 255, 76, 76)
-            //                 : const Color.fromARGB(255, 0, 0, 0),
-            //             icon: controller.isActive
-            //                 ? Icons.pause
-            //                 : Icons.play_arrow,
-            //           )),
-            //       _buildActionButton(
-            //         onPressed: controller.resetFocus,
-            //         label: 'Reset',
-            //         color: const Color.fromARGB(255, 0, 0, 0),
-            //         icon: Icons.refresh,
-            //       ),
-            //       _buildActionButton(
-            //         onPressed: () => Get.back(),
-            //         label: 'Set Time',
-            //         color: const Color.fromARGB(255, 0, 0, 0),
-            //         icon: Icons.timer,
-            //       ),
-            //     ],
-            //   ),
-            // ),
+            // Add the HP and EXP bars at the bottom
+            const HPEXPBars(),
           ],
         ),
       ),
@@ -245,6 +221,102 @@ class AdventureLogBottomSheet extends GetView<FocusController> {
                     );
                   },
                 )),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProgressBar extends StatelessWidget {
+  final int value;
+  final int max;
+  final Color color;
+  final String label;
+  final bool isReversed;
+
+  const ProgressBar({
+    super.key,
+    required this.value,
+    required this.max,
+    required this.color,
+    required this.label,
+    this.isReversed = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          height: 20,
+          color: const Color.fromARGB(255, 234, 234, 234),
+        ),
+        Align(
+          alignment: isReversed ? Alignment.centerRight : Alignment.centerLeft,
+          child: FractionallySizedBox(
+            widthFactor: value / max,
+            child: Container(
+              height: 20,
+              color: color,
+            ),
+          ),
+        ),
+        Container(
+          height: 20,
+          alignment: isReversed ? Alignment.centerRight : Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            '$label: $value/$max',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              shadows: [
+                Shadow(
+                  offset: const Offset(1.0, 1.0),
+                  blurRadius: 3.0,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class HPEXPBars extends StatelessWidget {
+  const HPEXPBars({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mock data
+    final hp = {'current': 75, 'max': 100};
+    final exp = {'current': 350, 'max': 1000};
+
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Row(
+        children: [
+          Expanded(
+            child: ProgressBar(
+              value: hp['current']!,
+              max: hp['max']!,
+              color: const Color(0xFFFC766A),
+              label: 'HP',
+            ),
+          ),
+          Expanded(
+            child: ProgressBar(
+              value: exp['current']!,
+              max: exp['max']!,
+              color: const Color(0xFF5B84B1),
+              label: 'EXP',
+              isReversed: true,
+            ),
           ),
         ],
       ),
