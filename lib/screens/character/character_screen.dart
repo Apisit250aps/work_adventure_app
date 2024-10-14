@@ -12,7 +12,7 @@ class CharacterScreen extends GetView<CharacterController> {
 
   @override
   Widget build(BuildContext context) {
-    final userController = Get.find<UserController>();
+    Get.find<UserController>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -24,7 +24,6 @@ class CharacterScreen extends GetView<CharacterController> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        
       ),
       body: RefreshIndicator(
         onRefresh: controller.loadCharacters,

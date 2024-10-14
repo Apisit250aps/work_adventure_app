@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/constant.dart';
-import 'package:work_adventure/widgets/ui/forms/character_form.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -22,7 +21,7 @@ class SettingScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -72,7 +71,7 @@ class SettingScreen extends StatelessWidget {
 
   Widget upStatusBar(String status, int value) {
     return Container(
-      margin: EdgeInsets.only(bottom: 0),
+      margin: const EdgeInsets.only(bottom: 0),
       padding: const EdgeInsets.symmetric(
         horizontal: 30,
       ),
@@ -94,10 +93,10 @@ class SettingScreen extends StatelessWidget {
               children: [
                 IconButton(
                   style: ButtonStyle(
-                      elevation: WidgetStatePropertyAll(5),
+                      elevation: const WidgetStatePropertyAll(5),
                       backgroundColor: WidgetStatePropertyAll(baseColor)),
                   onPressed: () {},
-                  icon: Icon(Boxicons.bx_minus),
+                  icon: const Icon(Boxicons.bx_minus),
                 ),
                 Container(
                   width: 75,
@@ -115,10 +114,10 @@ class SettingScreen extends StatelessWidget {
                 ),
                 IconButton(
                   style: ButtonStyle(
-                      elevation: WidgetStatePropertyAll(5),
+                      elevation: const WidgetStatePropertyAll(5),
                       backgroundColor: WidgetStatePropertyAll(baseColor)),
                   onPressed: () {},
-                  icon: Icon(Boxicons.bx_plus),
+                  icon: const Icon(Boxicons.bx_plus),
                 )
               ],
             ),
