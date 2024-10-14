@@ -26,17 +26,21 @@ class FocusScreen extends GetView<FocusController> {
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.black, width: 2),
                       ),
-                      child: Obx(() => CircularTimer(
-                            timeRemaining: controller.timeRemaining,
-                            totalTime: controller.totalTime,
-                            size: 250,
-                          )),
+                      child: Obx(
+                        () => CircularTimer(
+                          timeRemaining: controller.timeRemaining,
+                          totalTime: controller.totalTime,
+                          size: 250,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 30),
-                    Obx(() => Text(
-                          controller.currentEncounterIcon,
-                          style: const TextStyle(fontSize: 70),
-                        )),
+                    Obx(
+                      () => Text(
+                        controller.currentEncounterIcon,
+                        style: const TextStyle(fontSize: 70),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
