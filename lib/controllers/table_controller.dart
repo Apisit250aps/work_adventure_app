@@ -34,7 +34,7 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int calculateCharacterHP() => special['e']! * 10 + special['s']! ~/ 2;
-  int calculateCharacterStamina() => (special['s']! ~/ 2).clamp(5, 50);
+  int calculateCharacterStamina() => (special['s']! ~/ 2).clamp(6, 51);
 
   // การทอยลูกเต๋า
   int rollDice() {
@@ -225,5 +225,13 @@ class TableController extends GetxController {
 
   //เหตุการณ์พัก
   bool timeToRest(int counter) =>
-      counter == calculateCharacterStamina() ? true : false;
+      (counter == calculateCharacterStamina()) ? true : false;
+
+  int restTimer() {
+    int baseTimeRest = 10;
+    int endurancePerTime = (special["e"]! ~/ 15);
+    int timeRest =
+        ((baseTimeRest - endurancePerTime) - (timeEventRun() + 1)).clamp(1, 10);
+    return timeRest;
+  }
 }

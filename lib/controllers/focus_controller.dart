@@ -31,12 +31,14 @@ class FocusController extends GetxController {
   final RxString _currentEncounterIcon = "🌟".obs;
   final RxString _currentEncounterDescription =
       "Waiting for adventure...\n".obs;
-  RxInt eventCount = 0.obs;
+  final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
+  RxInt timeToRestCounter = 0.obs;
 
   // Timers
   Timer? _timer;
   Timer? _eventTimer;
+  Timer? _restTimer;
 
   // Getters
   int get timeRemaining => _timeRemaining.value;
@@ -49,8 +51,9 @@ class FocusController extends GetxController {
 
   // Other variables
   int rollOne = 0;
+  late final int _eventIntervalSeconds;
 
-  // Quest
+  // Quest variables
   String enemyQuestName = "";
   int enemyQuestCounter = 0;
   bool questIsActive = false;
@@ -59,7 +62,13 @@ class FocusController extends GetxController {
   int questExp = 0;
   int questEnemyNumber = 0;
 
-  final enemy = [
+  // Rest variables
+  bool isRest = false;
+  final RxBool _isResting = false.obs;
+  final RxInt _restTimeRemaining = 0.obs;
+
+  // Enemy data
+  final List<List<String>> enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
       "🦇 ค้างคาวราตรี",
@@ -90,19 +99,18 @@ class FocusController extends GetxController {
     ]
   ];
 
-  // Initialize focus session
+  @override
+  void onInit() {
+    super.onInit();
+    _eventIntervalSeconds = _tableController.timeEventRun();
+  }
+
+  // Session management methods
   void initFocus(int minutes) {
     _totalTime.value = minutes * 60;
     _timeRemaining.value = _totalTime.value;
     _resetSessionState();
     _addLogEntry("🏁", "Adventure Start", "Your journey begins!");
-  }
-
-  // Toggle active state
-  @override
-  void onInit() {
-    super.onInit();
-    _eventIntervalSeconds = _tableController.timeEventRun();
   }
 
   void toggleActive() {
@@ -115,34 +123,6 @@ class FocusController extends GetxController {
     }
   }
 
-  void _startEventTimer() {
-    // Cancel existing timer if any
-    _eventTimer?.cancel();
-
-    _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
-      if (_isActive.value && _timeRemaining.value > 0) {
-        generateEvent();
-      }
-    });
-  }
-
-  void _stopTimers() {
-    _timer?.cancel();
-    _eventTimer?.cancel();
-  }
-
-  // Keep generateEvent() as is
-  void generateEvent() {
-    eventCount++;
-
-    if (_tableController.timeToRest(eventCount.toInt())) {
-      _generateRestEvent();
-    } else {
-      _generateRandomEvent();
-    }
-  }
-
-  // Reset focus session
   void resetFocus() {
     _stopTimers();
     _timeRemaining.value = _totalTime.value;
@@ -150,13 +130,12 @@ class FocusController extends GetxController {
     _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
   }
 
-  // Show summary
   void showSummary() {
     _showingSummary.value = true;
     _addLogEntry("🏁", "Summary", "Adventure completed!");
   }
 
-  // Private methods
+  // Timer methods
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_timeRemaining.value > 0) {
@@ -167,7 +146,34 @@ class FocusController extends GetxController {
     });
   }
 
-  late final int _eventIntervalSeconds;
+  void _startEventTimer() {
+    _eventTimer?.cancel();
+    _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
+      if (_isActive.value && _timeRemaining.value > 0) {
+        generateEvent();
+      }
+    });
+  }
+
+  void _startRestTimer() {
+    _restTimer?.cancel();
+    _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (_restTimeRemaining.value > 0) {
+        _restTimeRemaining.value--;
+      } else {
+        _isResting.value = false;
+        _restTimer?.cancel();
+
+        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+      }
+    });
+  }
+
+  void _stopTimers() {
+    _timer?.cancel();
+    _eventTimer?.cancel();
+    _restTimer?.cancel();
+  }
 
   void _endSession() {
     _stopTimers();
@@ -177,11 +183,27 @@ class FocusController extends GetxController {
 
   void _resetSessionState() {
     _isActive.value = false;
+    _isResting.value = false;
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
-    _currentEncounterDescription.value = "Waiting for adventure...\n";
+    _currentEncounterDescription.value = "รอการผจญภัย...\n";
     eventCount.value = 0;
     _showingSummary.value = false;
+    timeToRestCounter.value = 0;
+    _restTimeRemaining.value = 0;
+  }
+
+  // Event generation methods
+  void generateEvent() {
+    if (!_isResting.value) {
+      timeToRestCounter++;
+      if (_tableController.timeToRest(timeToRestCounter.toInt())) {
+        timeToRestCounter.value = 0;
+        _generateRestEvent();
+      } else {
+        _generateRandomEvent();
+      }
+    }
   }
 
   void _generateRandomEvent() {
@@ -192,7 +214,7 @@ class FocusController extends GetxController {
       _generateNothingEvent();
     } else if (ranNumber <= 95) {
       _generateEnemyEvent();
-    } else if (questIsActive == false) {
+    } else if (!questIsActive) {
       _generateVillageEvent();
     } else {
       _generateEnemyEvent();
@@ -242,27 +264,24 @@ class FocusController extends GetxController {
         "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
   }
 
-  void questSlayer(
-    String name,
-  ) {
-    if (name == enemyQuestName) {
-      enemyQuestCounter += 1;
-    }
-
-    if (enemyQuestCounter == questEnemyNumber) {}
-  }
-
   void _generateRestEvent() {
+    _isResting.value = true;
     double intelligenceBonus =
         _getSpecialPercentage(_characterController.special.value.intelligence);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
+    int restDuration = _tableController.restTimer();
+    int restDurationShow = restDuration + _eventIntervalSeconds + 1;
 
     _updateEncounter("🏕️",
-        "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย");
-    _addLogEntry(
-        "🏕️", "Rest", "Found a safe spot to rest. Healed $healing HP.");
+        "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย\nเวลาพัก: $restDurationShow วินาที");
+    _addLogEntry("🏕️", "พัก",
+        "พบจุดพักที่ปลอดภัย รักษา $healing HP\nพักเป็นเวลา $restDurationShow วินาที");
+
+    _restTimeRemaining.value = restDuration;
+    _startRestTimer();
   }
 
+  // Helper methods
   void _updateEncounter(String icon, String description) {
     _currentEncounterIcon.value = icon;
     _currentEncounterDescription.value = description;
@@ -279,7 +298,6 @@ class FocusController extends GetxController {
         ));
   }
 
-  // Helper methods
   double _getSpecialPercentage(int value) => value / 100;
 
   String _getRandomVillageType() {
@@ -326,36 +344,38 @@ class FocusController extends GetxController {
     );
   }
 
+  // ... (previous code remains the same)
+
   String _getBattleDescription(
       int index, String enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "$enemy\nเลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ $exp 🧿 $coin 💰",
-        "$enemy\nกระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น $exp 🧿 $coin 💰",
-        "$enemy\nเนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น $exp 🧿 $coin 💰",
-        "$enemy\nเลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ $exp 🧿 $coin 💰",
-        "$enemy\nแผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ $exp 🧿 $coin 💰"
+        "$enemy พุ่งใส่\nเลือดท่านกระเซ็น $damage🩸\nบดขยี้ศัตรูราบคาบ $exp🧿 $coin💰",
+        "$enemy ตวัดเล็บ\nกระดูกท่านสั่น $damage🩸\nหักเขี้ยวเล็บศัตรูสิ้น $exp🧿 $coin💰",
+        "$enemy โจมตี\nเนื้อท่านฉีก $damage🩸\nเชือดเฉือนศัตรูขาดวิ่น $exp🧿 $coin💰",
+        "$enemy โผล่มา\nเลือดท่านพุ่ง $damage🩸\nเหยียบศัตรูย่อยยับ $exp🧿 $coin💰",
+        "$enemy คำราม\nแผลท่านแดงฉาน $damage🩸\nบดศัตรูเป็นจุณ $exp🧿 $coin💰"
       ],
       [
-        "$enemy\nเลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ $exp 🧿 $coin 💰",
-        "$enemy\nร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น $exp 🧿 $coin 💰",
-        "$enemy\nกระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ $exp 🧿 $coin 💰",
-        "$enemy\nเนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก $exp 🧿 $coin 💰",
-        "$enemy\nร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ $exp 🧿 $coin 💰"
+        "$enemy โฉบลง\nเลือดท่านสาด $damage🩸\nฉีกศัตรูเป็นชิ้นๆ $exp🧿 $coin💰",
+        "$enemy รุมเร้า\nร่างท่านระบม $damage🩸\nบั่นคอศัตรูขาดกระเด็น $exp🧿 $coin💰",
+        "$enemy ถีบ\nกระดูกท่านร้าว $damage🩸\nทิ้งศัตรูเป็นซากศพ $exp🧿 $coin💰",
+        "$enemy หมุนโจมตี\nเนื้อท่านแหลก $damage🩸\nสังหารศัตรูไม่เหลือซาก $exp🧿 $coin💰",
+        "$enemy ทะยานเข้า\nร่างท่านพรุน $damage🩸\nเผาศัตรูเป็นจุณ $exp🧿 $coin💰"
       ],
       [
-        "$enemy\nโลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก $exp 🧿 $coin 💰",
-        "$enemy\nร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ $exp 🧿 $coin 💰",
-        "$enemy\nเนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp 🧿 $coin 💰",
-        "$enemy\nตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ $exp 🧿 $coin 💰",
-        "$enemy\nจิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ $exp 🧿 $coin 💰"
+        "$enemy ปล่อยคลื่นพลัง\nโลหิตท่านทะลัก $damage🩸\nทำลายล้างศัตรูสิ้นซาก $exp🧿 $coin💰",
+        "$enemy เคลื่อนเร็วเหนือตา\nร่างท่านแหลกลาญ $damage🩸\nลบศัตรูออกจากความทรงจำ $exp🧿 $coin💰",
+        "$enemy ทะลุมิติ\nเนื้อท่านไหม้เกรียม $damage🩸\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp🧿 $coin💰",
+        "$enemy แผ่อำนาจ\nตัวตนท่านสลาย $damage🩸\nลบศัตรูออกจากทุกภพภูมิ $exp🧿 $coin💰",
+        "$enemy หยุดเวลา\nจิตท่านดับสูญ $damage🩸\nทำลายล้างศัตรูจากทุกมิติ $exp🧿 $coin💰"
       ],
       [
-        "$enemy\nร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง $exp 🧿 $coin 💰",
-        "$enemy\nตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง $exp 🧿 $coin 💰",
-        "$enemy\nท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ $exp 🧿 $coin 💰",
-        "$enemy\nท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน $exp 🧿 $coin 💰",
-        "$enemy\nท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ $exp 🧿 $coin 💰"
+        "$enemy ปรากฏทุกหนแห่ง\nร่างท่านแตกดับ $damage🩸\nล้างศัตรูออกจากความจริง $exp🧿 $coin💰",
+        "$enemy กลายเป็นพลังงาน\nตัวตนท่านสูญสิ้น $damage🩸\nกวาดศัตรูพ้นสรรพสิ่ง $exp🧿 $coin💰",
+        "$enemy ทำลายกฎธรรมชาติ\nท่านถูกลบจากกาลเวลา $damage🩸\nผลาญศัตรูจากความเป็นไปได้ $exp🧿 $coin💰",
+        "$enemy บิดเบือนความจริง\nท่านหายไปจากความทรงจำ $damage🩸\nบดศัตรูสู่ความไม่มีตัวตน $exp🧿 $coin💰",
+        "$enemy ก้าวข้ามตรรกะ\nท่านถูกลบจากความเป็นจริง $damage🩸\nลบศัตรูออกจากการดำรงอยู่ $exp🧿 $coin💰"
       ]
     ];
 
