@@ -222,4 +222,8 @@ class TableController extends GetxController {
     int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 10);
     return timeEvent;
   }
+
+  //เหตุการณ์พัก
+  bool timeToRest(int counter) =>
+      counter == calculateCharacterStamina() ? true : false;
 }

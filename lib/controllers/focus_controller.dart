@@ -31,7 +31,7 @@ class FocusController extends GetxController {
   final RxString _currentEncounterIcon = "🌟".obs;
   final RxString _currentEncounterDescription =
       "Waiting for adventure...\n".obs;
-  RxInt _eventCount = 0.obs;
+  RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
 
   // Timers
@@ -133,8 +133,9 @@ class FocusController extends GetxController {
 
   // Keep generateEvent() as is
   void generateEvent() {
-    _eventCount++;
-    if (_eventCount.value % 20 == 0) {
+    eventCount++;
+
+    if (_tableController.timeToRest(eventCount.toInt())) {
       _generateRestEvent();
     } else {
       _generateRandomEvent();
@@ -179,7 +180,7 @@ class FocusController extends GetxController {
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "Waiting for adventure...\n";
-    _eventCount.value = 0;
+    eventCount.value = 0;
     _showingSummary.value = false;
   }
 
@@ -329,32 +330,32 @@ class FocusController extends GetxController {
       int index, String enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "$enemy เลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ $exp 🧿 $coin 💰",
-        "$enemy กระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น $exp 🧿 $coin 💰",
-        "$enemy เนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น $exp 🧿 $coin 💰",
-        "$enemy เลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ $exp 🧿 $coin 💰",
-        "$enemy แผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ $exp 🧿 $coin 💰"
+        "$enemy\nเลือดท่านกระเซ็น $damage\nบดขยี้ศัตรูราบคาบ $exp 🧿 $coin 💰",
+        "$enemy\nกระดูกท่านสั่น $damage\nหักเขี้ยวเล็บศัตรูสิ้น $exp 🧿 $coin 💰",
+        "$enemy\nเนื้อท่านฉีก $damage\nเชือดเฉือนศัตรูขาดวิ่น $exp 🧿 $coin 💰",
+        "$enemy\nเลือดท่านพุ่ง $damage\nเหยียบศัตรูย่อยยับ $exp 🧿 $coin 💰",
+        "$enemy\nแผลท่านแดงฉาน $damage\nบดศัตรูเป็นจุณ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy เลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ $exp 🧿 $coin 💰",
-        "$enemy ร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น $exp 🧿 $coin 💰",
-        "$enemy กระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ $exp 🧿 $coin 💰",
-        "$enemy เนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก $exp 🧿 $coin 💰",
-        "$enemy ร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ $exp 🧿 $coin 💰"
+        "$enemy\nเลือดท่านสาด $damage\nฉีกศัตรูเป็นชิ้นๆ $exp 🧿 $coin 💰",
+        "$enemy\nร่างท่านระบม $damage\nบั่นคอศัตรูขาดกระเด็น $exp 🧿 $coin 💰",
+        "$enemy\nกระดูกท่านร้าว $damage\nทิ้งศัตรูเป็นซากศพ $exp 🧿 $coin 💰",
+        "$enemy\nเนื้อท่านแหลก $damage\nสังหารศัตรูไม่เหลือซาก $exp 🧿 $coin 💰",
+        "$enemy\nร่างท่านพรุน $damage\nเผาศัตรูเป็นจุณ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy โลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก $exp 🧿 $coin 💰",
-        "$enemy ร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ $exp 🧿 $coin 💰",
-        "$enemy เนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp 🧿 $coin 💰",
-        "$enemy ตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ $exp 🧿 $coin 💰",
-        "$enemy จิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ $exp 🧿 $coin 💰"
+        "$enemy\nโลหิตท่านทะลัก $damage\nทำลายล้างศัตรูสิ้นซาก $exp 🧿 $coin 💰",
+        "$enemy\nร่างท่านแหลกลาญ $damage\nลบศัตรูออกจากความทรงจำ $exp 🧿 $coin 💰",
+        "$enemy\nเนื้อท่านไหม้เกรียม $damage\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp 🧿 $coin 💰",
+        "$enemy\nตัวตนท่านสลาย $damage\nลบศัตรูออกจากทุกภพภูมิ $exp 🧿 $coin 💰",
+        "$enemy\nจิตท่านดับสูญ $damage\nทำลายล้างศัตรูจากทุกมิติ $exp 🧿 $coin 💰"
       ],
       [
-        "$enemy ร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง $exp 🧿 $coin 💰",
-        "$enemy ตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง $exp 🧿 $coin 💰",
-        "$enemy ท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ $exp 🧿 $coin 💰",
-        "$enemy ท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน $exp 🧿 $coin 💰",
-        "$enemy ท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ $exp 🧿 $coin 💰"
+        "$enemy\nร่างท่านแตกดับ $damage\nล้างศัตรูออกจากความจริง $exp 🧿 $coin 💰",
+        "$enemy\nตัวตนท่านสูญสิ้น $damage\nกวาดศัตรูพ้นสรรพสิ่ง $exp 🧿 $coin 💰",
+        "$enemy\nท่านถูกลบจากกาลเวลา $damage\nผลาญศัตรูจากความเป็นไปได้ $exp 🧿 $coin 💰",
+        "$enemy\nท่านหายไปจากความทรงจำ $damage\nบดศัตรูสู่ความไม่มีตัวตน $exp 🧿 $coin 💰",
+        "$enemy\nท่านถูกลบจากความเป็นจริง $damage\nลบศัตรูออกจากการดำรงอยู่ $exp 🧿 $coin 💰"
       ]
     ];
 
