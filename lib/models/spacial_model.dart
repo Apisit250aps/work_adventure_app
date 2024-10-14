@@ -1,28 +1,29 @@
+
 class Special {
-  final String id;
-  final String charId;
-  final int strength;
-  final int perception;
-  final int endurance;
-  final int charisma;
-  final int intelligence;
-  final int agility;
-  final int luck;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? id;
+  final String? charId;
+  final int? strength;
+  final int? perception;
+  final int? endurance;
+  final int? charisma;
+  final int? intelligence;
+  final int? agility;
+  final int? luck;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const Special({
-    required this.id,
-    required this.charId,
-    required this.strength,
-    required this.perception,
-    required this.endurance,
-    required this.charisma,
-    required this.intelligence,
-    required this.agility,
-    required this.luck,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.charId,
+    this.strength,
+    this.perception,
+    this.endurance,
+    this.charisma,
+    this.intelligence,
+    this.agility,
+    this.luck,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory Special.fromJson(Map<String, dynamic> json) {
@@ -52,8 +53,8 @@ class Special {
       'intelligence': intelligence,
       'agility': agility,
       'luck': luck,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 

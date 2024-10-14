@@ -38,8 +38,7 @@ class _CharacterFormState extends State<CharacterForm> {
           });
           Get.snackbar("Failed to create character", "message");
           return;
-        }
-        else {
+        } else {
           Get.snackbar("Character created successfully", "message");
           Get.offAllNamed("/characters");
         }
@@ -51,7 +50,6 @@ class _CharacterFormState extends State<CharacterForm> {
           _isLoading = false;
         });
       }
-      
     }
   }
 
@@ -66,6 +64,7 @@ class _CharacterFormState extends State<CharacterForm> {
         ),
         child: Column(
           children: [
+            CharacterAvatar(),
             CharacterFormGroup(
               nameController: nameController,
               classController: classController,
@@ -88,6 +87,31 @@ class _CharacterFormState extends State<CharacterForm> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CharacterAvatar extends StatelessWidget {
+  const CharacterAvatar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(
+        vertical: 20,
+      ),
+      child: Column(
+        children: [
+          Image.asset('assets/images/characters/dog.png'),
+          SizedBox(
+            height: 30,
+          ),
+          Text("Dog", style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 24
+          ),)
+        ],
       ),
     );
   }

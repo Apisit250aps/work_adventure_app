@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
+import 'package:work_adventure/models/spacial_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
@@ -9,6 +10,7 @@ class CharacterController extends GetxController {
   final ApiService _apiService = Get.find();
   final RxList<Character> charactersSlot = <Character>[].obs;
   final Rx<Character> characterSelect = const Character().obs;
+  final Rx<Special> spacial = const Special().obs;
   RxBool isLoading = true.obs;
   RxString errorMessage = ''.obs;
 
@@ -48,6 +50,8 @@ class CharacterController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  
 
   Future<List<Character>> fetchCharacter() async {
     final response = await _apiService.get(_rest.character);

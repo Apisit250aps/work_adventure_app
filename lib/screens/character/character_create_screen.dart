@@ -22,18 +22,16 @@ class CharacterCreateScreen extends GetView<CharacterController> {
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: controller.loadCharacters,
-        child: Container(
+      body: Container(
           padding: const EdgeInsets.all(10),
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              
               CharacterForm(),
             ],
           ),
         ),
-      ),
     );
   }
 }
