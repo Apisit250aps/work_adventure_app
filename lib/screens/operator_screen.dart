@@ -180,6 +180,7 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
           expand: false,
           builder: (_, contexts) {
             return Container(
+              padding: const EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -191,7 +192,7 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
                   const SizedBox(height: 20),
                   GradientButton(
                     onPressed: controller.toggleActive,
-                    child: Text("data"),
+                    child: const Text("Start"),
                   ),
                 ],
               ),
