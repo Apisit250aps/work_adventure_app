@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/spacial_model.dart';
@@ -10,7 +11,20 @@ class CharacterController extends GetxController {
   final ApiService _apiService = Get.find();
   final RxList<Character> charactersSlot = <Character>[].obs;
   final Rx<Character> characterSelect = const Character().obs;
-  final Rx<Special> spacial = const Special().obs;
+  final Rx<Special> special = Rx<Special>(Special(
+    id: "",
+    charId: "",
+    strength: 1,
+    perception: 5,
+    endurance: 1,
+    charisma: 3,
+    intelligence: 3,
+    agility: 100,
+    luck: 20,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  ));
+  
   RxBool isLoading = true.obs;
   RxString errorMessage = ''.obs;
 
@@ -92,5 +106,14 @@ class CharacterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  int calculateLevel() {
+    int exp = (characterSelect.value.exp as int);
+    const double base = 1.045;
+    const double C = 10000;
+
+    int level = (log(exp / C + 1) / log(base) + 1).round();
+    return level;
   }
 }

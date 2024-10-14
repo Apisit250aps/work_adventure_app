@@ -7,6 +7,7 @@ import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
+
 class TasksController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();

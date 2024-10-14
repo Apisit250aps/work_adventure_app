@@ -8,7 +8,7 @@ import 'package:work_adventure/controllers/work_controller.dart';
 class OperatorBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => PageControllerX());
+    Get.put(PageControllerX());
     Get.put(WorkController());
     Get.put(FocusController());
   }
