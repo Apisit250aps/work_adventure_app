@@ -171,6 +171,7 @@ class TableController extends GetxController {
     return (expReward, goldReward);
   }
 
+  // การคำนวณศัตรู
   int enemyCount(int difficulty) {
     final agilityPerEnemy = specialRoll("a");
     final percentage = _percentage(agilityPerEnemy);
@@ -179,7 +180,6 @@ class TableController extends GetxController {
     return adjustedEnemyCount.clamp(3, 50);
   }
 
-  // การคำนวณศัตรู
   int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
     final characterLevel = _characterController.calculateLevel() ~/ 20;

@@ -245,8 +245,8 @@ class FocusController extends GetxController {
   }
 
   void _generateNothingEvent() {
-    _updateEncounter("🌲🌲🌲",
-        "คุณก้าวเท้าเดินไปบนเส้นทางอันเงียบสงบไม่มีสิ่งใดมารบกวนการเดินทางอันแสนผ่อนคลายของคุณ");
+    _updateEncounter("🌲",
+        "คุณก้าวเท้าเดินไปบนเส้นทางอันเงียบสงบ\nไม่มีสิ่งใดมารบกวนการเดินทาง\nอันแสนผ่อนคลายของคุณ");
     _addLogEntry(
         "🌟", "Peaceful", "You continue your journey without incident.");
   }
@@ -266,8 +266,8 @@ class FocusController extends GetxController {
 
   void _generateRestEvent() {
     _isResting.value = true;
-    double intelligenceBonus =
-        _getSpecialPercentage(_characterController.special.value.intelligence as int);
+    double intelligenceBonus = _getSpecialPercentage(
+        _characterController.special.value.intelligence as int);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
     int restDuration = _tableController.restTimer();
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;

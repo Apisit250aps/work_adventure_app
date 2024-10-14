@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class RestServiceController extends GetxController {
-  String get base => 'http://192.168.126.77:3000';
+  String get base => 'http://192.168.128.38:3000';
 
   //
 
@@ -15,11 +15,12 @@ class RestServiceController extends GetxController {
 
   // character rest service
   String get character => '$base/character/';
-  String get createCharacter => '$base/character/create'; 
+  String get createCharacter => '$base/character/create';
   String get getCharacter => '$base/character/get'; // parameter characterId
-  String get deleteCharacter => '$base/character/delete'; // parameter characterId
-  String get updateCharacter => '$base/character/update'; // parameter characterId
-
+  String get deleteCharacter =>
+      '$base/character/delete'; // parameter characterId
+  String get updateCharacter =>
+      '$base/character/update'; // parameter characterId
 
   // work rest service
   String get work => '$base/work/all'; // parameter characterId
