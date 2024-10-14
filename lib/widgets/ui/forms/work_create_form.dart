@@ -32,7 +32,7 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
         child: Column(
           children: [
             const Text(
-              'Create Work Sheet',
+              'Create Work',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

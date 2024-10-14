@@ -24,12 +24,7 @@ class CharacterScreen extends GetView<CharacterController> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: userController.logout,
-          )
-        ],
+        
       ),
       body: RefreshIndicator(
         onRefresh: controller.loadCharacters,
@@ -68,7 +63,7 @@ class CharacterScreen extends GetView<CharacterController> {
       ),
       floatingActionButton: GradientFloatingActionButton(
         onPressed: () {
-          Get.offNamed("/characterCreate");
+          Get.toNamed("/characterCreate");
         },
         icon: const Icon(Boxicons.bx_plus, color: Colors.white),
       ),
@@ -114,7 +109,7 @@ class CharacterCard extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Image.asset("assets/images/slime_loading.gif"),
+            Image.asset("assets/images/characters/dog.png"),
             const SizedBox(height: 10),
             Text(
               character.name as String,

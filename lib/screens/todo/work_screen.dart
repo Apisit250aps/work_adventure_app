@@ -53,7 +53,8 @@ class WorkScreen extends GetView<WorkController> {
                               iconSize: 24,
                               padding: const EdgeInsets.all(0),
                               onPressed: () {},
-                              icon: const Icon(Boxicons.bx_check),
+                              icon: Icon(Boxicons.bx_check,
+                              color: task.isDone?Colors.white:Colors.black,),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
                                   task.isDone ? secondaryColor : Colors.white,

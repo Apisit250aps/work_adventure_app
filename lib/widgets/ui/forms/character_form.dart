@@ -64,7 +64,9 @@ class _CharacterFormState extends State<CharacterForm> {
         ),
         child: Column(
           children: [
-            CharacterAvatar(),
+            CharacterAvatar(
+              name: nameController.value.text,
+            ),
             CharacterFormGroup(
               nameController: nameController,
               classController: classController,
@@ -92,9 +94,15 @@ class _CharacterFormState extends State<CharacterForm> {
   }
 }
 
-class CharacterAvatar extends StatelessWidget {
-  const CharacterAvatar({super.key});
+class CharacterAvatar extends StatefulWidget {
+  final String? name;
+  const CharacterAvatar({super.key, this.name});
 
+  @override
+  State<CharacterAvatar> createState() => _CharacterAvatarState();
+}
+
+class _CharacterAvatarState extends State<CharacterAvatar> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -104,13 +112,16 @@ class CharacterAvatar extends StatelessWidget {
       child: Column(
         children: [
           Image.asset('assets/images/characters/dog.png'),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Text("Dog", style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 24
-          ),)
+          Text(
+            widget.name!,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 24,
+            ),
+          )
         ],
       ),
     );

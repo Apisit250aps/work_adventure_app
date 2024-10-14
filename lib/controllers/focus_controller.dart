@@ -17,8 +17,8 @@ class LogEntry {
 }
 
 class FocusController extends GetxController {
-  RxInt _timeRemaining = 0.obs;
-  final RxInt _totalTime = 0.obs;
+  RxInt _timeRemaining = 1800.obs;
+  final RxInt _totalTime = 1800.obs;
   final RxBool _isActive = false.obs;
   final RxList<LogEntry> _adventureLog = <LogEntry>[].obs;
   final RxString _currentEncounterIcon = "🌟".obs;

@@ -10,6 +10,7 @@ class CharacterCreateScreen extends GetView<CharacterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         // automaticallyImplyLeading: false,
         centerTitle: true,
@@ -24,10 +25,10 @@ class CharacterCreateScreen extends GetView<CharacterController> {
       ),
       body: Container(
           padding: const EdgeInsets.all(10),
+          
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
               CharacterForm(),
             ],
           ),
