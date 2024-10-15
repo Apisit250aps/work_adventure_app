@@ -68,6 +68,7 @@ class FocusController extends GetxController {
   final RxInt _restTimeRemaining = 0.obs;
 
   // Enemy data
+  RxInt damageInput = 10.obs;
   final List<List<String>> enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
@@ -262,6 +263,8 @@ class FocusController extends GetxController {
     _updateEncounter(enemy.split(" ")[0], battleDescription);
     _addLogEntry("⚔️", "Battle",
         "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
+
+    damageInput++;
   }
 
   void _generateRestEvent() {

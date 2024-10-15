@@ -15,6 +15,7 @@ import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
+import 'package:work_adventure/controllers/focus_controller.dart';
 
 void main() {
   runApp(const WorkAdventure());
@@ -73,6 +74,7 @@ class WorkAdventure extends StatelessWidget {
         Get.put(UserController());
         Get.put(CharacterController());
         Get.lazyPut(() => TableController());
+        Get.lazyPut(() => FocusController());
         Get.put(CharacterbarController());
       }),
       debugShowCheckedModeBanner: false,

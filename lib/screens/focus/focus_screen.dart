@@ -287,42 +287,44 @@ class ProgressBar extends StatelessWidget {
 }
 
 class HPEXPBars extends StatelessWidget {
-  CharacterbarController get characterbar => Get.find<CharacterbarController>();
   const HPEXPBars({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final (healthNow, healthMax) = characterbar.healthBar();
-    int healthnowBar = healthNow;
-    int healthmaxBar = healthMax;
-
-    final hp = {'current': healthnowBar, 'max': healthmaxBar};
-    final exp = {'current': 350, 'max': 1000};
+    final characterbar = Get.find<CharacterbarController>();
 
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
-      child: Row(
-        children: [
-          Expanded(
-            child: ProgressBar(
-              value: hp['current']!,
-              max: hp['max']!,
-              color: const Color(0xFFFC766A),
-              label: 'HP',
+      child: Obx(() {
+        final (healthNow, healthMax) = characterbar.healthBar();
+        // Assuming you have a method to get EXP values, replace the following line
+        // with actual method calls
+        final (expNow, expMax) = (350, 1000); // Replace with actual EXP getter
+
+        return Row(
+          children: [
+            Expanded(
+              child: ProgressBar(
+                value: healthNow,
+                max: healthMax,
+                color: const Color(0xFFFC766A),
+                label: 'HP',
+              ),
             ),
-          ),
-          Expanded(
-            child: ProgressBar(
-              value: exp['current']!,
-              max: exp['max']!,
-              color: const Color(0xFF5B84B1),
-              label: 'EXP',
-              isReversed: true,
+            Expanded(
+              child: ProgressBar(
+                value: expNow,
+                max: expMax,
+                color: const Color(0xFF5B84B1),
+                label: 'EXP',
+                isReversed: true,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 }
