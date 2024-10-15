@@ -1,35 +1,34 @@
-
 class Special {
   final String? id;
   final String? charId;
-  final int? strength;
-  final int? perception;
-  final int? endurance;
-  final int? charisma;
-  final int? intelligence;
-  final int? agility;
-  final int? luck;
+  int strength;
+  int perception;
+  int endurance;
+  int charisma;
+  int intelligence;
+  int agility;
+  int luck;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  const Special({
+  Special({
     this.id,
     this.charId,
-    this.strength,
-    this.perception,
-    this.endurance,
-    this.charisma,
-    this.intelligence,
-    this.agility,
-    this.luck,
+    required this.strength,
+    required this.perception,
+    required this.endurance,
+    required this.charisma,
+    required this.intelligence,
+    required this.agility,
+    required this.luck,
     this.createdAt,
     this.updatedAt,
   });
 
   factory Special.fromJson(Map<String, dynamic> json) {
     return Special(
-      id: json['_id'] as String,
-      charId: json['charId'] as String,
+      id: json['_id'] as String?,
+      charId: json['charId'] as String?,
       strength: json['strength'] as int,
       perception: json['perception'] as int,
       endurance: json['endurance'] as int,
@@ -37,8 +36,12 @@ class Special {
       intelligence: json['intelligence'] as int,
       agility: json['agility'] as int,
       luck: json['luck'] as int,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -85,6 +88,8 @@ class Special {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  // ... รักษา toString, operator ==, และ hashCode ไว้เหมือนเดิม
 
   @override
   String toString() {
