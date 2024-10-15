@@ -144,4 +144,6 @@ class WorkController extends GetxController {
       update();
     }
   }
+
+  Future<void> updateWork(Work work) async {}
 }

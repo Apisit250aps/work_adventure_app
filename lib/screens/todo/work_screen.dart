@@ -53,8 +53,11 @@ class WorkScreen extends GetView<WorkController> {
                               iconSize: 24,
                               padding: const EdgeInsets.all(0),
                               onPressed: () {},
-                              icon: Icon(Boxicons.bx_check,
-                              color: task.isDone?Colors.white:Colors.black,),
+                              icon: Icon(
+                                Boxicons.bx_check,
+                                color:
+                                    task.isDone ? Colors.white : Colors.black,
+                              ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
                                   task.isDone ? secondaryColor : Colors.white,
@@ -93,27 +96,24 @@ class WorkScreen extends GetView<WorkController> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(work.name as String),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Get.toNamed('/work/${work.id}/edit');
-                },
-                child: const Text('Edit'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _confirmDelete(context, work);
-                },
-                child:
-                    const Text('Delete', style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          ),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Get.toNamed('/work/${work.id}/edit');
+              },
+              child: const Text('Edit'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _confirmDelete(context, work);
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         );
       },
     );

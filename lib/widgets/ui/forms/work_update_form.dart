@@ -1,27 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
+import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
-class WorkCreateForm extends StatefulWidget {
-  const WorkCreateForm({super.key});
+class WorkUpdateForm extends StatefulWidget {
+  final Work work;
+
+  const WorkUpdateForm({super.key, required this.work});
 
   @override
-  State<WorkCreateForm> createState() => _WorkCreateFormState();
+  State<WorkUpdateForm> createState() => _WorkUpdateFormState();
 }
 
-class _WorkCreateFormState extends State<WorkCreateForm> {
+class _WorkUpdateFormState extends State<WorkUpdateForm> {
   final _formKey = GlobalKey<FormState>();
   final WorkController workController = Get.find<WorkController>();
 
-  final TextEditingController workNameController = TextEditingController();
-  final TextEditingController workDescriptionController =
-      TextEditingController();
-  final TextEditingController workStartController = TextEditingController();
-  final TextEditingController workDueController = TextEditingController();
-  final TextEditingController workStatusController =
-      TextEditingController(text: "todo");
+  late TextEditingController workNameController;
+  late TextEditingController workDescriptionController;
+  late TextEditingController workStartController;
+  late TextEditingController workDueController;
+  late TextEditingController workStatusController;
+
+  @override
+  void initState() {
+    super.initState();
+    workNameController = TextEditingController(text: widget.work.name);
+    workDescriptionController = TextEditingController(text: widget.work.description);
+    workStartController = TextEditingController(text: widget.work.startDate as String);
+    workDueController = TextEditingController(text: widget.work.dueDate as String);
+    workStatusController = TextEditingController(text: widget.work.status);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +43,7 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
         child: Column(
           children: [
             const Text(
-              'Create Work',
+              'Update Work',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -51,8 +62,8 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                 boxShadow: [
                   BoxShadow(
                     color: Color.fromRGBO(0, 0, 0, 0.1),
-                    offset: Offset(0, 10), // corresponds to 0px 10px
-                    blurRadius: 50, // corresponds to 50px
+                    offset: Offset(0, 10),
+                    blurRadius: 50,
                   )
                 ],
               ),
@@ -76,8 +87,9 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                   ),
                   CustomSingleSelectToggle(
                     options: workController.status,
+                    initialSelection: workController.status.indexOf(widget.work.status as String),
                     onSelected: (index) {
-                      print('Selected fruit: ${workController.status[index]}');
+                      print('Selected status: ${workController.status[index]}');
                       workStatusController.text = workController.status[index];
                     },
                     isVertical: false,
@@ -85,18 +97,16 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    initialSelection: null,
                   )
                 ],
               ),
             ),
             GradientButton(
               onPressed: () {
-                // Add logic to save the work sheet
                 _submitForm();
               },
               child: const Text(
-                'Save Work',
+                'Update Work',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -110,24 +120,25 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
   }
 
   void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      workController
-          .createWork(
-        workNameController.text,
-        workDescriptionController.text,
-        workStartController.text,
-        workDueController.text,
-        workStatusController.text,
-      )
-          .then((success) {
-        if (success) {
-          Get.back(); // Close the form
-          Get.snackbar('Success', 'Work sheet created successfully');
-        } else {
-          Get.snackbar('Error', 'Failed to create work sheet');
-        }
-      });
-    }
+    // if (_formKey.currentState!.validate()) {
+    //   workController
+    //       .updateWork(
+    //     widget.work.id,
+    //     workNameController.text,
+    //     workDescriptionController.text,
+    //     workStartController.text,
+    //     workDueController.text,
+    //     workStatusController.text,
+    //   )
+    //       .then((success) {
+    //     if (success) {
+    //       Get.back(); // Close the form
+    //       Get.snackbar('Success', 'Work updated successfully');
+    //     } else {
+    //       Get.snackbar('Error', 'Failed to update work');
+    //     }
+    //   });
+    // }
   }
 
   @override
