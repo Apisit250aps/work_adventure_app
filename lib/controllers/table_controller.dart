@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import 'dart:math';
 import 'package:work_adventure/controllers/character_controller.dart';
 
@@ -33,7 +34,7 @@ class TableController extends GetxController {
       pow(1.1, _characterController.calculateLevel() / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
-  int calculateCharacterHP() => special['e']! * 10 + special['s']! ~/ 2;
+  int calculateCharacterHP() => (special['e']! + special['s']! ~/ 2) * 100;
   int calculateCharacterStamina() => (special['s']! ~/ 2).clamp(5, 50);
 
   // การทอยลูกเต๋า

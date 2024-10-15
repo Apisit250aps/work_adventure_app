@@ -21,7 +21,7 @@ class LogEntry {
 class FocusController extends GetxController {
   final CharacterController _characterController =
       Get.find<CharacterController>();
-  final TableController _tableController = Get.put(TableController());
+  final TableController _tableController = Get.find<TableController>();
 
   // Observable variables
   RxInt _timeRemaining = 3600.obs;

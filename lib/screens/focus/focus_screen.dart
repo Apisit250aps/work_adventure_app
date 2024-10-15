@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
+import 'package:work_adventure/controllers/characteroutloop_controller.dart';
 
 class FocusScreen extends GetView<FocusController> {
   const FocusScreen({super.key, required int totalTime});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,7 +67,7 @@ class FocusScreen extends GetView<FocusController> {
     );
   }
 
-  Widget _buildActionButton({
+  Widget buildActionButton({
     required VoidCallback onPressed,
     required String label,
     required Color color,
@@ -87,7 +87,7 @@ class FocusScreen extends GetView<FocusController> {
     );
   }
 
-  void _showAdventureLog(BuildContext context) {
+  void showAdventureLog(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -287,12 +287,15 @@ class ProgressBar extends StatelessWidget {
 }
 
 class HPEXPBars extends StatelessWidget {
+  CharacterbarController get characterbar => Get.find<CharacterbarController>();
   const HPEXPBars({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // Mock data
-    final hp = {'current': 75, 'max': 100};
+    final (healthNow, healthMax) = characterbar.healthBar();
+    int healthnowBar = healthNow;
+    int healthmaxBar = healthMax;
+
+    final hp = {'current': healthnowBar, 'max': healthmaxBar};
     final exp = {'current': 350, 'max': 1000};
 
     return Positioned(

@@ -24,7 +24,7 @@ class CharacterController extends GetxController {
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   ));
-  
+
   RxBool isLoading = true.obs;
   RxString errorMessage = ''.obs;
 
@@ -64,8 +64,6 @@ class CharacterController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  
 
   Future<List<Character>> fetchCharacter() async {
     final response = await _apiService.get(_rest.character);
