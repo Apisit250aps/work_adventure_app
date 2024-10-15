@@ -16,13 +16,13 @@ class TableController extends GetxController {
   void _initializeSpecialAttributes() {
     final characterSpecial = _characterController.special.value;
     special = {
-      's': characterSpecial.strength as int,
-      'p': characterSpecial.perception as int,
-      'e': characterSpecial.endurance as int,
-      'c': characterSpecial.charisma as int,
-      'i': characterSpecial.intelligence as int,
-      'a': characterSpecial.agility as int,
-      'l': characterSpecial.luck as int,
+      's': characterSpecial.strength,
+      'p': characterSpecial.perception,
+      'e': characterSpecial.endurance,
+      'c': characterSpecial.charisma,
+      'i': characterSpecial.intelligence,
+      'a': characterSpecial.agility,
+      'l': characterSpecial.luck,
     };
   }
 

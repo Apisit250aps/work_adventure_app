@@ -35,4 +35,12 @@ class RestServiceController extends GetxController {
   String get createTask => '$base/tasks/create'; // parameter workId
   String get deleteTask => '$base/tasks/delete'; // parameter taskId
   String get updateTask => '$base/tasks/update'; // parameter taskId
+
+
+  // Special rest service
+  String get charSpecials => '$base/special/'; // parameter charId
+  String get getSpecial => '$base/special/get'; // parameter specialId
+  String get createSpecial => '$base/special/create'; // parameter charId
+  String get deleteSpecial => '$base/special/delete'; // parameter specialId
+  String get updateSpecial => '$base/special/update'; // parameter specialId
 }

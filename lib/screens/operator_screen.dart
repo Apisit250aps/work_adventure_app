@@ -5,7 +5,6 @@ import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
 import 'package:work_adventure/screens/focus/focus_screen.dart';
-import 'package:work_adventure/screens/option/setting_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/work_create_form.dart';
@@ -67,7 +66,7 @@ class OperatorScreen extends GetView<PageControllerX> {
       actions: [
         IconButton(
           onPressed: () {
-            Get.to(() => const SettingScreen());
+            Get.toNamed("/characterStatus");
           },
           style: ButtonStyle(
             backgroundColor: WidgetStateProperty.all(baseColor),

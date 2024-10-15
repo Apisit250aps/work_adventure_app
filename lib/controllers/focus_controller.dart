@@ -208,7 +208,7 @@ class FocusController extends GetxController {
 
   void _generateRandomEvent() {
     double luckBonus =
-        _getSpecialPercentage(_characterController.special.value.luck as int);
+        _getSpecialPercentage(_characterController.special.value.luck);
     int ranNumber = Random().nextInt(100) + 1;
     if (ranNumber <= (30 - luckBonus * 100).clamp(5, 30)) {
       _generateNothingEvent();
@@ -266,8 +266,8 @@ class FocusController extends GetxController {
 
   void _generateRestEvent() {
     _isResting.value = true;
-    double intelligenceBonus = _getSpecialPercentage(
-        _characterController.special.value.intelligence as int);
+    double intelligenceBonus =
+        _getSpecialPercentage(_characterController.special.value.intelligence);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
     int restDuration = _tableController.restTimer();
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
