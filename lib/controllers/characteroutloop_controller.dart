@@ -18,8 +18,12 @@ class CharacterbarController extends GetxController {
   }
 
   (int, int) expBar() {
-    final (exp, nextLevelExp) = _characterController.expExport();
-    int currentExp = exp + (_focusController.expInput).toInt();
+    RxInt expInput = _focusController.expInput;
+    final (exp, nextLevelExp) = _characterController.expExport(expInput);
+    if (expInput >= nextLevelExp) {
+      _focusController.expInput = 0.obs;
+    }
+    int currentExp = exp + (expInput).toInt();
     return (currentExp, nextLevelExp);
   }
 }

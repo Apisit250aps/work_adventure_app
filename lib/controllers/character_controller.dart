@@ -107,8 +107,8 @@ class CharacterController extends GetxController {
     }
   }
 
-  int calculateLevel() {
-    int exp = (characterSelect.value.exp as int);
+  int calculateLevel(RxInt expInput) {
+    int exp = (characterSelect.value.exp as int) + (expInput).toInt();
     const double base = 1.045;
     const double C = 10000;
 
@@ -116,12 +116,12 @@ class CharacterController extends GetxController {
     return level;
   }
 
-  (int, int) expExport() {
+  (int, int) expExport(RxInt expInput) {
     const double base = 1.045;
     const double C = 10000;
-    int level = calculateLevel() + 1;
+    int level = calculateLevel(expInput) + 1;
     int expNow = (characterSelect.value.exp as int);
-    int expNextLevel = (C * (exp((level - 1) * log(base)) - 1)).round();
+    int expNextLevel = (((C * (exp((level - 1) * log(base)) - 1)).round()));
 
     return (expNow, expNextLevel);
   }
