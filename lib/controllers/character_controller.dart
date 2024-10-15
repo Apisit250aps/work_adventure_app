@@ -15,7 +15,7 @@ class CharacterController extends GetxController {
   final Rx<Special> special = Rx<Special>(Special(
     id: "",
     charId: "",
-    strength: 1,
+    strength: 10,
     perception: 5,
     endurance: 1,
     charisma: 3,

@@ -73,8 +73,8 @@ class WorkAdventure extends StatelessWidget {
         Get.put(ApiService());
         Get.put(UserController());
         Get.put(CharacterController());
-        Get.lazyPut(() => TableController());
-        Get.lazyPut(() => FocusController());
+        Get.put(TableController());
+        Get.put(FocusController());
         Get.put(CharacterbarController());
       }),
       debugShowCheckedModeBanner: false,

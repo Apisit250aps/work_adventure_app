@@ -33,7 +33,7 @@ class FocusController extends GetxController {
       "Waiting for adventure...\n".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
-  RxInt timeToRestCounter = 200.obs;
+  RxInt timeToRestCounter = 0.obs;
 
   // Timers
   Timer? _timer;
