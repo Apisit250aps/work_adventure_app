@@ -299,9 +299,9 @@ class HPEXPBars extends StatelessWidget {
       right: 0,
       child: Obx(() {
         final (healthNow, healthMax) = characterbar.healthBar();
+        final (expNow, expMax) = characterbar.expBar();
         // Assuming you have a method to get EXP values, replace the following line
         // with actual method calls
-        final (expNow, expMax) = (350, 1000); // Replace with actual EXP getter
 
         return Row(
           children: [

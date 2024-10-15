@@ -11,6 +11,7 @@ class CharacterController extends GetxController {
   final ApiService _apiService = Get.find();
   final RxList<Character> charactersSlot = <Character>[].obs;
   final Rx<Character> characterSelect = const Character().obs;
+
   final Rx<Special> special = Rx<Special>(Special(
     id: "",
     charId: "",
@@ -113,5 +114,15 @@ class CharacterController extends GetxController {
 
     int level = (log(exp / C + 1) / log(base) + 1).round();
     return level;
+  }
+
+  (int, int) expExport() {
+    const double base = 1.045;
+    const double C = 10000;
+    int level = calculateLevel() + 1;
+    int expNow = (characterSelect.value.exp as int);
+    int expNextLevel = (C * (exp((level - 1) * log(base)) - 1)).round();
+
+    return (expNow, expNextLevel);
   }
 }
