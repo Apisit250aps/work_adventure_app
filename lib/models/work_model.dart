@@ -10,7 +10,6 @@ class Work {
   final String? status; // "todo", "inprogress", หรือ "done"
   final DateTime? createdAt;
   final DateTime? updatedAt;
-
   final List<dynamic>? tasks;
 
   const Work({

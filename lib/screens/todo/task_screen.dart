@@ -152,8 +152,10 @@ class TaskListTile extends GetWidget<TasksController> {
       child: IconButton(
         icon: Icon(Boxicons.bx_check,
             color: task.isDone ? Colors.white : textColor),
-        onPressed: () =>
-            controller.updateTask(task.copyWith(isDone: !task.isDone)),
+        onPressed: () {
+          controller.updateTask(task.copyWith(
+              isDone: !task.isDone, isFirst: task.isFirst! ? false : false));
+        },
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
               task.isDone ? secondaryColor : Colors.white),
