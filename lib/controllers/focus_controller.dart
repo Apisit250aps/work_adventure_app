@@ -195,6 +195,10 @@ class FocusController extends GetxController {
     _restTimeRemaining.value = 0;
   }
 
+  void expInputReset() {
+    expInput.value = 0;
+  }
+
   // Event generation methods
   void generateEvent() {
     if (!_isResting.value) {
