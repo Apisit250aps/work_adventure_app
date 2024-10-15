@@ -128,39 +128,46 @@ class SpecialController extends GetxController {
 
     switch (status) {
       case "STR":
-        if (updatedSpecial.strength > 0)
+        if (updatedSpecial.strength > 0) {
           updatedSpecial =
               updatedSpecial.copyWith(strength: updatedSpecial.strength - 1);
+        }
         break;
       case "PER":
-        if (updatedSpecial.perception > 0)
+        if (updatedSpecial.perception > 0) {
           updatedSpecial = updatedSpecial.copyWith(
               perception: updatedSpecial.perception - 1);
+        }
         break;
       case "END":
-        if (updatedSpecial.endurance > 0)
+        if (updatedSpecial.endurance > 0) {
           updatedSpecial =
               updatedSpecial.copyWith(endurance: updatedSpecial.endurance - 1);
+        }
         break;
       case "CHA":
-        if (updatedSpecial.charisma > 0)
+        if (updatedSpecial.charisma > 0) {
           updatedSpecial =
               updatedSpecial.copyWith(charisma: updatedSpecial.charisma - 1);
+        }
         break;
       case "INT":
-        if (updatedSpecial.intelligence > 0)
+        if (updatedSpecial.intelligence > 0) {
           updatedSpecial = updatedSpecial.copyWith(
               intelligence: updatedSpecial.intelligence - 1);
+        }
         break;
       case "AGI":
-        if (updatedSpecial.agility > 0)
+        if (updatedSpecial.agility > 0) {
           updatedSpecial =
               updatedSpecial.copyWith(agility: updatedSpecial.agility - 1);
+        }
         break;
       case "LUK":
-        if (updatedSpecial.luck > 0)
+        if (updatedSpecial.luck > 0) {
           updatedSpecial =
               updatedSpecial.copyWith(luck: updatedSpecial.luck - 1);
+        }
         break;
     }
 

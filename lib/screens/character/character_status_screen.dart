@@ -5,7 +5,7 @@ import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 
 class CharacterStatusScreen extends GetWidget<SpecialController> {
-  CharacterStatusScreen({Key? key}) : super(key: key);
+  const CharacterStatusScreen({super.key});
 
 
   @override
