@@ -1,27 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
+import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
-class TaskCreateForm extends StatefulWidget {
-  const TaskCreateForm({super.key});
+class TaskUpdateForm extends StatefulWidget {
+  final Task task;
+  final TasksController tasksController;
+  const TaskUpdateForm({
+    super.key,
+    required this.task,
+    required this.tasksController,
+  });
 
   @override
-  State<TaskCreateForm> createState() => _TaskCreateFormState();
+  State<TaskUpdateForm> createState() => _TaskUpdateFormState();
 }
 
-class _TaskCreateFormState extends State<TaskCreateForm> {
+class _TaskUpdateFormState extends State<TaskUpdateForm> {
   final _formKey = GlobalKey<FormState>();
-  final TasksController tasksController = Get.find<TasksController>();
 
-  final TextEditingController taskNameController = TextEditingController();
-  final TextEditingController taskDescriptionController =
-      TextEditingController();
-  final TextEditingController taskStartController = TextEditingController();
-  final TextEditingController taskDueController = TextEditingController();
-  final TextEditingController taskDifficultyController =
-      TextEditingController(text: "1");
+  late TextEditingController taskNameController;
+  late TextEditingController taskDescriptionController;
+  late TextEditingController taskStartController;
+  late TextEditingController taskDueController;
+  late TextEditingController taskDifficultyController;
+
+  @override
+  void initState() {
+    super.initState();
+    taskNameController = TextEditingController(text: widget.task.name ?? '');
+    taskDescriptionController =
+        TextEditingController(text: widget.task.description ?? '');
+    taskStartController =
+        TextEditingController(text: widget.task.startDate?.toString() ?? '');
+    taskDueController =
+        TextEditingController(text: widget.task.dueDate?.toString() ?? '');
+    taskDifficultyController =
+        TextEditingController(text: widget.task.difficulty as String);
+  }
+
+  @override
+  void dispose() {
+    taskNameController.dispose();
+    taskDescriptionController.dispose();
+    taskStartController.dispose();
+    taskDueController.dispose();
+    taskDifficultyController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -76,9 +104,10 @@ class _TaskCreateFormState extends State<TaskCreateForm> {
                   CustomSingleSelectToggle(
                     options: const ["Easy", "Medium", "Hard"],
                     onSelected: (index) {
-                      print('Selected fruit: ${tasksController.status[index]}');
+                      print(
+                          'Selected fruit: ${widget.tasksController.status[index]}');
                       taskDifficultyController.text =
-                          tasksController.status[index];
+                          widget.tasksController.status[index];
                     },
                     isVertical: false,
                     labelStyle: const TextStyle(
@@ -93,7 +122,6 @@ class _TaskCreateFormState extends State<TaskCreateForm> {
             GradientButton(
               onPressed: () {
                 // Add logic to save the work sheet
-                _submitForm();
               },
               child: const Text(
                 'Save Task',
@@ -107,26 +135,5 @@ class _TaskCreateFormState extends State<TaskCreateForm> {
         ),
       ),
     );
-  }
-
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      tasksController
-          .createTask(
-        taskNameController.text,
-        taskDescriptionController.text,
-        taskStartController.text,
-        taskDueController.text,
-        int.parse(taskDifficultyController.text),
-      )
-          .then((success) {
-        if (success) {
-          Get.back(); // Close the form
-          Get.snackbar('Success', 'Task created successfully');
-        } else {
-          Get.snackbar('Error', 'Failed to create work sheet');
-        }
-      });
-    }
   }
 }

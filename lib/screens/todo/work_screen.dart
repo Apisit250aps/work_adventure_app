@@ -6,7 +6,7 @@ import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/collapses/collapse.dart';
-import 'package:work_adventure/widgets/ui/forms/work_update_form.dart';
+import 'package:work_adventure/widgets/ui/forms/work/work_update_form.dart';
 
 class WorkScreen extends GetView<WorkController> {
   const WorkScreen({super.key});

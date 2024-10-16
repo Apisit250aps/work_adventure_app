@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
-import 'package:work_adventure/widgets/ui/forms/task_create_form.dart';
+import 'package:work_adventure/widgets/ui/forms/task/task_create_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
 
 class TaskScreen extends GetWidget<TasksController> {
