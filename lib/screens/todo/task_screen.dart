@@ -9,6 +9,8 @@ import 'package:work_adventure/widgets/ui/forms/task/task_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
 
+enum Difficulty { easy, medium, hard }
+
 class TaskScreen extends GetWidget<TasksController> {
   const TaskScreen({super.key});
 
@@ -114,7 +116,9 @@ class TaskScreen extends GetWidget<TasksController> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
-                  const SizedBox(height: 20,),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   const SheetHeader(title: "Work details"),
                   Container(
                     margin: const EdgeInsets.only(top: 20),
@@ -169,6 +173,15 @@ class TaskScreen extends GetWidget<TasksController> {
                           'Status',
                           work.status.toString(),
                         ),
+                        _buildInfoRow(
+                          Icon(
+                            Boxicons.bx_meteor,
+                            color: Colors.blue[600],
+                            size: 36,
+                          ),
+                          'Difficulty',
+                          calculateDifficulty(),
+                        ),
                       ],
                     ),
                   )
@@ -179,6 +192,31 @@ class TaskScreen extends GetWidget<TasksController> {
         );
       },
     );
+  }
+
+  String calculateDifficulty() {
+    if (controller.tasks.isEmpty)
+      return "ง่าย"; // ถ้าไม่มี task ให้ถือว่าง่ายที่สุด
+
+    double averageDifficulty = controller.tasks
+            .map((task) => task.difficulty)
+            .reduce((a, b) => a + b) /
+        controller.tasks.length;
+
+    if (averageDifficulty < 1.5) return "ง่าย";
+    if (averageDifficulty < 2.5) return "กลาง";
+    return "ยาก";
+  }
+
+  int _difficultyToNumber(Difficulty difficulty) {
+    switch (difficulty) {
+      case Difficulty.easy:
+        return 1;
+      case Difficulty.medium:
+        return 2;
+      case Difficulty.hard:
+        return 3;
+    }
   }
 
   Widget _buildInfoRow(Icon icon, String label, String value) {
