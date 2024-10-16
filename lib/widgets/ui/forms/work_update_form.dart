@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:intl/intl.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
@@ -119,23 +118,23 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Row(
                 children: [
                   Container(
                     width: 48, // ปรับขนาดตามต้องการ
                     height: 48, // ปรับขนาดตามต้องการ
-                    margin:
-                        EdgeInsets.only(right: 10), // เพิ่มระยะห่างระหว่างปุ่ม
-                    decoration: BoxDecoration(
+                    margin: const EdgeInsets.only(
+                        right: 10), // เพิ่มระยะห่างระหว่างปุ่ม
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.red, // หรือสีที่คุณต้องการ
                     ),
                     child: IconButton(
-                      icon: Icon(Boxicons.bx_trash, color: Colors.white),
+                      icon: const Icon(Boxicons.bx_trash, color: Colors.white),
                       onPressed: () {
-                        // ใส่ฟังก์ชันการลบที่นี่
+                        _confirmDelete(context, widget.work);
                       },
                     ),
                   ),
@@ -160,6 +159,31 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
     );
   }
 
+  void _confirmDelete(BuildContext context, Work work) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: Text('Are you sure you want to delete "${work.name}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.controller.deleteWork(work.id as String);
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       final updatedWork = widget.work.copyWith(
@@ -175,11 +199,11 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
       if (success) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Work updated successfully')),
+          const SnackBar(content: Text('Work updated successfully')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update work')),
+          const SnackBar(content: Text('Failed to update work')),
         );
       }
     }
