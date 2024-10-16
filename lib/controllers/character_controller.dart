@@ -107,35 +107,32 @@ class CharacterController extends GetxController {
     }
   }
 
-  int calculateLevel(RxInt expInput) {
-    int exp = (characterSelect.value.exp as int) + (expInput).toInt();
+  int calculateLevel(int exp) {
     const double base = 1.045;
     const double C = 10000;
 
-    int level = (log(exp / C + 1) / log(base) + 1).round();
-    return level;
+    return (log(exp / C + 1) / log(base) + 1).round();
   }
 
-  (int, int) expExport(RxInt expInput) {
+  (int, int) calculateExpForNextLevel(int additionalExp) {
     const double base = 1.045;
     const double C = 10000;
-    int level = calculateLevel(expInput) + 1;
-    int expNow = (characterSelect.value.exp as int);
-    int expNextLevel = (((C * (exp((level - 1) * log(base)) - 1)).round()));
+    int currentExp = characterSelect.value.exp as int;
 
-    return (expNow, expNextLevel);
+    int totalExp = currentExp + additionalExp;
+    int currentLevel = calculateLevel(totalExp);
+    int expForNextLevel = (C * (pow(base, currentLevel) - 1)).round();
+
+    return (totalExp, expForNextLevel);
   }
 
-  (bool, int) isLevelUp(RxInt expInput) {
-    int specialPoint = 0;
-    bool isUp = false;
-    final (expNow, expNextLevel) = expExport(0.obs);
-    if (expNow + (expInput).toInt() >= expNextLevel) {
-      int specialPoint = 2;
-      bool isUp = true;
-      return (isUp, specialPoint);
+  (bool, int) checkLevelUp(int currentExp, int additionalExp) {
+    final (totalExp, expForNextLevel) = calculateExpForNextLevel(additionalExp);
+
+    if (totalExp >= expForNextLevel) {
+      return (true, 2); // Level up occurred, grant 2 special points
     }
 
-    return (isUp, specialPoint);
+    return (false, 0); // No level up, no special points
   }
 }

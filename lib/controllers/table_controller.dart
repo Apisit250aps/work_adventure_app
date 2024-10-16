@@ -31,7 +31,7 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get _levelMultiplier =>
-      pow(1.1, _characterController.calculateLevel(0.obs) / 5).toDouble() + 0.5;
+      pow(1.1, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
   int calculateCharacterHP() => (special['e']! * 50 + special['s']! ~/ 2);
@@ -183,7 +183,7 @@ class TableController extends GetxController {
 
   int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
-    final characterLevel = _characterController.calculateLevel(0.obs) ~/ 20;
+    final characterLevel = _characterController.calculateLevel(0) ~/ 20;
 
     // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
     final List<int> enemyChance = [
