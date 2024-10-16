@@ -126,7 +126,7 @@ class CharacterController extends GetxController {
     return (totalExp, expForNextLevel);
   }
 
-  (bool, int) checkLevelUp(int currentExp, int additionalExp) {
+  (bool, int) checkLevelUp(int additionalExp) {
     final (totalExp, expForNextLevel) = calculateExpForNextLevel(additionalExp);
 
     if (totalExp >= expForNextLevel) {
