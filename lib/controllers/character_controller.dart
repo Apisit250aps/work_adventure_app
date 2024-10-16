@@ -168,9 +168,16 @@ class CharacterController extends GetxController {
     updateCharacterOnServer();
   }
 
-  void additionalCoins(int add) {}
+  void additionalCoins(int add) {
+    Character updatedCharacter = characterSelect.value.copyWith();
+    updatedCharacter =
+        updatedCharacter.copyWith(coin: (updatedCharacter.coin ?? 0) + add);
 
-  void additionalSpecial(int add) {
+    characterSelect.value = updatedCharacter;
+    updateCharacterOnServer();
+  }
+
+  void additionalSpecial() {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
         focusPoint: (characterSelect.value.focusPoint ?? 0) + 3);
@@ -185,6 +192,7 @@ class CharacterController extends GetxController {
     if (exp >= expForNextLevel) {
       isLevelUp = true;
       additionalExp(exp);
+      additionalSpecial();
     }
 
     return isLevelUp;

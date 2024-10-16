@@ -81,9 +81,11 @@ class TableController extends GetxController {
   }
 
   // การคำนวณประสบการณ์
-  int calculateEXP(int exp) =>
-      ((exp + (exp * _percentage(specialRoll('i')))) * _levelMultiplier)
-          .round();
+  int calculateEXP(int exp) => ((exp +
+              ((exp * (specialRoll('i') / 10).clamp(1, 10)) *
+                  _percentage(specialRoll('i')))) *
+          _levelMultiplier)
+      .round();
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
