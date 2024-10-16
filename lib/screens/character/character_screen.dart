@@ -87,7 +87,7 @@ class CharacterScreen extends GetView<CharacterController> {
   }
 }
 
-class CharacterCard extends StatelessWidget {
+class CharacterCard extends GetWidget<CharacterController> {
   final Character character;
   final VoidCallback? onTap; // รับ onTap เป็นพารามิเตอร์
   final VoidCallback? onDoubleTap;
@@ -108,7 +108,10 @@ class CharacterCard extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Image.asset("assets/images/characters/dog.png"),
+            Image.asset(
+              controller.characterImages[character.avatarIndex as int],
+              width: 250,
+            ),
             const SizedBox(height: 10),
             Text(
               character.name as String,

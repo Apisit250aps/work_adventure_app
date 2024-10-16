@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/spacial_model.dart';
@@ -25,6 +26,14 @@ class CharacterController extends GetxController {
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   ));
+
+  List<String> get characterImages => <String>[
+        'assets/images/characters/cat.png',
+        'assets/images/characters/dog.png',
+        'assets/images/characters/john.png',
+        'assets/images/characters/monkey.png',
+        'assets/images/characters/steve.png',
+      ];
 
   RxBool isLoading = true.obs;
   RxString errorMessage = ''.obs;

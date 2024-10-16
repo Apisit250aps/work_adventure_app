@@ -23,9 +23,9 @@ class CharacterCreateScreen extends GetView<CharacterController> {
           ),
         ),
       ),
-      body: Container(
+      body: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.all(10),
-          
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -33,6 +33,7 @@ class CharacterCreateScreen extends GetView<CharacterController> {
             ],
           ),
         ),
+      ),
     );
   }
 }

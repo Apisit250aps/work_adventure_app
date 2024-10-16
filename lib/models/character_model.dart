@@ -1,6 +1,7 @@
 class Character {
   final String? id;
   final String? name;
+  final int? avatarIndex;
   final int? exp;
   final int? level;
   final String? className;
@@ -14,6 +15,7 @@ class Character {
   const Character({
     this.id,
     this.name,
+    this.avatarIndex,
     this.exp,
     this.level,
     this.className,
@@ -29,6 +31,7 @@ class Character {
     return Character(
       id: json['_id'] as String,
       name: json['name'] as String,
+      avatarIndex: json['avatarIndex'] as int,
       exp: json['exp'] as int,
       level: json['level'] as int,
       className: json['className'] as String,
@@ -45,6 +48,7 @@ class Character {
     return {
       '_id': id,
       'name': name,
+      'avatarIndex': avatarIndex,
       'exp': exp,
       'level': level,
       'className': className,
@@ -60,6 +64,7 @@ class Character {
   Character copyWith({
     String? id,
     String? name,
+    int? avatarIndex,
     int? exp,
     int? level,
     String? className,
@@ -73,6 +78,7 @@ class Character {
     return Character(
       id: id ?? this.id,
       name: name ?? this.name,
+      avatarIndex: avatarIndex ?? this.avatarIndex,
       exp: exp ?? this.exp,
       level: level ?? this.level,
       className: className ?? this.className,
@@ -97,6 +103,7 @@ class Character {
           runtimeType == other.runtimeType &&
           id == other.id &&
           name == other.name &&
+          avatarIndex == other.avatarIndex &&
           exp == other.exp &&
           level == other.level &&
           className == other.className &&
@@ -111,6 +118,7 @@ class Character {
   int get hashCode =>
       id.hashCode ^
       name.hashCode ^
+      avatarIndex.hashCode ^
       exp.hashCode ^
       level.hashCode ^
       className.hashCode ^
