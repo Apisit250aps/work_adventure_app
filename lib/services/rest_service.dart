@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class RestServiceController extends GetxController {
-  String get base => 'http://192.168.126.77:3000';
+  String get base => 'http://192.168.128.38:3000';
 
   //
 
@@ -35,7 +35,6 @@ class RestServiceController extends GetxController {
   String get createTask => '$base/tasks/create'; // parameter workId
   String get deleteTask => '$base/tasks/delete'; // parameter taskId
   String get updateTask => '$base/tasks/update'; // parameter taskId
-
 
   // Special rest service
   String get charSpecials => '$base/special'; // parameter charId
