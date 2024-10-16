@@ -38,7 +38,7 @@ class RestServiceController extends GetxController {
 
 
   // Special rest service
-  String get charSpecials => '$base/special/'; // parameter charId
+  String get charSpecials => '$base/special'; // parameter charId
   String get getSpecial => '$base/special/get'; // parameter specialId
   String get createSpecial => '$base/special/create'; // parameter charId
   String get deleteSpecial => '$base/special/delete'; // parameter specialId
