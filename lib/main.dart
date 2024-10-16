@@ -51,7 +51,7 @@ class WorkAdventure extends StatelessWidget {
         ),
         GetPage(
           name: '/characterStatus',
-          page: () => CharacterStatusScreen(),
+          page: () => const CharacterStatusScreen(),
           binding: SpecialBinding(),
         ),
         GetPage(

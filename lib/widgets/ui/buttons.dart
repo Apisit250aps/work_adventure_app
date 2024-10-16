@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class GradientButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Widget child;
+  final double? width;
   final EdgeInsetsGeometry padding;
   final List<Color> gradientColors;
 
@@ -14,13 +15,13 @@ class GradientButton extends StatelessWidget {
     this.gradientColors = const [
       Color.fromARGB(255, 233, 174, 202),
       Color.fromARGB(255, 148, 187, 233),
-    ],
+    ], this.width = double.infinity,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: width,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: gradientColors,

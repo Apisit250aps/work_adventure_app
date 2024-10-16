@@ -10,10 +10,7 @@ Color textColor = const Color.fromARGB(255, 43, 52, 64);
 
 ThemeData themeData = ThemeData(
   scaffoldBackgroundColor: backgroundColor,
-  appBarTheme: AppBarTheme(
-    backgroundColor: backgroundColor,
-    elevation: 0
-  ),
+  appBarTheme: AppBarTheme(backgroundColor: backgroundColor, elevation: 0),
   colorScheme: ColorScheme.fromSeed(
     seedColor: primaryColor,
   ),
@@ -26,6 +23,18 @@ ThemeData themeData = ThemeData(
   ),
   bottomSheetTheme: BottomSheetThemeData(
     backgroundColor: backgroundColor,
+  ),
+  dialogTheme: DialogTheme(
+    backgroundColor: backgroundColor,
+    insetPadding: const EdgeInsets.all(0),
+    
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+      
+    ),
+    actionsPadding:const EdgeInsets.all(5),
+    
+    elevation: 0,
   ),
   useMaterial3: true,
 );

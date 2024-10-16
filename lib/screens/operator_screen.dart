@@ -7,7 +7,7 @@ import 'package:work_adventure/controllers/page_controller.dart';
 import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
-import 'package:work_adventure/widgets/ui/forms/work_create_form.dart';
+import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
 
 class OperatorScreen extends GetView<PageControllerX> {

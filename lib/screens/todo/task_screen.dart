@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
-import 'package:work_adventure/widgets/ui/forms/task_create_form.dart';
+import 'package:work_adventure/widgets/ui/forms/task/task_create_form.dart';
+import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
 
 class TaskScreen extends GetWidget<TasksController> {
@@ -88,7 +89,9 @@ class TaskScreen extends GetWidget<TasksController> {
           controller.tasks.where((task) => task.isDone == isDone).toList();
       return ListView.builder(
         itemCount: tasks.length,
-        itemBuilder: (context, index) => TaskListTile(tasks[index]),
+        itemBuilder: (context, index) {
+          return TaskListTile(tasks[index]);
+        },
       );
     });
   }
@@ -117,6 +120,8 @@ class TaskScreen extends GetWidget<TasksController> {
       },
     );
   }
+
+  
 }
 
 class TaskListTile extends GetWidget<TasksController> {
@@ -127,6 +132,7 @@ class TaskListTile extends GetWidget<TasksController> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: _buildLeadingIcon(),
+      onLongPress:()=> _showTaskOptions(context, task),
       title: Text(
         task.name,
         style: TextStyle(
@@ -136,6 +142,27 @@ class TaskListTile extends GetWidget<TasksController> {
         ),
       ),
       subtitle: Text(controller.diffs(task.difficulty)),
+    );
+  }
+
+  void _showTaskOptions(BuildContext context, Task task) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.75,
+          expand: false,
+          builder: (_, controllers) {
+            return TaskUpdateForm(
+              task: task,
+              tasksController: controller,
+            );
+          },
+        );
+      },
     );
   }
 
@@ -152,8 +179,10 @@ class TaskListTile extends GetWidget<TasksController> {
       child: IconButton(
         icon: Icon(Boxicons.bx_check,
             color: task.isDone ? Colors.white : textColor),
-        onPressed: () =>
-            controller.updateTask(task.copyWith(isDone: !task.isDone)),
+        onPressed: () {
+          controller.updateTask(task.copyWith(
+              isDone: !task.isDone, isFirst: task.isFirst! ? false : false));
+        },
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(
               task.isDone ? secondaryColor : Colors.white),

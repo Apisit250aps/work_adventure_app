@@ -6,6 +6,7 @@ class Task {
   final DateTime? startDate;
   final DateTime? dueDate;
   final bool isDone;
+  final bool? isFirst;
   final String? workId;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -21,6 +22,7 @@ class Task {
     this.workId,
     required this.createdAt,
     required this.updatedAt,
+     this.isFirst,
   }) : assert(difficulty >= 1 && difficulty <= 3,
             'Difficulty must be 1, 2, or 3');
 
@@ -37,6 +39,7 @@ class Task {
           ? DateTime.parse(json['due_date'] as String)
           : null,
       isDone: json['isDone'] as bool,
+      isFirst: json['isFirst'] as bool,
       workId: json['workId'] as String?,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -52,6 +55,7 @@ class Task {
       'start_date': startDate?.toIso8601String(),
       'due_date': dueDate?.toIso8601String(),
       'isDone': isDone,
+      'isFirst': isFirst,
       'workId': workId,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -66,6 +70,7 @@ class Task {
     DateTime? startDate,
     DateTime? dueDate,
     bool? isDone,
+    bool? isFirst,
     String? workId,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -78,6 +83,7 @@ class Task {
       startDate: startDate ?? this.startDate,
       dueDate: dueDate ?? this.dueDate,
       isDone: isDone ?? this.isDone,
+      isFirst: isFirst ?? this.isFirst,
       workId: workId ?? this.workId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -101,6 +107,7 @@ class Task {
           startDate == other.startDate &&
           dueDate == other.dueDate &&
           isDone == other.isDone &&
+          isFirst == other.isFirst &&
           workId == other.workId &&
           createdAt == other.createdAt &&
           updatedAt == other.updatedAt;
@@ -114,6 +121,7 @@ class Task {
       startDate.hashCode ^
       dueDate.hashCode ^
       isDone.hashCode ^
+      isFirst.hashCode ^
       workId.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode;

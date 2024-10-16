@@ -6,6 +6,7 @@ import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/collapses/collapse.dart';
+import 'package:work_adventure/widgets/ui/forms/work/work_update_form.dart';
 
 class WorkScreen extends GetView<WorkController> {
   const WorkScreen({super.key});
@@ -24,7 +25,7 @@ class WorkScreen extends GetView<WorkController> {
             return ListView.builder(
               itemCount: controller.workList.length,
               itemBuilder: (context, index) {
-                final work = controller.workList[index];
+                final Work work = controller.workList[index];
                 return CollapseContent(
                   onDoubleTap: () {
                     controller.selectIndex(index);
@@ -53,8 +54,11 @@ class WorkScreen extends GetView<WorkController> {
                               iconSize: 24,
                               padding: const EdgeInsets.all(0),
                               onPressed: () {},
-                              icon: Icon(Boxicons.bx_check,
-                              color: task.isDone?Colors.white:Colors.black,),
+                              icon: Icon(
+                                Boxicons.bx_check,
+                                color:
+                                    task.isDone ? Colors.white : Colors.black,
+                              ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
                                   task.isDone ? secondaryColor : Colors.white,
@@ -88,59 +92,22 @@ class WorkScreen extends GetView<WorkController> {
   }
 
   void _showWorkOptions(BuildContext context, Work work) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(work.name as String),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Get.toNamed('/work/${work.id}/edit');
-                },
-                child: const Text('Edit'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _confirmDelete(context, work);
-                },
-                child:
-                    const Text('Delete', style: TextStyle(color: Colors.red)),
-              ),
-            ],
-          ),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.75,
+          expand: false,
+          builder: (_, controllers) {
+            return  WorkUpdateForm(work: work, controller: controller,);
+          },
         );
       },
     );
   }
 
-  void _confirmDelete(BuildContext context, Work work) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete "${work.name}"?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                controller.deleteWork(work.id as String);
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  
 }

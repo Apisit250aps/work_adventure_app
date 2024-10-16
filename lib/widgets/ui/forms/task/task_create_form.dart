@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:work_adventure/controllers/work_controller.dart';
+import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
-class WorkCreateForm extends StatefulWidget {
-  const WorkCreateForm({super.key});
+class TaskCreateForm extends StatefulWidget {
+  
+  
+  const TaskCreateForm({super.key});
 
   @override
-  State<WorkCreateForm> createState() => _WorkCreateFormState();
+  State<TaskCreateForm> createState() => _TaskCreateFormState();
 }
 
-class _WorkCreateFormState extends State<WorkCreateForm> {
+class _TaskCreateFormState extends State<TaskCreateForm> {
   final _formKey = GlobalKey<FormState>();
-  final WorkController workController = Get.find<WorkController>();
+  final TasksController tasksController = Get.find<TasksController>();
 
-  final TextEditingController workNameController = TextEditingController();
-  final TextEditingController workDescriptionController =
+  final TextEditingController taskNameController = TextEditingController();
+  final TextEditingController taskDescriptionController =
       TextEditingController();
-  final TextEditingController workStartController = TextEditingController();
-  final TextEditingController workDueController = TextEditingController();
-  final TextEditingController workStatusController =
-      TextEditingController(text: "todo");
-
+  final TextEditingController taskStartController = TextEditingController();
+  final TextEditingController taskDueController = TextEditingController();
+  final TextEditingController taskDifficultyController =
+      TextEditingController(text: "1");
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -32,7 +33,7 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
         child: Column(
           children: [
             const Text(
-              'Create Work',
+              'Create Task',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -60,31 +61,33 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                 children: [
                   CustomTextField(
                     hintText: "name",
-                    controller: workNameController,
+                    controller: taskNameController,
                   ),
                   CustomTextField(
                     hintText: "description",
-                    controller: workDescriptionController,
+                    controller: taskDescriptionController,
                   ),
                   CustomDatePickerField(
                     hintText: 'start',
-                    controller: workStartController,
+                    controller: taskStartController,
                   ),
                   CustomDatePickerField(
                     hintText: 'due',
-                    controller: workDueController,
+                    controller: taskDueController,
                   ),
                   CustomSingleSelectToggle(
-                    options: workController.status,
+                    options: const ["Easy", "Medium", "Hard"],
                     onSelected: (index) {
-                      print('Selected fruit: ${workController.status[index]}');
-                      workStatusController.text = workController.status[index];
+                      print('Selected fruit: ${tasksController.status[index]}');
+                      taskDifficultyController.text =
+                          tasksController.status[index];
                     },
                     isVertical: false,
                     labelStyle: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                    // initialSelection: null,
                   )
                 ],
               ),
@@ -95,7 +98,7 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                 _submitForm();
               },
               child: const Text(
-                'Save Work Sheet',
+                'Save Task',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -110,32 +113,22 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      workController
-          .createWork(
-        workNameController.text,
-        workDescriptionController.text,
-        workStartController.text,
-        workDueController.text,
-        workStatusController.text,
+      tasksController
+          .createTask(
+        taskNameController.text,
+        taskDescriptionController.text,
+        taskStartController.text,
+        taskDueController.text,
+        int.parse(taskDifficultyController.text),
       )
           .then((success) {
         if (success) {
           Get.back(); // Close the form
-          Get.snackbar('Success', 'Work sheet created successfully');
+          Get.snackbar('Success', 'Task created successfully');
         } else {
           Get.snackbar('Error', 'Failed to create work sheet');
         }
       });
     }
-  }
-
-  @override
-  void dispose() {
-    workNameController.dispose();
-    workDescriptionController.dispose();
-    workStartController.dispose();
-    workDueController.dispose();
-    workStatusController.dispose();
-    super.dispose();
   }
 }
