@@ -125,4 +125,17 @@ class CharacterController extends GetxController {
 
     return (expNow, expNextLevel);
   }
+
+  (bool, int) isLevelUp(RxInt expInput) {
+    int specialPoint = 0;
+    bool isUp = false;
+    final (expNow, expNextLevel) = expExport(0.obs);
+    if (expNow + (expInput).toInt() >= expNextLevel) {
+      int specialPoint = 2;
+      bool isUp = true;
+      return (isUp, specialPoint);
+    }
+
+    return (isUp, specialPoint);
+  }
 }
