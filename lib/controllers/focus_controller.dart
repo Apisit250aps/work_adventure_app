@@ -49,9 +49,11 @@ class FocusController extends GetxController {
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
 
+  int get _eventIntervalSeconds => _tableController.timeEventRun;
+  int get restDuration => _tableController.restTimer;
+
   // Other variables
   int rollOne = 0;
-  late final int _eventIntervalSeconds;
 
   // Quest variables
   String enemyQuestName = "";
@@ -104,7 +106,11 @@ class FocusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _eventIntervalSeconds = _tableController.timeEventRun();
+    ever(_tableController.special, (_) {
+      if (_isActive.value) {
+        _startEventTimer();
+      }
+    });
   }
 
   // Session management methods
@@ -230,7 +236,7 @@ class FocusController extends GetxController {
   void _generateVillageEvent() {
     questIsActive = true;
     final villageType = _getRandomVillageType();
-    final questDifficulty = _tableController.selectQuest();
+    final questDifficulty = _tableController.selectQuest;
     questNumber = questDifficulty;
     final questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
@@ -278,7 +284,6 @@ class FocusController extends GetxController {
     double intelligenceBonus =
         _getSpecialPercentage(_characterController.special.value.intelligence);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
-    int restDuration = _tableController.restTimer();
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
 
     _updateEncounter("🏕️",

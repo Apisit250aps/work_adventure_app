@@ -10,7 +10,7 @@ class CharacterbarController extends GetxController {
       Get.find<CharacterController>();
 
   (int, int) healthBar() {
-    int maxHealth = _tableController.calculateCharacterHP();
+    int maxHealth = _tableController.calculateCharacterHP;
     int damage = (_focusController.damageInput).toInt();
     int healthNow = (maxHealth - damage).clamp(0, maxHealth);
 

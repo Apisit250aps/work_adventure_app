@@ -13,9 +13,7 @@ import 'package:work_adventure/screens/todo/task_screen.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
-import 'package:work_adventure/controllers/table_controller.dart';
-import 'package:work_adventure/controllers/characteroutloop_controller.dart';
-import 'package:work_adventure/controllers/focus_controller.dart';
+
 
 void main() {
   runApp(const WorkAdventure());

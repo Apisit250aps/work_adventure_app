@@ -19,7 +19,11 @@ class TableController extends GetxController {
     _updateSpecial(_specialController.special.value);
   }
 
-  void _updateSpecial(Special specialValue) {
+  void testCalculations() {
+    // เพิ่มการทดสอบฟังก์ชันอื่นๆ ตามต้องการ
+  }
+
+  _updateSpecial(Special specialValue) {
     special.value = {
       's': specialValue.strength,
       'p': specialValue.perception,
@@ -38,12 +42,12 @@ class TableController extends GetxController {
       pow(1.1, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
-  int calculateCharacterHP() =>
+  int get calculateCharacterHP =>
       (special.value['e']! * 50 + special.value['s']! ~/ 2);
-  int calculateCharacterStamina() => (special.value['s']! ~/ 2).clamp(5, 50);
+  int get calculateCharacterStamina => (special.value['s']! ~/ 2).clamp(5, 50);
 
   // การทอยลูกเต๋า
-  int rollDice() {
+  int get rollDice {
     final count = (special.value['c']! ~/ 21).clamp(1, 3);
     int dice = singleDiceRoll();
     double specialRollPercentage = _percentage(specialRoll("l"));
@@ -95,7 +99,7 @@ class TableController extends GetxController {
 
   bool _shouldReduceCoin(int difficulty) {
     final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
-    return rollDice() + specialRoll('p') <= threshold;
+    return rollDice + specialRoll('p') <= threshold;
   }
 
   // การคำนวณลดความเสียหาย
@@ -132,12 +136,12 @@ class TableController extends GetxController {
 
   // การคำนวณลดความเสียหาย
   int hpReduction(int damage) {
-    int characterHP = calculateCharacterHP();
+    int characterHP = calculateCharacterHP;
     return (characterHP - damage).clamp(0, double.infinity).toInt();
   }
 
   // การคำนวณเควส
-  int selectQuest() {
+  int get selectQuest {
     final int dice = singleDiceRoll();
     final int charismaQuest = specialRoll("c") ~/ 15;
 
@@ -223,22 +227,22 @@ class TableController extends GetxController {
   }
 
   // ความเร็วการเจอเหตุการณ์
-  int timeEventRun() {
+  int get timeEventRun {
     int baseTimeEvent = 10;
-    int agilityPerTime = (special.value["a"]! / 10).round();
+    int agilityPerTime = ((special.value["a"]!) / 10).round();
     int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 10);
     return timeEvent;
   }
 
   //เหตุการณ์พัก
   bool timeToRest(int counter) =>
-      (counter >= calculateCharacterStamina()) ? true : false;
+      (counter > calculateCharacterStamina) ? true : false;
 
-  int restTimer() {
+  int get restTimer {
     int baseTimeRest = 10;
     int endurancePerTime = (special.value["e"]! ~/ 15);
     int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun() + 1)).clamp(1, 10);
+        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(1, 10);
     return timeRest;
   }
 }
