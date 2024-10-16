@@ -101,17 +101,19 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
                     hintText: 'Due Date',
                   ),
                   CustomSingleSelectToggle(
+                    initValue: workStatusController.text,
                     options: widget.controller.status,
                     onSelected: (index) {
                       setState(() {
                         workStatusController.text =
                             widget.controller.status[index];
+                        print(workStatusController.text);
                       });
                     },
                     isVertical: false,
                     labelStyle: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      
                     ),
                   ),
                 ],
@@ -159,8 +161,8 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
     );
   }
 
-  void _confirmDelete(BuildContext context, Work work) {
-    showDialog(
+  Future<void> _confirmDelete(BuildContext context, Work work) async {
+    final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -168,20 +170,25 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
           content: Text('Are you sure you want to delete "${work.name}"?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).pop(false),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.controller.deleteWork(work.id as String);
-              },
+              onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
       },
     );
+
+    if (shouldDelete == true) {
+      await widget.controller.deleteWork(work.id as String);
+      Navigator.of(context).pop(); // ปิด BottomSheet
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Work "${work.name}" has been deleted')),
+      );
+    }
   }
 
   void _submitForm() async {

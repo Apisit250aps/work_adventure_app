@@ -37,7 +37,7 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
     taskDueController =
         TextEditingController(text: widget.task.dueDate?.toString() ?? '');
     taskDifficultyController =
-        TextEditingController(text: widget.task.difficulty as String);
+        TextEditingController(text: '${widget.task.difficulty}');
   }
 
   @override

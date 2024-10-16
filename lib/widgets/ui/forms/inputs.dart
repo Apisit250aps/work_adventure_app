@@ -161,14 +161,16 @@ class CustomSingleSelectToggle extends StatefulWidget {
   final void Function(int) onSelected;
   final bool isVertical;
   final TextStyle? labelStyle;
+  final String? initValue;  // เพิ่ม initValue
 
   const CustomSingleSelectToggle({
-    super.key,
+    Key? key,
     required this.options,
     required this.onSelected,
     this.isVertical = false,
     this.labelStyle,
-  });
+    this.initValue,  // เพิ่ม initValue ในคอนสตรัคเตอร์
+  }) : super(key: key);
 
   @override
   _CustomSingleSelectToggleState createState() => _CustomSingleSelectToggleState();
@@ -180,9 +182,28 @@ class _CustomSingleSelectToggleState extends State<CustomSingleSelectToggle> {
   @override
   void initState() {
     super.initState();
+    _initializeSelectedOptions();
+  }
+
+  void _initializeSelectedOptions() {
     _selectedOptions = List.generate(widget.options.length, (_) => false);
-    if (widget.options.isNotEmpty) {
-      _selectedOptions[0] = true; // Default to first option selected
+    if (widget.initValue != null) {
+      final initIndex = widget.options.indexOf(widget.initValue!);
+      if (initIndex != -1) {
+        _selectedOptions[initIndex] = true;
+      } else if (widget.options.isNotEmpty) {
+        _selectedOptions[0] = true;  // Default to first option if initValue is not found
+      }
+    } else if (widget.options.isNotEmpty) {
+      _selectedOptions[0] = true;  // Default to first option if initValue is not provided
+    }
+  }
+
+  @override
+  void didUpdateWidget(CustomSingleSelectToggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initValue != widget.initValue || oldWidget.options != widget.options) {
+      _initializeSelectedOptions();
     }
   }
 
@@ -216,7 +237,7 @@ class _CustomSingleSelectToggleState extends State<CustomSingleSelectToggle> {
           ),
           children: widget.options.map((option) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(option),
+            child: Text(option, style: widget.labelStyle),
           )).toList(),
         ),
       ],

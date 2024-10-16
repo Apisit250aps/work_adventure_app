@@ -150,6 +150,7 @@ class WorkController extends GetxController {
     String path = _rest.updateWork;
     String endpoints = "$path/${work.id}";
     try {
+      print(work.toJson());
       final response = await _apiService.put(endpoints, work.toJson());
       return response.statusCode == 200;
     } catch (e) {
