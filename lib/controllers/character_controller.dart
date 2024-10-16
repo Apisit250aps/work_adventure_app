@@ -115,32 +115,78 @@ class CharacterController extends GetxController {
     }
   }
 
+  Future<void> updateCharacterOnServer() async {
+    try {
+      String path = _rest.updateCharacter;
+      String endpoints = "$path/${characterSelect.value.id}";
+      print(characterSelect.value.toJson());
+      final response = await _apiService.put(
+        endpoints,
+        characterSelect.value.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        print("Special updated successfully on server");
+      } else {
+        print(
+            "Failed to update special on server. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error updating special on server: $e");
+      // You might want to show an error message to the user here
+    }
+  }
+
   int calculateLevel(int exp) {
     const double base = 1.045;
-    const double C = 10000;
+    const double C = 6000;
 
     return (log(exp / C + 1) / log(base) + 1).round();
   }
 
-  (int, int) calculateExpForNextLevel(int additionalExp) {
+  (int, int) calculateExpForNextLevel(int add) {
     const double base = 1.045;
-    const double C = 10000;
+    const double C = 6000;
     int currentExp = characterSelect.value.exp as int;
 
-    int totalExp = currentExp + additionalExp;
-    int currentLevel = calculateLevel(totalExp);
-    int expForNextLevel = (C * (pow(base, currentLevel) - 1)).round();
+    int totalExp = currentExp + add;
+    int currentLevel = calculateLevel(currentExp);
+    int nextLevel = calculateLevel(currentExp) + 1;
+    int expNextLevel = (C * (pow(base, nextLevel) - 1)).round();
+    int expcurrentLevel = (C * (pow(base, currentLevel) - 1)).round();
+    int expForNextLevel = expNextLevel - expcurrentLevel;
 
     return (totalExp, expForNextLevel);
   }
 
-  (bool, int) checkLevelUp(int additionalExp) {
-    final (totalExp, expForNextLevel) = calculateExpForNextLevel(additionalExp);
+  void additionalExp(int add) {
+    Character updatedCharacter = characterSelect.value.copyWith();
+    updatedCharacter =
+        updatedCharacter.copyWith(exp: (updatedCharacter.exp ?? 0) + add);
 
-    if (totalExp >= expForNextLevel) {
-      return (true, 2); // Level up occurred, grant 2 special points
+    characterSelect.value = updatedCharacter;
+    updateCharacterOnServer();
+  }
+
+  void additionalCoins(int add) {}
+
+  void additionalSpecial(int add) {
+    Character updatedCharacter = characterSelect.value.copyWith();
+    updatedCharacter = updatedCharacter.copyWith(
+        focusPoint: (characterSelect.value.focusPoint ?? 0) + 3);
+    characterSelect.value = updatedCharacter;
+    updateCharacterOnServer();
+  }
+
+  bool checkLevelUp(int add) {
+    bool isLevelUp = false;
+    final (totalExp, expForNextLevel) = calculateExpForNextLevel(add);
+
+    if (add >= expForNextLevel) {
+      isLevelUp = true;
+      additionalExp(add); // Level up occurred, grant 2 special points
     }
-
-    return (false, 0); // No level up, no special points
+    // No level up, no special points
+    return isLevelUp;
   }
 }

@@ -71,7 +71,7 @@ class FocusController extends GetxController {
 
   // Enemy data
   RxInt damageInput = 0.obs;
-  int expInput = 0;
+  RxInt expInput = 0.obs;
   final List<List<String>> enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
@@ -201,8 +201,8 @@ class FocusController extends GetxController {
     _restTimeRemaining.value = 0;
   }
 
-  void expInputReset() {
-    expInput = 0;
+  void expInputReset(int value) {
+    expInput.value = value;
   }
 
   // Event generation methods
