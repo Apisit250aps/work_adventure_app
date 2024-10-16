@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
-import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class WorkUpdateForm extends StatefulWidget {
   final Work work;
+  final WorkController controller;
 
-  const WorkUpdateForm({super.key, required this.work});
+  const WorkUpdateForm(
+      {super.key, required this.work, required this.controller});
 
   @override
-  State<WorkUpdateForm> createState() => _WorkUpdateFormState();
+  _WorkUpdateFormState createState() => _WorkUpdateFormState();
 }
 
 class _WorkUpdateFormState extends State<WorkUpdateForm> {
   final _formKey = GlobalKey<FormState>();
-  final WorkController workController = Get.find<WorkController>();
 
   late TextEditingController workNameController;
   late TextEditingController workDescriptionController;
@@ -27,11 +27,24 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
   @override
   void initState() {
     super.initState();
-    workNameController = TextEditingController(text: widget.work.name);
-    workDescriptionController = TextEditingController(text: widget.work.description);
-    workStartController = TextEditingController(text: widget.work.startDate as String);
-    workDueController = TextEditingController(text: widget.work.dueDate as String);
+    workNameController = TextEditingController(text: widget.work.name ?? '');
+    workDescriptionController =
+        TextEditingController(text: widget.work.description ?? '');
+    workStartController =
+        TextEditingController(text: widget.work.startDate?.toString() ?? '');
+    workDueController =
+        TextEditingController(text: widget.work.dueDate?.toString() ?? '');
     workStatusController = TextEditingController(text: widget.work.status);
+  }
+
+  @override
+  void dispose() {
+    workNameController.dispose();
+    workDescriptionController.dispose();
+    workStartController.dispose();
+    workDueController.dispose();
+    workStatusController.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,11 +52,12 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
     return Form(
       key: _formKey,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Update Work',
+              'Edit Work',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -62,56 +76,50 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
                 boxShadow: [
                   BoxShadow(
                     color: Color.fromRGBO(0, 0, 0, 0.1),
-                    offset: Offset(0, 10),
-                    blurRadius: 50,
+                    offset: Offset(0, 10), // corresponds to 0px 10px
+                    blurRadius: 50, // corresponds to 50px
                   )
                 ],
               ),
               child: Column(
                 children: [
                   CustomTextField(
-                    hintText: "name",
                     controller: workNameController,
+                    hintText: 'Name',
                   ),
                   CustomTextField(
-                    hintText: "description",
                     controller: workDescriptionController,
+                    hintText: 'Description',
                   ),
                   CustomDatePickerField(
-                    hintText: 'start',
                     controller: workStartController,
+                    hintText: 'Start Date',
                   ),
                   CustomDatePickerField(
-                    hintText: 'due',
                     controller: workDueController,
+                    hintText: 'Due Date',
                   ),
                   CustomSingleSelectToggle(
-                    options: workController.status,
-                    initialSelection: workController.status.indexOf(widget.work.status as String),
+                    options: widget.controller.status,
                     onSelected: (index) {
-                      print('Selected status: ${workController.status[index]}');
-                      workStatusController.text = workController.status[index];
+                      setState(() {
+                        workStatusController.text =
+                            widget.controller.status[index];
+                      });
                     },
                     isVertical: false,
                     labelStyle: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            GradientButton(
-              onPressed: () {
-                _submitForm();
-              },
-              child: const Text(
-                'Update Work',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _submitForm,
+              child: const Text('Update Work'),
             ),
           ],
         ),
@@ -119,35 +127,28 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
     );
   }
 
-  void _submitForm() {
-    // if (_formKey.currentState!.validate()) {
-    //   workController
-    //       .updateWork(
-    //     widget.work.id,
-    //     workNameController.text,
-    //     workDescriptionController.text,
-    //     workStartController.text,
-    //     workDueController.text,
-    //     workStatusController.text,
-    //   )
-    //       .then((success) {
-    //     if (success) {
-    //       Get.back(); // Close the form
-    //       Get.snackbar('Success', 'Work updated successfully');
-    //     } else {
-    //       Get.snackbar('Error', 'Failed to update work');
-    //     }
-    //   });
-    // }
-  }
+  void _submitForm() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final updatedWork = widget.work.copyWith(
+        name: workNameController.text,
+        description: workDescriptionController.text,
+        startDate: DateTime.tryParse(workStartController.text),
+        dueDate: DateTime.tryParse(workDueController.text),
+        status: workStatusController.text,
+      );
 
-  @override
-  void dispose() {
-    workNameController.dispose();
-    workDescriptionController.dispose();
-    workStartController.dispose();
-    workDueController.dispose();
-    workStatusController.dispose();
-    super.dispose();
+      final success = await widget.controller.updateWork(updatedWork);
+
+      if (success) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Work updated successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update work')),
+        );
+      }
+    }
   }
 }

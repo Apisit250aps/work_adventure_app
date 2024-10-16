@@ -145,5 +145,19 @@ class WorkController extends GetxController {
     }
   }
 
-  Future<void> updateWork(Work work) async {}
+  Future<bool> updateWork(Work work) async {
+    final characterId = character.id;
+    String path = _rest.updateWork;
+    String endpoints = "$path/${work.id}";
+    try {
+      final response = await _apiService.put(endpoints, work.toJson());
+      return response.statusCode == 200;
+    } catch (e) {
+      print("Error updating work: $e");
+      return false;
+    } finally {
+      loadWorks();
+      update();
+    }
+  }
 }

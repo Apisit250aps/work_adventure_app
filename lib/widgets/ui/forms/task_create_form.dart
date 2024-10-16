@@ -85,7 +85,7 @@ class _TaskCreateFormState extends State<TaskCreateForm> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    initialSelection: null,
+                    // initialSelection: null,
                   )
                 ],
               ),

@@ -167,7 +167,7 @@ class CustomSingleSelectToggle extends StatefulWidget {
     required this.options,
     required this.onSelected,
     this.isVertical = false,
-    this.labelStyle, required initialSelection,
+    this.labelStyle,
   });
 
   @override

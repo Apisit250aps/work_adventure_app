@@ -77,6 +77,7 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                   CustomSingleSelectToggle(
                     options: workController.status,
                     onSelected: (index) {
+                      print('$index');
                       print('Selected fruit: ${workController.status[index]}');
                       workStatusController.text = workController.status[index];
                     },
@@ -85,7 +86,6 @@ class _WorkCreateFormState extends State<WorkCreateForm> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    initialSelection: null,
                   )
                 ],
               ),
