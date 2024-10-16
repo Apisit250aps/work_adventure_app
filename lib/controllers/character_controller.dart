@@ -182,6 +182,7 @@ class CharacterController extends GetxController {
     updatedCharacter = updatedCharacter.copyWith(
         focusPoint: (characterSelect.value.focusPoint ?? 0) + 3);
     characterSelect.value = updatedCharacter;
+    print(updatedCharacter);
     updateCharacterOnServer();
   }
 

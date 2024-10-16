@@ -33,7 +33,7 @@ class FocusController extends GetxController {
       "Waiting for adventure...\n".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
-  RxInt timeToRestCounter = 0.obs;
+  RxInt SPCounter = 0.obs;
 
   // Timers
   Timer? _timer;
@@ -197,7 +197,7 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
     eventCount.value = 0;
     _showingSummary.value = false;
-    timeToRestCounter.value = 0;
+    SPCounter.value = 0;
     _restTimeRemaining.value = 0;
   }
 
@@ -208,9 +208,9 @@ class FocusController extends GetxController {
   // Event generation methods
   void generateEvent() {
     if (!_isResting.value) {
-      timeToRestCounter++;
-      if (_tableController.timeToRest(timeToRestCounter.toInt())) {
-        timeToRestCounter.value = 0;
+      SPCounter++;
+      if (_tableController.timeToRest(SPCounter.toInt())) {
+        SPCounter.value = 0;
         _generateRestEvent();
       } else {
         _generateRandomEvent();

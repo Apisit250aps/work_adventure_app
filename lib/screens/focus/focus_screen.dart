@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -155,12 +155,12 @@ class CircularTimer extends StatelessWidget {
   String formatTime(int seconds) {
     if (seconds > 5999) {
       // More than 99 minutes and 59 seconds
-      int hours = max(0, seconds ~/ 3600);
-      int minutes = max(0, (seconds % 3600) ~/ 60);
+      int hours = math.max(0, seconds ~/ 3600);
+      int minutes = math.max(0, (seconds % 3600) ~/ 60);
       return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
     } else {
-      int minutes = max(0, seconds ~/ 60);
-      int remainingSeconds = max(0, seconds % 60);
+      int minutes = math.max(0, seconds ~/ 60);
+      int remainingSeconds = math.max(0, seconds % 60);
       return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
     }
   }
@@ -234,6 +234,7 @@ class ProgressBar extends StatelessWidget {
   final Color color;
   final String label;
   final bool isReversed;
+  final Duration animationDuration;
 
   const ProgressBar({
     super.key,
@@ -242,6 +243,7 @@ class ProgressBar extends StatelessWidget {
     required this.color,
     required this.label,
     this.isReversed = false,
+    this.animationDuration = const Duration(milliseconds: 1000),
   });
 
   @override
@@ -250,34 +252,57 @@ class ProgressBar extends StatelessWidget {
       children: [
         Container(
           height: 20,
-          color: const Color.fromARGB(255, 234, 234, 234),
-        ),
-        Align(
-          alignment: isReversed ? Alignment.centerRight : Alignment.centerLeft,
-          child: FractionallySizedBox(
-            widthFactor: value / max,
-            child: Container(
-              height: 20,
-              color: color,
-            ),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
-        Container(
-          height: 20,
-          alignment: isReversed ? Alignment.centerRight : Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(
-            '$label: $value/$max',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              shadows: [
-                Shadow(
-                  offset: const Offset(1.0, 1.0),
-                  blurRadius: 3.0,
-                  color: Colors.black.withOpacity(0.5),
+        TweenAnimationBuilder<double>(
+          duration: animationDuration,
+          tween: Tween(begin: 0, end: value / max),
+          curve: Curves.easeInOut,
+          builder: (context, tweenValue, child) {
+            return AnimatedAlign(
+              duration: animationDuration,
+              alignment:
+                  isReversed ? Alignment.centerRight : Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: tweenValue,
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color.withOpacity(0.7), color],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: CustomPaint(
+                    painter:
+                        ShimmerPainter(color: Colors.white.withOpacity(0.25)),
+                  ),
                 ),
-              ],
+              ),
+            );
+          },
+        ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: Container(
+            key: ValueKey<int>(value),
+            height: 20,
+            alignment:
+                isReversed ? Alignment.centerRight : Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              '$label: $value/$max',
+              style: TextStyle(
+                color: color.computeLuminance() > 0.5
+                    ? Colors.black
+                    : Colors.black,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
@@ -286,8 +311,43 @@ class ProgressBar extends StatelessWidget {
   }
 }
 
+class ShimmerPainter extends CustomPainter {
+  final Color color;
+
+  ShimmerPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    path.moveTo(0, 0);
+    for (double i = 0; i < size.width; i++) {
+      path.lineTo(i, math.sin(i / 5) * 3 + 10);
+    }
+    path.lineTo(size.width, 0);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
 class HPEXPBars extends StatelessWidget {
-  const HPEXPBars({super.key});
+  final double staminaBarWidth;
+  final double hpBarWidth;
+  final double expBarWidth;
+
+  const HPEXPBars({
+    super.key,
+    this.staminaBarWidth = 1.0,
+    this.hpBarWidth = 0.35,
+    this.expBarWidth = 0.35,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -300,27 +360,47 @@ class HPEXPBars extends StatelessWidget {
       child: Obx(() {
         final (healthNow, healthMax) = characterbar.healthBar();
         final (expNow, expMax) = characterbar.expBar();
-        // Assuming you have a method to get EXP values, replace the following line
-        // with actual method calls
+        final (staminaNow, staminaMax) = characterbar.spBar();
 
-        return Row(
+        return Column(
           children: [
-            Expanded(
-              child: ProgressBar(
-                value: healthNow,
-                max: healthMax,
-                color: const Color(0xFFFC766A),
-                label: 'HP',
+            // Stamina bar
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: staminaBarWidth,
+                child: ProgressBar(
+                  value: expNow,
+                  max: expMax,
+                  color: const Color(0xFF5B84B1),
+                  label: 'EXP',
+                ),
               ),
             ),
-            Expanded(
-              child: ProgressBar(
-                value: expNow,
-                max: expMax,
-                color: const Color(0xFF5B84B1),
-                label: 'EXP',
-                isReversed: true,
-              ),
+            const SizedBox(height: 0),
+            // HP and EXP bars
+            Row(
+              children: [
+                Expanded(
+                  flex: (hpBarWidth * 100).toInt(),
+                  child: ProgressBar(
+                    value: healthNow,
+                    max: healthMax,
+                    color: const Color(0xFFFC766A),
+                    label: 'HP',
+                  ),
+                ),
+                Expanded(
+                  flex: (expBarWidth * 100).toInt(),
+                  child: ProgressBar(
+                    value: staminaNow,
+                    max: staminaMax,
+                    color: const Color(0xFFFFD700),
+                    label: 'SP',
+                    isReversed: true,
+                  ),
+                ),
+              ],
             ),
           ],
         );

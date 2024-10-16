@@ -30,6 +30,13 @@ class CharacterbarController extends GetxController {
         expForNextLevel
       );
     }
-    return ((expInput).toInt(), expForNextLevel);
+    return (((expInput)).clamp(1, double.infinity).toInt(), expForNextLevel);
+  }
+
+  (int, int) spBar() {
+    int maxSP = _tableController.calculateCharacterStamina;
+    int spNow = maxSP - (_focusController.SPCounter).toInt();
+
+    return (spNow, maxSP);
   }
 }
