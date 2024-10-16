@@ -53,6 +53,7 @@ class CharacterScreen extends GetView<CharacterController> {
                   enlargeCenterPage: true,
                   onPageChanged: (index, reason) {
                     controller.selectIndex(index);
+                    print('???$index');
                   },
                 ),
               );

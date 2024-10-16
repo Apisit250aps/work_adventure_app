@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
@@ -17,6 +18,7 @@ class _CharacterFormState extends State<CharacterForm> {
   final CharacterController controller = Get.find<CharacterController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController classController = TextEditingController();
+  final TextEditingController avatarIndex = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -29,8 +31,9 @@ class _CharacterFormState extends State<CharacterForm> {
       });
 
       try {
+        
         final success = await controller.createCharacter(
-            nameController.text, classController.text, 0);
+            nameController.text, classController.text, int.parse(avatarIndex.text));
 
         if (!success) {
           setState(() {
@@ -64,8 +67,29 @@ class _CharacterFormState extends State<CharacterForm> {
         ),
         child: Column(
           children: [
-            CharacterAvatar(
-              name: nameController.value.text,
+            CarouselSlider.builder(
+              itemCount: controller.characterImages.length,
+              itemBuilder: (context, index, realIndex) {
+                final image = controller.characterImages[index];
+                return Container(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        image,
+                        width: 250,
+                      ),
+                    ],
+                  ),
+                );
+              },
+              options: CarouselOptions(
+                aspectRatio: 1,
+                enlargeCenterPage: true,
+                onPageChanged: (index, reason) {
+                  avatarIndex.text = "$index";
+                  print('???${avatarIndex.text}');
+                },
+              ),
             ),
             CharacterFormGroup(
               nameController: nameController,
@@ -136,8 +160,8 @@ class CharacterFormGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 20,
+      margin: const EdgeInsets.only(
+        bottom: 20,
       ),
       decoration: const BoxDecoration(
         color: Colors.white,

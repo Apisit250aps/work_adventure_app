@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/models/spacial_model.dart';

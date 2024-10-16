@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 
 class CharacterStatusScreen extends GetWidget<SpecialController> {
   const CharacterStatusScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
+    final CharacterController characterController = Get.find();
+    final character = characterController.characterSelect.value;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -33,7 +35,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
                 alignment: Alignment.center,
                 child: ClipOval(
                   child: Image.asset(
-                    "assets/images/characters/dog.png",
+                    characterController.characterImages[character.avatarIndex as int],
                     width: 150,
                     height: 150,
                     fit: BoxFit.cover,
@@ -41,16 +43,16 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "Dog",
-                style: TextStyle(
+              Text(
+                character.name as String,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const Text(
-                "Student",
-                style: TextStyle(
+              Text(
+                character.className as String,
+                style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
@@ -113,7 +115,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
               ),
               IconButton(
                 style: ButtonStyle(
-                  elevation: const  WidgetStatePropertyAll(5),
+                  elevation: const WidgetStatePropertyAll(5),
                   backgroundColor: WidgetStatePropertyAll(baseColor),
                 ),
                 onPressed: () => controller.incrementSpecial(status),
