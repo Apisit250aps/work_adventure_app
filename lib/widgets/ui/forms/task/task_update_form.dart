@@ -206,7 +206,7 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 final success = await widget.tasksController
-                    .deleteTask(widget.task.id as String);
+                    .deleteTask(widget.task.id);
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Task deleted successfully')),

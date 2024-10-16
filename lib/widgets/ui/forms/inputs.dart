@@ -10,13 +10,13 @@ class CustomDatePickerField extends StatefulWidget {
   final DateTime? lastDate;
 
   const CustomDatePickerField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.controller,
     this.initialDate,
     this.firstDate,
     this.lastDate,
-  }) : super(key: key);
+  });
 
   @override
   _CustomDatePickerFieldState createState() => _CustomDatePickerFieldState();
@@ -180,13 +180,13 @@ class CustomSingleSelectToggle extends StatefulWidget {
   final String? initValue; // เพิ่ม initValue
 
   const CustomSingleSelectToggle({
-    Key? key,
+    super.key,
     required this.options,
     required this.onSelected,
     this.isVertical = false,
     this.labelStyle,
     this.initValue, // เพิ่ม initValue ในคอนสตรัคเตอร์
-  }) : super(key: key);
+  });
 
   @override
   _CustomSingleSelectToggleState createState() =>
