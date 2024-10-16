@@ -7,6 +7,7 @@ import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/collapses/collapse.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_update_form.dart';
+import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class WorkScreen extends GetView<WorkController> {
   const WorkScreen({super.key});
@@ -18,7 +19,7 @@ class WorkScreen extends GetView<WorkController> {
       child: Obx(
         () {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: SlimeLoading());
           } else if (controller.workList.isEmpty) {
             return const Center(child: Text('No works available'));
           } else {
@@ -27,6 +28,7 @@ class WorkScreen extends GetView<WorkController> {
               itemBuilder: (context, index) {
                 final Work work = controller.workList[index];
                 return CollapseContent(
+                  initiallyExpanded: index == 0,
                   onDoubleTap: () {
                     controller.selectIndex(index);
                     Get.toNamed('/tasks');

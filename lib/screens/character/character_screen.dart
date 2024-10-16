@@ -6,6 +6,7 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
+import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
   const CharacterScreen({super.key});
@@ -13,6 +14,7 @@ class CharacterScreen extends GetView<CharacterController> {
   @override
   Widget build(BuildContext context) {
     Get.find<UserController>();
+    controller.loadCharacters();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -27,16 +29,18 @@ class CharacterScreen extends GetView<CharacterController> {
       ),
       body: RefreshIndicator(
         onRefresh: controller.loadCharacters,
-        child: Center(
-          child: Obx(() {
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (controller.errorMessage.isNotEmpty) {
-              return Center(child: Text(controller.errorMessage.value));
-            } else if (controller.charactersSlot.isEmpty) {
-              return const Center(child: Text('No characters available'));
-            } else {
-              return CarouselSlider.builder(
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: SlimeLoading(),
+            );
+          } else if (controller.errorMessage.isNotEmpty) {
+            return Center(child: Text(controller.errorMessage.value));
+          } else if (controller.charactersSlot.isEmpty) {
+            return const Center(child: Text('No characters available'));
+          } else {
+            return Center(
+              child: CarouselSlider.builder(
                 itemCount: controller.charactersSlot.length,
                 itemBuilder: (context, index, realIndex) {
                   final character = controller.charactersSlot[index];
@@ -56,10 +60,10 @@ class CharacterScreen extends GetView<CharacterController> {
                     print('???$index');
                   },
                 ),
-              );
-            }
-          }),
-        ),
+              ),
+            );
+          }
+        }),
       ),
       floatingActionButton: GradientFloatingActionButton(
         onPressed: () {

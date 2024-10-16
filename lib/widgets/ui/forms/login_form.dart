@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/main.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
@@ -16,6 +17,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final UserController userController = Get.find<UserController>();
+  final CharacterController characterController =
+      Get.find<CharacterController>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -30,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
       try {
         await userController.login(
             usernameController.text, passwordController.text);
-
+        characterController.loadCharacters();
         Get.offAll(() => const AuthWrapper());
       } catch (e) {
         Get.snackbar(
