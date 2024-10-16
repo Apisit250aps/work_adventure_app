@@ -35,6 +35,7 @@ class WorkAdventure extends StatelessWidget {
         GetPage(
           name: '/',
           page: () => const AuthWrapper(),
+          binding: AuthWarpBinding(),
         ),
         GetPage(
           name: '/operator',
@@ -73,7 +74,6 @@ class WorkAdventure extends StatelessWidget {
         Get.put(ApiService());
         Get.put(UserController());
         Get.put(CharacterController());
-        Get.put(SpecialController());
         Get.put(TableController());
         Get.put(FocusController());
         Get.put(CharacterbarController());

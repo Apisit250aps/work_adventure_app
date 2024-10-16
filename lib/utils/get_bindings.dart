@@ -30,6 +30,15 @@ class TaskBinding extends Bindings {
   }
 }
 
+class AuthWarpBinding extends Bindings {
+  @override
+  void dependencies() {
+    // Add bindings for special features here
+    // For example:
+    Get.find<CharacterController>().loadCharacters();
+  }
+}
+
 // class SpecialBinding extends Bindings {
 //   @override
 //   void dependencies() {
