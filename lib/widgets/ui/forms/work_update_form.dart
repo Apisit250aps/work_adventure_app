@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:intl/intl.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
+import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class WorkUpdateForm extends StatefulWidget {
@@ -117,10 +119,41 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: const Text('Update Work'),
-            ),
+            Container(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Container(
+                    width: 48, // ปรับขนาดตามต้องการ
+                    height: 48, // ปรับขนาดตามต้องการ
+                    margin:
+                        EdgeInsets.only(right: 10), // เพิ่มระยะห่างระหว่างปุ่ม
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red, // หรือสีที่คุณต้องการ
+                    ),
+                    child: IconButton(
+                      icon: Icon(Boxicons.bx_trash, color: Colors.white),
+                      onPressed: () {
+                        // ใส่ฟังก์ชันการลบที่นี่
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GradientButton(
+                      onPressed: _submitForm,
+                      child: const Text(
+                        'Save Work',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
