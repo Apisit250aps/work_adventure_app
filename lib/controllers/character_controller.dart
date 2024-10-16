@@ -184,9 +184,9 @@ class CharacterController extends GetxController {
 
     if (add >= expForNextLevel) {
       isLevelUp = true;
-      additionalExp(add); // Level up occurred, grant 2 special points
+      additionalExp(add);
     }
-    // No level up, no special points
+
     return isLevelUp;
   }
 }
