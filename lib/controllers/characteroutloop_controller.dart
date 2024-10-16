@@ -35,7 +35,7 @@ class CharacterbarController extends GetxController {
 
   (int, int) spBar() {
     int maxSP = _tableController.calculateCharacterStamina;
-    int spNow = maxSP - (_focusController.SPCounter).toInt();
+    int spNow = (maxSP - (_focusController.SPCounter).toInt()).clamp(0, maxSP);
 
     return (spNow, maxSP);
   }

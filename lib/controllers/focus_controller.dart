@@ -165,16 +165,29 @@ class FocusController extends GetxController {
 
   void _startRestTimer() {
     _restTimer?.cancel();
+    final staminaPerSecond =
+        _tableController.calculateCharacterStamina / restDuration;
+
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
         _restTimeRemaining.value--;
-      } else {
-        _isResting.value = false;
-        _restTimer?.cancel();
 
-        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+        final elapsedTime = restDuration - _restTimeRemaining.value;
+        final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
+
+        SPCounter.value =
+            _tableController.calculateCharacterStamina - (recoveredStamina);
+      } else {
+        _finishResting();
       }
     });
+  }
+
+  void _finishResting() {
+    _isResting.value = false;
+    SPCounter.value = 0;
+    _restTimer?.cancel();
+    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _stopTimers() {
@@ -210,7 +223,6 @@ class FocusController extends GetxController {
     if (!_isResting.value) {
       SPCounter++;
       if (_tableController.timeToRest(SPCounter.toInt())) {
-        SPCounter.value = 0;
         _generateRestEvent();
       } else {
         _generateRandomEvent();
