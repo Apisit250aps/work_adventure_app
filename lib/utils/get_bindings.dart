@@ -12,6 +12,7 @@ class OperatorBinding extends Bindings {
     Get.put(PageControllerX());
     Get.put(WorkController());
     Get.put(FocusController());
+    Get.put(SpecialController());
   }
 }
 
@@ -19,7 +20,6 @@ class CharacterBinding extends Bindings {
   @override
   void dependencies() {
     Get.find<CharacterController>();
-    
   }
 }
 
@@ -30,11 +30,11 @@ class TaskBinding extends Bindings {
   }
 }
 
-class SpecialBinding extends Bindings {
-  @override
-  void dependencies() {
-    // Add bindings for special features here
-    // For example:
-    Get.put(SpecialController());
-  }
-}
+// class SpecialBinding extends Bindings {
+//   @override
+//   void dependencies() {
+//     // Add bindings for special features here
+//     // For example:
+//     Get.find<>();
+//   }
+// }
