@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:intl/intl.dart';
 import 'package:work_adventure/constant.dart';
-
 class CustomDatePickerField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
@@ -11,19 +10,35 @@ class CustomDatePickerField extends StatefulWidget {
   final DateTime? lastDate;
 
   const CustomDatePickerField({
-    super.key,
+    Key? key,
     required this.hintText,
     required this.controller,
     this.initialDate,
     this.firstDate,
     this.lastDate,
-  });
+  }) : super(key: key);
 
   @override
   _CustomDatePickerFieldState createState() => _CustomDatePickerFieldState();
 }
 
 class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = _parseDate(widget.controller.text) ?? widget.initialDate ?? DateTime.now();
+  }
+
+  DateTime? _parseDate(String value) {
+    try {
+      return DateFormat('yyyy-MM-dd').parse(value);
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomTextField(
@@ -38,12 +53,13 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: widget.initialDate ?? DateTime.now(),
+      initialDate: _selectedDate,
       firstDate: widget.firstDate ?? DateTime(1900),
       lastDate: widget.lastDate ?? DateTime(2100),
     );
-    if (picked != null) {
+    if (picked != null && picked != _selectedDate) {
       setState(() {
+        _selectedDate = picked;
         widget.controller.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
@@ -161,7 +177,7 @@ class CustomSingleSelectToggle extends StatefulWidget {
   final void Function(int) onSelected;
   final bool isVertical;
   final TextStyle? labelStyle;
-  final String? initValue;  // เพิ่ม initValue
+  final String? initValue; // เพิ่ม initValue
 
   const CustomSingleSelectToggle({
     Key? key,
@@ -169,11 +185,12 @@ class CustomSingleSelectToggle extends StatefulWidget {
     required this.onSelected,
     this.isVertical = false,
     this.labelStyle,
-    this.initValue,  // เพิ่ม initValue ในคอนสตรัคเตอร์
+    this.initValue, // เพิ่ม initValue ในคอนสตรัคเตอร์
   }) : super(key: key);
 
   @override
-  _CustomSingleSelectToggleState createState() => _CustomSingleSelectToggleState();
+  _CustomSingleSelectToggleState createState() =>
+      _CustomSingleSelectToggleState();
 }
 
 class _CustomSingleSelectToggleState extends State<CustomSingleSelectToggle> {
@@ -192,17 +209,20 @@ class _CustomSingleSelectToggleState extends State<CustomSingleSelectToggle> {
       if (initIndex != -1) {
         _selectedOptions[initIndex] = true;
       } else if (widget.options.isNotEmpty) {
-        _selectedOptions[0] = true;  // Default to first option if initValue is not found
+        _selectedOptions[0] =
+            true; // Default to first option if initValue is not found
       }
     } else if (widget.options.isNotEmpty) {
-      _selectedOptions[0] = true;  // Default to first option if initValue is not provided
+      _selectedOptions[0] =
+          true; // Default to first option if initValue is not provided
     }
   }
 
   @override
   void didUpdateWidget(CustomSingleSelectToggle oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initValue != widget.initValue || oldWidget.options != widget.options) {
+    if (oldWidget.initValue != widget.initValue ||
+        oldWidget.options != widget.options) {
       _initializeSelectedOptions();
     }
   }
@@ -235,10 +255,12 @@ class _CustomSingleSelectToggleState extends State<CustomSingleSelectToggle> {
             minHeight: 40.0,
             minWidth: 80.0,
           ),
-          children: widget.options.map((option) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(option, style: widget.labelStyle),
-          )).toList(),
+          children: widget.options
+              .map((option) => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(option, style: widget.labelStyle),
+                  ))
+              .toList(),
         ),
       ],
     );

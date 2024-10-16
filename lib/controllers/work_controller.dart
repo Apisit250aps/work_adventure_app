@@ -146,7 +146,6 @@ class WorkController extends GetxController {
   }
 
   Future<bool> updateWork(Work work) async {
-    final characterId = character.id;
     String path = _rest.updateWork;
     String endpoints = "$path/${work.id}";
     try {

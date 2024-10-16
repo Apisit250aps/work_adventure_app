@@ -7,7 +7,6 @@ import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
-
 class TasksController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
@@ -31,7 +30,7 @@ class TasksController extends GetxController {
   }
 
   RxList<Task> tasks = <Task>[].obs;
- 
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -106,7 +105,37 @@ class TasksController extends GetxController {
     }
   }
 
-  Future<void> updateTask(Task task) async {
+  Future<bool> deleteTask(String taskId) async {
+    try {
+      // Set loading state to true
+      isLoading.value = true;
+
+      // Construct the endpoint for deletion
+      String path = _rest.deleteTask;
+      String endpoint = "$path/$taskId";
+
+      // Send DELETE request to the server
+      final response = await _apiService.delete(endpoint);
+
+      if (response.statusCode == 200) {
+        // Remove the deleted task from the local list
+        tasks.removeWhere((task) => task.id == taskId);
+        update(); // This will trigger a UI update
+        return true;
+      } else {
+        print("Failed to delete task: ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Error deleting task: $e");
+      return false;
+    } finally {
+      // Set loading state to false
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> updateTask(Task task) async {
     isLoading.value = true;
     try {
       final taskId = task.id;
@@ -119,16 +148,17 @@ class TasksController extends GetxController {
         if (index != -1) {
           tasks[index] = task;
           tasks.refresh();
-  
+          return true;
         }
+        return false;
       } else {
-        throw Exception('Failed to update task: ${response.statusCode}');
+        return false;
       }
     } catch (e) {
       print('Error updating task: $e');
-      rethrow;
-    }
-    finally {
+
+      return false;
+    } finally {
       isLoading.value = false;
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
@@ -98,10 +99,12 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
                     controller: taskStartController,
                   ),
                   CustomDatePickerField(
+                    initialDate: widget.task.dueDate,
                     hintText: 'due',
                     controller: taskDueController,
                   ),
                   CustomSingleSelectToggle(
+                    initValue: ["Easy", "Medium", "Hard"][int.parse(taskDifficultyController.text) - 1],
                     options: const ["Easy", "Medium", "Hard"],
                     onSelected: (index) {
                       print(
@@ -119,21 +122,107 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
                 ],
               ),
             ),
-            GradientButton(
-              onPressed: () {
-                // Add logic to save the work sheet
-              },
-              child: const Text(
-                'Save Task',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Container(
+                    width: 48, // ปรับขนาดตามต้องการ
+                    height: 48, // ปรับขนาดตามต้องการ
+                    margin: const EdgeInsets.only(
+                        right: 10), // เพิ่มระยะห่างระหว่างปุ่ม
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red, // หรือสีที่คุณต้องการ
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Boxicons.bx_trash, color: Colors.white),
+                      onPressed: () {
+                        _confirmDelete();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: GradientButton(
+                      onPressed: _submitForm,
+                      child: const Text(
+                        'Save Work',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),
+    );
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final updatedTask = widget.task.copyWith(
+        name: taskNameController.text,
+        description: taskDescriptionController.text,
+        startDate: DateTime.tryParse(taskStartController.text),
+        dueDate: DateTime.tryParse(taskDueController.text),
+        difficulty: int.tryParse(taskDifficultyController.text) ??
+            widget.task.difficulty,
+      );
+
+      final success = await widget.tasksController.updateTask(updatedTask);
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Task updated successfully')),
+        );
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update task')),
+        );
+      }
+    }
+  }
+
+  void _confirmDelete() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content:
+              Text('Are you sure you want to delete "${widget.task.name}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final success = await widget.tasksController
+                    .deleteTask(widget.task.id as String);
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Task deleted successfully')),
+                  );
+                  Navigator.of(context).pop(true);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to delete task')),
+                  );
+                }
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
