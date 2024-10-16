@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/special_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
@@ -73,6 +74,7 @@ class WorkAdventure extends StatelessWidget {
         Get.put(ApiService());
         Get.put(UserController());
         Get.put(CharacterController());
+        Get.put(SpecialController());
         Get.put(TableController());
         Get.put(FocusController());
         Get.put(CharacterbarController());
