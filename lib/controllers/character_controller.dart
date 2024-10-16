@@ -178,13 +178,13 @@ class CharacterController extends GetxController {
     updateCharacterOnServer();
   }
 
-  bool checkLevelUp(int add) {
+  bool checkLevelUp(int exp) {
     bool isLevelUp = false;
-    final (totalExp, expForNextLevel) = calculateExpForNextLevel(add);
+    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
 
-    if (add >= expForNextLevel) {
+    if (exp >= expForNextLevel) {
       isLevelUp = true;
-      additionalExp(add);
+      additionalExp(exp);
     }
 
     return isLevelUp;
