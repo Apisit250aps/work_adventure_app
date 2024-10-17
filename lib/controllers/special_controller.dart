@@ -15,6 +15,7 @@ class SpecialController extends GetxController {
       Get.find<CharacterController>();
 
   Character get character => characterController.characterSelect.value;
+  Rx<Character> characterSelect = const Character().obs;
   Rx<Special> special = Special(
     strength: 0,
     perception: 0,
@@ -27,12 +28,14 @@ class SpecialController extends GetxController {
     charId: '',
   ).obs;
   final RxBool isLoading = false.obs;
+  final RxBool statusLoading = false.obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     loadSpecial();
+    loadCharacter();
   }
 
   Future<void> loadSpecial() async {
@@ -50,6 +53,23 @@ class SpecialController extends GetxController {
     } finally {
       isLoading.value = false;
       print(special);
+    }
+  }
+
+  Future<void> loadCharacter() async {
+    statusLoading.value = true;
+    try {
+      final response =
+          await _apiService.get("${_rest.getCharacter}/${character.id}");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> charsData = data['characters'];
+        characterSelect.value = Character.fromJson(charsData[0]);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      statusLoading.value = false;
     }
   }
 
@@ -87,40 +107,44 @@ class SpecialController extends GetxController {
   }
 
   void incrementSpecial(String status) {
-    Special updatedSpecial = special.value.copyWith();
-    switch (status) {
-      case "STR":
-        updatedSpecial =
-            updatedSpecial.copyWith(strength: updatedSpecial.strength + 1);
-        break;
-      case "PER":
-        updatedSpecial =
-            updatedSpecial.copyWith(perception: updatedSpecial.perception + 1);
-        break;
-      case "END":
-        updatedSpecial =
-            updatedSpecial.copyWith(endurance: updatedSpecial.endurance + 1);
-        break;
-      case "CHA":
-        updatedSpecial =
-            updatedSpecial.copyWith(charisma: updatedSpecial.charisma + 1);
-        break;
-      case "INT":
-        updatedSpecial = updatedSpecial.copyWith(
-            intelligence: updatedSpecial.intelligence + 1);
-        break;
-      case "AGI":
-        updatedSpecial =
-            updatedSpecial.copyWith(agility: updatedSpecial.agility + 1);
-        break;
-      case "LUK":
-        updatedSpecial = updatedSpecial.copyWith(luck: updatedSpecial.luck + 1);
-        break;
-    }
+    if (characterSelect.value.statusPoint as int > 0) {
+      Special updatedSpecial = special.value.copyWith();
+      switch (status) {
+        case "STR":
+          updatedSpecial =
+              updatedSpecial.copyWith(strength: updatedSpecial.strength + 1);
+          break;
+        case "PER":
+          updatedSpecial = updatedSpecial.copyWith(
+              perception: updatedSpecial.perception + 1);
+          break;
+        case "END":
+          updatedSpecial =
+              updatedSpecial.copyWith(endurance: updatedSpecial.endurance + 1);
+          break;
+        case "CHA":
+          updatedSpecial =
+              updatedSpecial.copyWith(charisma: updatedSpecial.charisma + 1);
+          break;
+        case "INT":
+          updatedSpecial = updatedSpecial.copyWith(
+              intelligence: updatedSpecial.intelligence + 1);
+          break;
+        case "AGI":
+          updatedSpecial =
+              updatedSpecial.copyWith(agility: updatedSpecial.agility + 1);
+          break;
+        case "LUK":
+          updatedSpecial =
+              updatedSpecial.copyWith(luck: updatedSpecial.luck + 1);
+          break;
+      }
 
-    special.value = updatedSpecial;
-    print("Incremented $status: ${special.value.toJson()}");
-    updateSpecialOnServer();
+      special.value = updatedSpecial;
+      print("Incremented $status: ${special.value.toJson()}");
+      updateSpecialOnServer();
+      update();
+    }
   }
 
   void decrementSpecial(String status) {
@@ -177,6 +201,7 @@ class SpecialController extends GetxController {
   }
 
   Future<void> updateSpecialOnServer() async {
+    statusLoading.value = true;
     try {
       String path = _rest.updateSpecial;
       String endpoints = "$path/${special.value.id}";
@@ -188,6 +213,12 @@ class SpecialController extends GetxController {
 
       if (response.statusCode == 200) {
         print("Special updated successfully on server");
+        int state = characterSelect.value.statusPoint as int;
+        late int point = state - 1;
+
+        await _apiService.put("${_rest.updateCharacter}/${character.id}",
+            {"status_point": point});
+        print(point);
       } else {
         print(
             "Failed to update special on server. Status code: ${response.statusCode}");
@@ -195,6 +226,9 @@ class SpecialController extends GetxController {
     } catch (e) {
       print("Error updating special on server: $e");
       // You might want to show an error message to the user here
+    } finally {
+      await loadCharacter();
+      statusLoading.value = false;
     }
   }
 }

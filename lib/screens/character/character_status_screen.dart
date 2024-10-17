@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
+import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterStatusScreen extends GetWidget<SpecialController> {
   const CharacterStatusScreen({super.key});
@@ -47,51 +48,54 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
               ),
             ),
             // const SizedBox(height: 50),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 10,
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 10,
-              ),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: baseColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Row(
-                      children: [
-                        const Text("LV."),
-                        Text(
-                          "${characterController.calculateLevel(character.exp as int)}",
-                        ),
-                      ],
+            Obx(
+              () => Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 10,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: baseColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Row(
+                        children: [
+                          const Text("LV."),
+                          Text(
+                            "${characterController.calculateLevel(controller.characterSelect.value.exp as int)}",
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("EXP:"),
-                        Text("${character.exp}"),
-                      ],
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("EXP:"),
+                          Text("${controller.characterSelect.value.exp}"),
+                        ],
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text("STATUS."),
-                        Text("${character.level}"),
-                      ],
-                    ),
-                  )
-                ],
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const Text("STATUS."),
+                          Text(
+                              "${controller.characterSelect.value.statusPoint}"),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             upStatusBar(
