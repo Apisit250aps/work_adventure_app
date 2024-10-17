@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
@@ -23,72 +24,48 @@ class WorkScreen extends GetView<WorkController> {
           } else if (controller.workList.isEmpty) {
             return const Center(child: Text('No works available'));
           } else {
-            return ListView.builder(
-              itemCount: controller.workList.length,
-              itemBuilder: (context, index) {
-                final Work work = controller.workList[index];
-                return CollapseContent(
-                  initiallyExpanded: index == 0,
-                  onDoubleTap: () {
-                    controller.selectIndex(index);
-                    Get.toNamed('/tasks');
-                  },
-                  onLongPress: () => _showWorkOptions(context, work),
-                  title: work.name ?? 'Untitled',
-                  child: SizedBox(
-                    child: ListView.builder(
-                      itemCount: work.tasks?.length ?? 0,
-                      itemBuilder: (context, taskIndex) {
-                        final task = work.tasks?[taskIndex] as Task;
-                        return ListTile(
-                          leading: Container(
-                            decoration: const BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                                  offset:
-                                      Offset(0, 10), // corresponds to 0px 10px
-                                  blurRadius: 50, // corresponds to 50px
-                                )
-                              ],
-                            ),
-                            child: IconButton(
-                              iconSize: 24,
-                              padding: const EdgeInsets.all(0),
-                              onPressed: () {},
-                              icon: Icon(
-                                Boxicons.bx_check,
-                                color:
-                                    task.isDone ? Colors.white : Colors.black,
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                  task.isDone ? secondaryColor : Colors.white,
-                                ),
-                                elevation: const WidgetStatePropertyAll(
-                                  5,
-                                ), // ยังคงมี elevation ได้
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            task.name,
-                            style: TextStyle(
-                              decoration: task.isDone
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
+              child: ListView.builder(
+                itemCount: controller.workList.length,
+                itemBuilder: (context, index) {
+                  final Work work = controller.workList[index];
+                  return WorkCollapseTileList(work: work, index);
+                },
+              ),
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class WorkCollapseTileList extends GetWidget<WorkController> {
+  final Work work;
+  final int index;
+  const WorkCollapseTileList(this.index, {super.key, required this.work});
+
+  @override
+  Widget build(BuildContext context) {
+    return CollapseContent(
+      initiallyExpanded: index == 0,
+      onDoubleTap: () {
+        controller.selectIndex(index);
+        Get.toNamed('/tasks');
+      },
+      onLongPress: () => _showWorkOptions(context, work),
+      title: work.name ?? 'Untitled',
+      child: SizedBox(
+        child: ListView.builder(
+          itemCount: work.tasks?.length ?? 0,
+          itemBuilder: (context, taskIndex) {
+            final task = work.tasks?[taskIndex] as Task;
+            return TaskOfWork(task: task);
+          },
+        ),
       ),
     );
   }
@@ -104,12 +81,114 @@ class WorkScreen extends GetView<WorkController> {
           maxChildSize: 0.75,
           expand: false,
           builder: (_, controllers) {
-            return  WorkUpdateForm(work: work, controller: controller,);
+            return WorkUpdateForm(
+              work: work,
+              controller: controller,
+            );
           },
         );
       },
     );
   }
+}
 
-  
+// ListTile(
+//               leading: Container(
+//                 decoration: const BoxDecoration(
+//                   boxShadow: [
+//                     BoxShadow(
+//                       color: Color.fromRGBO(0, 0, 0, 0.1),
+//                       offset: Offset(0, 10), // corresponds to 0px 10px
+//                       blurRadius: 50, // corresponds to 50px
+//                     )
+//                   ],
+//                 ),
+//                 child: IconButton(
+//                   iconSize: 24,
+//                   padding: const EdgeInsets.all(0),
+//                   onPressed: () {},
+//                   icon: Icon(
+//                     Boxicons.bx_check,
+//                     color: task.isDone ? Colors.white : Colors.black,
+//                   ),
+//                   style: ButtonStyle(
+//                     backgroundColor: WidgetStatePropertyAll(
+//                       task.isDone ? secondaryColor : Colors.white,
+//                     ),
+//                     elevation: const WidgetStatePropertyAll(
+//                       5,
+//                     ), // ยังคงมี elevation ได้
+//                   ),
+//                 ),
+//               ),
+//               title: Text(
+//                 task.name,
+//                 style: TextStyle(
+//                   decoration: task.isDone ? TextDecoration.lineThrough : null,
+//                   fontWeight: FontWeight.w600,
+//                 ),
+//               ),
+//             );
+class TaskOfWork extends StatelessWidget {
+  final Task task;
+  const TaskOfWork({super.key, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: IconButton(
+        onPressed: () {},
+        style: ButtonStyle(
+          iconColor: WidgetStatePropertyAll(
+            task.isDone ? baseColor : textColor,
+          ),
+          backgroundColor: WidgetStatePropertyAll(
+            task.isDone ? secondaryColor : baseColor,
+          ),
+        ),
+        icon: const Icon(
+          Boxicons.bx_check,
+        ),
+      ),
+      title: Text(
+        task.name,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          decoration: task.isDone ? TextDecoration.lineThrough : null,
+        ),
+      ),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 5,
+          horizontal: 5,
+        ),
+        decoration: BoxDecoration(
+          color: diffColor(task.difficulty),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          diff(task.difficulty),
+          style: TextStyle(
+            color: textColor,
+          ),
+        ),
+      ),
+      // subtitle: Text(task.description ?? ''),
+    );
+  }
+
+  String diff(int index) {
+    List<String> taskDiffs = <String>["Easy", "Medium", "Hard"];
+    return taskDiffs[index - 1];
+  }
+
+  Color diffColor(int index) {
+    List<Color> colors = <Color>[
+      Colors.green.shade100,
+      Colors.yellow.shade100,
+      Colors.red.shade100,
+    ];
+
+    return colors[index - 1];
+  }
 }
