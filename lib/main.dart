@@ -14,6 +14,7 @@ import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
 
+
 void main() {
   runApp(const WorkAdventure());
 }

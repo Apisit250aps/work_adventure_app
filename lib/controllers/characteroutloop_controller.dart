@@ -10,7 +10,7 @@ class CharacterbarController extends GetxController {
       Get.find<CharacterController>();
 
   (int, int) healthBar() {
-    int maxHealth = _tableController.calculateCharacterHP();
+    int maxHealth = _tableController.calculateCharacterHP;
     int damage = (_focusController.damageInput).toInt();
     int healthNow = (maxHealth - damage).clamp(0, maxHealth);
 
@@ -18,13 +18,25 @@ class CharacterbarController extends GetxController {
   }
 
   (int, int) expBar() {
-    int expInput = _focusController.expInput;
-    final (exp, nextLevelExp) =
+    int expInput = (_focusController.expInput).toInt();
+    bool checkLevelUp = _characterController.checkLevelUp(expInput);
+    final (totalExp, expForNextLevel) =
         _characterController.calculateExpForNextLevel(expInput);
-    int currentExp = exp + (expInput).toInt();
-    if (expInput >= nextLevelExp - currentExp) {
-      _focusController.expInputReset();
+    if (checkLevelUp) {
+      int expDifference = expInput - expForNextLevel;
+      _focusController.expInputReset(expDifference);
+      return (
+        ((expDifference).clamp(1, double.infinity)).toInt(),
+        expForNextLevel
+      );
     }
-    return ((expInput).toInt(), nextLevelExp);
+    return (((expInput)).clamp(1, double.infinity).toInt(), expForNextLevel);
+  }
+
+  (int, int) spBar() {
+    int maxSP = _tableController.calculateCharacterStamina;
+    int spNow = (maxSP - (_focusController.SPCounter).toInt()).clamp(0, maxSP);
+
+    return (spNow, maxSP);
   }
 }

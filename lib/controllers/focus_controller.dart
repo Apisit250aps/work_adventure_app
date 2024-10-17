@@ -33,7 +33,7 @@ class FocusController extends GetxController {
       "Waiting for adventure...\n".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
-  RxInt timeToRestCounter = 0.obs;
+  RxInt SPCounter = 0.obs;
 
   // Timers
   Timer? _timer;
@@ -49,9 +49,11 @@ class FocusController extends GetxController {
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
 
+  int get _eventIntervalSeconds => _tableController.timeEventRun;
+  int get restDuration => _tableController.restTimer;
+
   // Other variables
   int rollOne = 0;
-  late final int _eventIntervalSeconds;
 
   // Quest variables
   String enemyQuestName = "";
@@ -69,7 +71,7 @@ class FocusController extends GetxController {
 
   // Enemy data
   RxInt damageInput = 0.obs;
-  int expInput = 0;
+  RxInt expInput = 0.obs;
   final List<List<String>> enemy = [
     [
       "🐺 หมาป่าจิ๋ว",
@@ -104,7 +106,11 @@ class FocusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _eventIntervalSeconds = _tableController.timeEventRun();
+    ever(_tableController.special, (_) {
+      if (_isActive.value) {
+        _startEventTimer();
+      }
+    });
   }
 
   // Session management methods
@@ -159,16 +165,29 @@ class FocusController extends GetxController {
 
   void _startRestTimer() {
     _restTimer?.cancel();
+    final staminaPerSecond =
+        _tableController.calculateCharacterStamina / restDuration;
+
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
         _restTimeRemaining.value--;
-      } else {
-        _isResting.value = false;
-        _restTimer?.cancel();
 
-        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+        final elapsedTime = restDuration - _restTimeRemaining.value;
+        final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
+
+        SPCounter.value =
+            _tableController.calculateCharacterStamina - (recoveredStamina);
+      } else {
+        _finishResting();
       }
     });
+  }
+
+  void _finishResting() {
+    _isResting.value = false;
+    SPCounter.value = 0;
+    _restTimer?.cancel();
+    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _stopTimers() {
@@ -191,20 +210,19 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
     eventCount.value = 0;
     _showingSummary.value = false;
-    timeToRestCounter.value = 0;
+    SPCounter.value = 0;
     _restTimeRemaining.value = 0;
   }
 
-  void expInputReset() {
-    expInput = 0;
+  void expInputReset(int value) {
+    expInput.value = value;
   }
 
   // Event generation methods
   void generateEvent() {
     if (!_isResting.value) {
-      timeToRestCounter++;
-      if (_tableController.timeToRest(timeToRestCounter.toInt())) {
-        timeToRestCounter.value = 0;
+      SPCounter++;
+      if (_tableController.timeToRest(SPCounter.toInt())) {
         _generateRestEvent();
       } else {
         _generateRandomEvent();
@@ -230,7 +248,7 @@ class FocusController extends GetxController {
   void _generateVillageEvent() {
     questIsActive = true;
     final villageType = _getRandomVillageType();
-    final questDifficulty = _tableController.selectQuest();
+    final questDifficulty = _tableController.selectQuest;
     questNumber = questDifficulty;
     final questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
@@ -278,7 +296,6 @@ class FocusController extends GetxController {
     double intelligenceBonus =
         _getSpecialPercentage(_characterController.special.value.intelligence);
     int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
-    int restDuration = _tableController.restTimer();
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
 
     _updateEncounter("🏕️",

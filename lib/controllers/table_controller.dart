@@ -1,29 +1,37 @@
 import 'package:get/get.dart';
-
 import 'dart:math';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/special_controller.dart';
+import 'package:work_adventure/models/spacial_model.dart';
 
 class TableController extends GetxController {
   final CharacterController _characterController =
       Get.find<CharacterController>();
+  final SpecialController _specialController = Get.find<SpecialController>();
   final Random _random = Random();
 
-  Map<String, int> special = {};
+  Rx<Map<String, int>> special = Rx<Map<String, int>>({});
 
-  TableController() {
-    _initializeSpecialAttributes();
+  @override
+  void onInit() {
+    super.onInit();
+    ever(_specialController.special, _updateSpecial);
+    _updateSpecial(_specialController.special.value);
   }
 
-  void _initializeSpecialAttributes() {
-    final characterSpecial = _characterController.special.value;
-    special = {
-      's': characterSpecial.strength,
-      'p': characterSpecial.perception,
-      'e': characterSpecial.endurance,
-      'c': characterSpecial.charisma,
-      'i': characterSpecial.intelligence,
-      'a': characterSpecial.agility,
-      'l': characterSpecial.luck,
+  void testCalculations() {
+    // เพิ่มการทดสอบฟังก์ชันอื่นๆ ตามต้องการ
+  }
+
+  _updateSpecial(Special specialValue) {
+    special.value = {
+      's': specialValue.strength,
+      'p': specialValue.perception,
+      'e': specialValue.endurance,
+      'c': specialValue.charisma,
+      'i': specialValue.intelligence,
+      'a': specialValue.agility,
+      'l': specialValue.luck,
     };
   }
 
@@ -34,12 +42,13 @@ class TableController extends GetxController {
       pow(1.1, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
-  int calculateCharacterHP() => (special['e']! * 50 + special['s']! ~/ 2);
-  int calculateCharacterStamina() => (special['s']! ~/ 2).clamp(5, 50);
+  int get calculateCharacterHP =>
+      (special.value['e']! * 50 + special.value['s']! ~/ 2);
+  int get calculateCharacterStamina => (special.value['s']! ~/ 2).clamp(5, 50);
 
   // การทอยลูกเต๋า
-  int rollDice() {
-    final count = (special['c']! ~/ 21).clamp(1, 3);
+  int get rollDice {
+    final count = (special.value['c']! ~/ 21).clamp(1, 3);
     int dice = singleDiceRoll();
     double specialRollPercentage = _percentage(specialRoll("l"));
     int totalRoll =
@@ -63,17 +72,20 @@ class TableController extends GetxController {
   }
 
   int specialRoll(String attribute) {
-    if (!special.containsKey(attribute)) return 0;
-    final luckBonus = (special["l"]! ~/ 1.5);
+    if (!special.value.containsKey(attribute)) return 0;
+    final luckBonus = (special.value["l"]! ~/ 1.5);
     final specialDice =
-        (_random.nextInt((special[attribute]! + luckBonus + 1)) / 10).round();
-    return special[attribute]! + specialDice;
+        (_random.nextInt((special.value[attribute]! + luckBonus + 1)) / 10)
+            .round();
+    return special.value[attribute]! + specialDice;
   }
 
   // การคำนวณประสบการณ์
-  int calculateEXP(int exp) =>
-      ((exp + (exp * _percentage(specialRoll('i')))) * _levelMultiplier)
-          .round();
+  int calculateEXP(int exp) => ((exp +
+              ((exp * (specialRoll('i') / 10).clamp(1, 10)) *
+                  _percentage(specialRoll('i')))) *
+          _levelMultiplier)
+      .round();
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
@@ -89,7 +101,7 @@ class TableController extends GetxController {
 
   bool _shouldReduceCoin(int difficulty) {
     final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
-    return rollDice() + specialRoll('p') <= threshold;
+    return rollDice + specialRoll('p') <= threshold;
   }
 
   // การคำนวณลดความเสียหาย
@@ -103,7 +115,7 @@ class TableController extends GetxController {
     double reductionPercentage = _calculateBaseReduction(
         strengthRoll, baseReduction, maxReduction, scalingFactor);
 
-    if (special['s']! >= 80) {
+    if (special.value['s']! >= 80) {
       reductionPercentage *=
           _calculateLateGameMultiplier(strengthRoll, lateGameBoost);
     }
@@ -126,12 +138,12 @@ class TableController extends GetxController {
 
   // การคำนวณลดความเสียหาย
   int hpReduction(int damage) {
-    int characterHP = calculateCharacterHP();
+    int characterHP = calculateCharacterHP;
     return (characterHP - damage).clamp(0, double.infinity).toInt();
   }
 
   // การคำนวณเควส
-  int selectQuest() {
+  int get selectQuest {
     final int dice = singleDiceRoll();
     final int charismaQuest = specialRoll("c") ~/ 15;
 
@@ -217,22 +229,22 @@ class TableController extends GetxController {
   }
 
   // ความเร็วการเจอเหตุการณ์
-  int timeEventRun() {
+  int get timeEventRun {
     int baseTimeEvent = 10;
-    int agilityPerTime = (special["a"]! / 10).round();
+    int agilityPerTime = ((special.value["a"]!) / 10).round();
     int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 10);
     return timeEvent;
   }
 
   //เหตุการณ์พัก
   bool timeToRest(int counter) =>
-      (counter >= calculateCharacterStamina()) ? true : false;
+      (counter > calculateCharacterStamina) ? true : false;
 
-  int restTimer() {
+  int get restTimer {
     int baseTimeRest = 10;
-    int endurancePerTime = (special["e"]! ~/ 15);
+    int endurancePerTime = (special.value["e"]! ~/ 15);
     int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun() + 1)).clamp(1, 10);
+        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(1, 10);
     return timeRest;
   }
 }
