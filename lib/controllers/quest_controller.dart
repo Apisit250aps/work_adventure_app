@@ -82,14 +82,22 @@ class QuestController extends GetxController {
     loadQuests();
   }
 
-  Future<void> addQuest(String title, String details) async {
-    final newQuest = Quest(
-      title: title,
-      date: DateTime.now(),
-      details: details,
-    );
-    await _questBox.add(newQuest);
-    loadQuests();
+  Future<bool> addQuest(String title, String details) async {
+    try {
+      final newQuest = Quest(
+        title: title,
+        date: DateTime.now(),
+        details: details,
+      );
+
+      await _questBox.add(newQuest);
+      return true;
+    } catch (e) {
+      print('Error adding quest: $e');
+      return false;
+    } finally {
+      loadQuests();
+    }
   }
 
   Future<void> updateQuest(

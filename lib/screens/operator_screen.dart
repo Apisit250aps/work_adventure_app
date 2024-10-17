@@ -9,6 +9,7 @@ import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/screens/todo/quest_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/forms/quest/quest_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
 
@@ -31,12 +32,12 @@ class OperatorScreen extends GetView<PageControllerX> {
     PageData(
       title: "Dairy Quests",
       widget: DailyQuestScreen(),
-      floatingActionButton: (context) => const FocusFloatingActionButton(),
+      floatingActionButton: (context) => const QuestFloatingActionButton(),
     ),
     PageData(
       title: "Status",
       widget: const CharacterStatusScreen(),
-      floatingActionButton: (context) =>  Container(),
+      floatingActionButton: (context) => Container(),
     ),
   ];
 
@@ -143,6 +144,52 @@ class WorkFloatingActionButton extends StatelessWidget {
           expand: false,
           builder: (_, controller) {
             return const WorkCreateForm();
+          },
+        );
+      },
+    );
+  }
+}
+
+class QuestFloatingActionButton extends StatelessWidget {
+  const QuestFloatingActionButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            primaryColor,
+            secondaryColor,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        shape: BoxShape.circle,
+      ),
+      child: FloatingActionButton(
+        onPressed: () => _createQuestSheets(context),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  void _createQuestSheets(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.75,
+          
+          expand: false,
+          builder: (_, controller) {
+            return const QuestCreateForm();
           },
         );
       },
