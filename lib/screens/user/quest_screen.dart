@@ -6,6 +6,8 @@ class DailyQuestScreen extends StatelessWidget {
   final QuestController controller = Get.put(QuestController());
   final TextEditingController textController = TextEditingController();
 
+  DailyQuestScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,7 +19,7 @@ class DailyQuestScreen extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: textController,
-                  decoration: InputDecoration(hintText: 'Enter new quest'),
+                  decoration: const InputDecoration(hintText: 'Enter new quest'),
                 ),
               ),
               ElevatedButton(
@@ -27,7 +29,7 @@ class DailyQuestScreen extends StatelessWidget {
                     textController.clear();
                   }
                 },
-                child: Text('Add'),
+                child: const Text('Add'),
               ),
             ],
           ),
@@ -48,7 +50,7 @@ class DailyQuestScreen extends StatelessWidget {
                               controller.toggleQuestStatus(quest.id),
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete),
+                          icon: const Icon(Icons.delete),
                           onPressed: () => controller.deleteQuest(quest.id),
                         ),
                       ],
@@ -57,7 +59,7 @@ class DailyQuestScreen extends StatelessWidget {
                       // Open edit dialog
                       Get.dialog(
                         AlertDialog(
-                          title: Text('Edit Quest'),
+                          title: const Text('Edit Quest'),
                           content: TextField(
                             controller:
                                 TextEditingController(text: quest.title),
@@ -65,11 +67,11 @@ class DailyQuestScreen extends StatelessWidget {
                           ),
                           actions: [
                             TextButton(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () => Get.back(),
                             ),
                             TextButton(
-                              child: Text('Save'),
+                              child: const Text('Save'),
                               onPressed: () {
                                 controller.updateQuest(quest.id, quest.title,
                                     quest.isCompleted, '');

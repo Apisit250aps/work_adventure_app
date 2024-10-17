@@ -195,8 +195,9 @@ class TaskScreen extends GetWidget<TasksController> {
   }
 
   String calculateDifficulty() {
-    if (controller.tasks.isEmpty)
+    if (controller.tasks.isEmpty) {
       return "ง่าย"; // ถ้าไม่มี task ให้ถือว่าง่ายที่สุด
+    }
 
     double averageDifficulty = controller.tasks
             .map((task) => task.difficulty)
