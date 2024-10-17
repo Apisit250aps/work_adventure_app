@@ -29,6 +29,11 @@ class BottomNavigation extends StatelessWidget {
           activeIcon: Icon(Boxicons.bxs_time),
           label: '',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(Boxicons.bx_receipt),
+          activeIcon: Icon(Boxicons.bxs_receipt),
+          label: '',
+        ),
       ],
     );
   }
