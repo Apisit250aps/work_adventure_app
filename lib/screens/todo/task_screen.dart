@@ -269,13 +269,45 @@ class TaskListTile extends GetWidget<TasksController> {
       title: Text(
         task.name,
         style: TextStyle(
-          decoration: task.isDone ? TextDecoration.lineThrough : null,
-          color: task.isDone ? Colors.grey : textColor,
           fontWeight: FontWeight.w600,
+          decoration: task.isDone ? TextDecoration.lineThrough : null,
         ),
       ),
-      subtitle: Text(controller.diffs(task.difficulty)),
+      subtitle:
+          Text(task.description!.isEmpty ? '--' : task.description as String),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 5,
+          horizontal: 5,
+        ),
+        decoration: BoxDecoration(
+          color: diffColor(task.difficulty),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          diff(task.difficulty),
+          style: TextStyle(
+            color: textColor,
+          ),
+        ),
+      ),
+      // subtitle: Text(task.description ?? ''),
     );
+  }
+
+  String diff(int index) {
+    List<String> taskDiffs = <String>["Easy", "Medium", "Hard"];
+    return taskDiffs[index - 1];
+  }
+
+  Color diffColor(int index) {
+    List<Color> colors = <Color>[
+      Colors.green.shade100,
+      Colors.yellow.shade100,
+      Colors.red.shade100,
+    ];
+
+    return colors[index - 1];
   }
 
   void _showTaskOptions(BuildContext context, Task task) {

@@ -43,7 +43,17 @@ class _CollapseContentState extends State<CollapseContent> {
           onDoubleTap: widget.onDoubleTap,
           onLongPress: widget.onLongPress,
           child: Container(
-            color: backgroundColor,
+            decoration: BoxDecoration(
+              color: baseColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                  offset: Offset(0, 0), // corresponds to 0px 10px
+                  blurRadius: 10, // corresponds to 50px
+                )
+              ],
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,7 +78,7 @@ class _CollapseContentState extends State<CollapseContent> {
             duration: const Duration(milliseconds: 300),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                vertical: 10,
+                vertical: 5,
                 horizontal: 0,
               ),
               height: 200,

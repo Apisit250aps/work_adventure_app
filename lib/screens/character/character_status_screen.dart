@@ -46,7 +46,54 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 50),
+            // const SizedBox(height: 50),
+            Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 10,
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 10,
+              ),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: baseColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Row(
+                      children: [
+                        const Text("LV."),
+                        Text(
+                          "${characterController.calculateLevel(character.exp as int)}",
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("EXP:"),
+                        Text("${character.exp}"),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text("STATUS."),
+                        Text("${character.level}"),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
             upStatusBar(
               "STR",
               controller.special.value.strength,
@@ -106,7 +153,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
                 icon: icon,
               ),
               Container(
-                width: 75,
+                width: 100,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: baseColor,
@@ -121,16 +168,16 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
           ),
           Row(
             children: [
-              IconButton(
-                style: ButtonStyle(
-                  elevation: const WidgetStatePropertyAll(5),
-                  backgroundColor: WidgetStatePropertyAll(baseColor),
-                ),
-                onPressed: () => controller.decrementSpecial(status),
-                icon: const Icon(Boxicons.bx_minus),
-              ),
+              // IconButton(
+              //   style: ButtonStyle(
+              //     elevation: const WidgetStatePropertyAll(5),
+              //     backgroundColor: WidgetStatePropertyAll(baseColor),
+              //   ),
+              //   onPressed: () => controller.decrementSpecial(status),
+              //   icon: const Icon(Boxicons.bx_minus),
+              // ),
               Container(
-                width: 75,
+                width: 100,
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(

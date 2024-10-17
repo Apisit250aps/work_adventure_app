@@ -76,20 +76,20 @@ class OperatorScreen extends GetView<PageControllerX> {
           ),
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {
-            Get.toNamed("/characterStatus");
-          },
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(baseColor),
-            elevation: const WidgetStatePropertyAll(5),
-            iconSize: const WidgetStatePropertyAll(28),
-          ),
-          icon: const Icon(Icons.more_vert),
-        ),
-        const SizedBox(width: 10),
-      ],
+      // actions: [
+      //   IconButton(
+      //     onPressed: () {
+      //       Get.toNamed("/characterStatus");
+      //     },
+      //     style: ButtonStyle(
+      //       backgroundColor: WidgetStateProperty.all(baseColor),
+      //       elevation: const WidgetStatePropertyAll(5),
+      //       iconSize: const WidgetStatePropertyAll(28),
+      //     ),
+      //     icon: const Icon(Icons.more_vert),
+      //   ),
+      //   const SizedBox(width: 10),
+      // ],
     );
   }
 }
