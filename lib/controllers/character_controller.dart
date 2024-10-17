@@ -144,20 +144,31 @@ class CharacterController extends GetxController {
     return (log(exp / C + 1) / log(base) + 1).round();
   }
 
-  (int, int, int) calculateExpForNextLevel(int add) {
+  int get expForNextLevel => 0;
+  int _expForNextLevel = 0;
+  set expForNextLevel(int value) {
+    _expForNextLevel = value;
+  }
+
+  int get totalExp => 0;
+  int _totalExp = 0;
+  set totalExp(int value) {
+    _totalExp = value;
+  }
+
+  (int, int) calculateExpForNextLevel(int add) {
     const double base = 1.045;
     const double C = 6000;
     int currentExp = characterSelect.value.exp as int;
 
-    int totalExp = currentExp + add;
+    totalExp = currentExp + add;
     int currentLevel = calculateLevel(currentExp);
     int nextLevel = calculateLevel(currentExp) + 1;
     int expNextLevel = (C * (pow(base, nextLevel) - 1)).round();
-    int expcurrentLevel = (C * (pow(base, currentLevel) - 1)).round();
-    int expForNextLevel = expNextLevel - expcurrentLevel;
-    int expGap = totalExp - expcurrentLevel;
+    int expCurrentLevel = (C * (pow(base, currentLevel) - 1)).round();
+    expForNextLevel = expNextLevel - expCurrentLevel;
 
-    return (totalExp, expForNextLevel, expGap);
+    return (_totalExp, _expForNextLevel);
   }
 
   void additionalExp(int add) {
@@ -183,32 +194,21 @@ class CharacterController extends GetxController {
     updatedCharacter = updatedCharacter.copyWith(
         focusPoint: (characterSelect.value.statusPoint ?? 0) + 3);
     characterSelect.value = updatedCharacter;
-    print(updatedCharacter);
     updateCharacterOnServer();
   }
 
-  bool isLevelup(int exp) {
-    final (totalExp, expForNextLevel, expGap) = calculateExpForNextLevel(exp);
-
-    if (exp + expGap >= expForNextLevel) {
-      additionalSpecial();
-      return true;
-    }
-    return false;
-  }
+  bool get isLevelup => false;
 
   bool focusSender(int exp, int coin) {
-    if (isLevelup(exp)) {
-      additionalExp(exp);
-      additionalExp(coin);
-      return true;
-    }
-    return false;
-  }
+    bool isLevelUp = false;
+    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
 
-  void taskSender(int exp, int coin) {
-    additionalExp(exp);
-    additionalExp(coin);
-    isLevelup(0);
+    if (exp >= expForNextLevel) {
+      isLevelUp = true;
+      additionalExp(exp);
+      additionalSpecial();
+    }
+
+    return isLevelUp;
   }
 }
