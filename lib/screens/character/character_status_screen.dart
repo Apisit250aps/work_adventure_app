@@ -12,63 +12,52 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
   Widget build(BuildContext context) {
     final CharacterController characterController = Get.find();
     final character = characterController.characterSelect.value;
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          "Status",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Container(
+              alignment: Alignment.center,
+              child: ClipOval(
+                child: Image.asset(
+                  characterController
+                      .characterImages[character.avatarIndex as int],
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              character.name as String,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              character.className as String,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 50),
+            upStatusBar("STR", controller.special.value.strength),
+            upStatusBar("PER", controller.special.value.perception),
+            upStatusBar("END", controller.special.value.endurance),
+            upStatusBar("CHA", controller.special.value.charisma),
+            upStatusBar("INT", controller.special.value.intelligence),
+            upStatusBar("AGI", controller.special.value.agility),
+            upStatusBar("LUK", controller.special.value.luck),
+          ],
         ),
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Container(
-                alignment: Alignment.center,
-                child: ClipOval(
-                  child: Image.asset(
-                    characterController.characterImages[character.avatarIndex as int],
-                    width: 150,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                character.name as String,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                character.className as String,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 50),
-              upStatusBar("STR", controller.special.value.strength),
-              upStatusBar("PER", controller.special.value.perception),
-              upStatusBar("END", controller.special.value.endurance),
-              upStatusBar("CHA", controller.special.value.charisma),
-              upStatusBar("INT", controller.special.value.intelligence),
-              upStatusBar("AGI", controller.special.value.agility),
-              upStatusBar("LUK", controller.special.value.luck),
-            ],
-          ),
-        );
-      }),
-    );
+      );
+    });
   }
 
   Widget upStatusBar(String status, int value) {
