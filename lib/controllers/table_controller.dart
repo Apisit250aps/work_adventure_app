@@ -231,6 +231,13 @@ class TableController extends GetxController {
     return enemyChance.indexOf(selectedChance);
   }
 
+  bool healthReduceCondition(int damage) {
+    if (calculateCharacterHP - damage <= 0) {
+      return false;
+    }
+    return true;
+  }
+
   // ความเร็วการเจอเหตุการณ์
   int get timeEventRun {
     int baseTimeEvent = 10;

@@ -293,8 +293,10 @@ class FocusController extends GetxController {
         "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
 
     damageInput += enemyDamage;
-    expInput += enemyEXP;
-    coinInput += enemyCoin;
+    if (_tableController.healthReduceCondition(damageInput.value)) {
+      expInput += enemyEXP;
+      coinInput += enemyCoin;
+    }
   }
 
   void _generateRestEvent() {
