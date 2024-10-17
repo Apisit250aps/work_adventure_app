@@ -32,7 +32,9 @@ class _LoginFormState extends State<LoginForm> {
       });
       try {
         await userController.login(
-            usernameController.text, passwordController.text);
+          usernameController.text,
+          passwordController.text,
+        );
         characterController.loadCharacters();
         Get.offAll(() => const AuthWrapper());
       } catch (e) {
