@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
+import 'package:work_adventure/screens/character/character_status_screen.dart';
 import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/screens/user/quest_screen.dart';
@@ -31,6 +32,11 @@ class OperatorScreen extends GetView<PageControllerX> {
       title: "Dairy Quests",
       widget: DailyQuestScreen(),
       floatingActionButton: (context) => const FocusFloatingActionButton(),
+    ),
+    PageData(
+      title: "Status",
+      widget: const CharacterStatusScreen(),
+      floatingActionButton: (context) =>  Container(),
     ),
   ];
 

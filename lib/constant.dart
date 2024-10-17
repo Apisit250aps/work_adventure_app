@@ -20,6 +20,8 @@ ThemeData themeData = ThemeData(
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: baseColor,
+    selectedItemColor: textColor,
+    
   ),
   bottomSheetTheme: BottomSheetThemeData(
     backgroundColor: backgroundColor,
