@@ -47,37 +47,77 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
               ),
             ),
             const SizedBox(height: 50),
-            upStatusBar("STR", controller.special.value.strength),
-            upStatusBar("PER", controller.special.value.perception),
-            upStatusBar("END", controller.special.value.endurance),
-            upStatusBar("CHA", controller.special.value.charisma),
-            upStatusBar("INT", controller.special.value.intelligence),
-            upStatusBar("AGI", controller.special.value.agility),
-            upStatusBar("LUK", controller.special.value.luck),
+            upStatusBar(
+              "STR",
+              controller.special.value.strength,
+              Icon(Boxicons.bx_dumbbell),
+            ),
+            upStatusBar(
+              "PER",
+              controller.special.value.perception,
+              Icon(Boxicons.bx_donate_heart),
+            ),
+            upStatusBar(
+              "END",
+              controller.special.value.endurance,
+              Icon(Boxicons.bx_heart),
+            ),
+            upStatusBar(
+              "CHA",
+              controller.special.value.charisma,
+              Icon(Boxicons.bx_message_square_detail),
+            ),
+            upStatusBar(
+              "INT",
+              controller.special.value.intelligence,
+              Icon(Boxicons.bx_brain),
+            ),
+            upStatusBar(
+              "AGI",
+              controller.special.value.agility,
+              Icon(Boxicons.bx_run),
+            ),
+            upStatusBar(
+              "LUK",
+              controller.special.value.luck,
+              Icon(Boxicons.bx_coin),
+            ),
           ],
         ),
       );
     });
   }
 
-  Widget upStatusBar(String status, int value) {
+  Widget upStatusBar(String status, int value, Icon icon) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 75,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: baseColor,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text(status)],
-            ),
+          Row(
+            children: [
+              IconButton(
+                style: ButtonStyle(
+                  elevation: const WidgetStatePropertyAll(5),
+                  backgroundColor: WidgetStatePropertyAll(baseColor),
+                ),
+                onPressed: () => controller.incrementSpecial(status),
+                icon: icon,
+              ),
+              Container(
+                width: 75,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: baseColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Text(status)],
+                ),
+              ),
+            ],
           ),
           Row(
             children: [
