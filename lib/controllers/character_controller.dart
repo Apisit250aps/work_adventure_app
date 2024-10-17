@@ -144,7 +144,7 @@ class CharacterController extends GetxController {
     return (log(exp / C + 1) / log(base) + 1).round();
   }
 
-  (int, int) calculateExpForNextLevel(int add) {
+  (int, int, int) calculateExpForNextLevel(int add) {
     const double base = 1.045;
     const double C = 6000;
     int currentExp = characterSelect.value.exp as int;
@@ -155,8 +155,9 @@ class CharacterController extends GetxController {
     int expNextLevel = (C * (pow(base, nextLevel) - 1)).round();
     int expcurrentLevel = (C * (pow(base, currentLevel) - 1)).round();
     int expForNextLevel = expNextLevel - expcurrentLevel;
+    int expGap = totalExp - expcurrentLevel;
 
-    return (totalExp, expForNextLevel);
+    return (totalExp, expForNextLevel, expGap);
   }
 
   void additionalExp(int add) {
@@ -186,30 +187,35 @@ class CharacterController extends GetxController {
     updateCharacterOnServer();
   }
 
-  bool checkLevelUp(int exp, int coin) {
-    bool isLevelUp = false;
-    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
+  bool isLevelup(int exp) {
+    final (totalExp, expForNextLevel, expGap) = calculateExpForNextLevel(exp);
 
-    if (exp >= expForNextLevel) {
-      isLevelUp = true;
+    if (exp + expGap >= expForNextLevel) {
+      return true;
+    }
+    return false;
+  }
+
+  bool checkLevelUp(int exp, int coin) {
+    if (isLevelup(exp)) {
       additionalExp(exp);
       additionalExp(coin);
       additionalSpecial();
+      return true;
     }
 
-    return isLevelUp;
+    return false;
   }
 
   bool taskSender(int exp, int coin) {
-    bool isSended = false;
-    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
     additionalExp(exp);
     additionalExp(coin);
 
-    if (exp >= expForNextLevel) {
+    if (isLevelup(0)) {
       additionalSpecial();
+      return true;
     }
 
-    return isSended;
+    return false;
   }
 }
