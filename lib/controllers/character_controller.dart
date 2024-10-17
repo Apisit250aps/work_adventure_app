@@ -191,31 +191,24 @@ class CharacterController extends GetxController {
     final (totalExp, expForNextLevel, expGap) = calculateExpForNextLevel(exp);
 
     if (exp + expGap >= expForNextLevel) {
+      additionalSpecial();
       return true;
     }
     return false;
   }
 
-  bool checkLevelUp(int exp, int coin) {
+  bool focusSender(int exp, int coin) {
     if (isLevelup(exp)) {
       additionalExp(exp);
       additionalExp(coin);
-      additionalSpecial();
       return true;
     }
-
     return false;
   }
 
-  bool taskSender(int exp, int coin) {
+  void taskSender(int exp, int coin) {
     additionalExp(exp);
     additionalExp(coin);
-
-    if (isLevelup(0)) {
-      additionalSpecial();
-      return true;
-    }
-
-    return false;
+    isLevelup(0);
   }
 }
