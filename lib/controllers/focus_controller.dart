@@ -175,8 +175,8 @@ class FocusController extends GetxController {
         final elapsedTime = restDuration - _restTimeRemaining.value;
         final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
 
-        SPCounter.value =
-            _tableController.calculateCharacterStamina - (recoveredStamina);
+        SPCounter.value = _tableController.calculateCharacterStamina -
+            (recoveredStamina ~/ 1.5);
       } else {
         _finishResting();
       }
@@ -357,7 +357,7 @@ class FocusController extends GetxController {
       [4, 6, 6],
       [8, 12, 10]
     ];
-    final baseValue = (rollOne + 5).clamp(5, 15);
+    final baseValue = (rollOne).clamp(1, 10);
 
     int coin = baseValue * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];

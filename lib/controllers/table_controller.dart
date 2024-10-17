@@ -43,8 +43,10 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 50 + special.value['s']! ~/ 2);
-  int get calculateCharacterStamina => (special.value['s']! ~/ 2).clamp(5, 50);
+      (special.value['e']! * 25 + special.value['s']!);
+
+  int get calculateCharacterStamina =>
+      ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
 
   // การทอยลูกเต๋า
   int get rollDice {
@@ -73,7 +75,7 @@ class TableController extends GetxController {
 
   int specialRoll(String attribute) {
     if (!special.value.containsKey(attribute)) return 0;
-    final luckBonus = (special.value["l"]! ~/ 1.5);
+    final luckBonus = (special.value["l"]! ~/ 10);
     final specialDice =
         (_random.nextInt((special.value[attribute]! + luckBonus + 1)) / 10)
             .round();
@@ -101,7 +103,7 @@ class TableController extends GetxController {
 
   bool _shouldReduceCoin(int difficulty) {
     final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
-    return rollDice + specialRoll('p') <= threshold;
+    return rollDice + specialRoll('p') >= threshold;
   }
 
   // การคำนวณลดความเสียหาย
@@ -111,13 +113,13 @@ class TableController extends GetxController {
     const scalingFactor = 0.025;
     const lateGameBoost = 1.5;
 
-    final strengthRoll = specialRoll('s');
+    final physicalRoll = ((specialRoll('s') * 1.5) + specialRoll('e')) ~/ 2.5;
     double reductionPercentage = _calculateBaseReduction(
-        strengthRoll, baseReduction, maxReduction, scalingFactor);
+        physicalRoll, baseReduction, maxReduction, scalingFactor);
 
     if (special.value['s']! >= 80) {
       reductionPercentage *=
-          _calculateLateGameMultiplier(strengthRoll, lateGameBoost);
+          _calculateLateGameMultiplier(physicalRoll, lateGameBoost);
     }
 
     reductionPercentage =
@@ -186,7 +188,8 @@ class TableController extends GetxController {
 
   // การคำนวณศัตรู
   int enemyCount(int difficulty) {
-    final agilityPerEnemy = specialRoll("a");
+    final agilityPerEnemy =
+        ((specialRoll("c") * 1.5) + specialRoll("a")) ~/ 2.5;
     final percentage = _percentage(agilityPerEnemy);
     final baseEnemyCount = 50 - (50 * percentage);
     final adjustedEnemyCount = baseEnemyCount ~/ (difficulty + 1);
@@ -199,8 +202,8 @@ class TableController extends GetxController {
 
     // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
     final List<int> enemyChance = [
-      (12 - characterLevel).clamp(7, 12), // Common
-      (6 - characterLevel ~/ 1.5).clamp(1, 6), // Uncommon
+      (13 - characterLevel ~/ 1.5).clamp(7, 13), // Common
+      (5 - characterLevel).clamp(1, 5), // Uncommon
       (2 + characterLevel ~/ 1.5).clamp(2, 7), // Rare
       (1 + characterLevel).clamp(1, 6) // God
     ];
@@ -241,10 +244,10 @@ class TableController extends GetxController {
       (counter > calculateCharacterStamina) ? true : false;
 
   int get restTimer {
-    int baseTimeRest = 10;
-    int endurancePerTime = (special.value["e"]! ~/ 15);
+    int baseTimeRest = 20;
+    int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 10);
     int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(1, 10);
+        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(2, 20);
     return timeRest;
   }
 }
