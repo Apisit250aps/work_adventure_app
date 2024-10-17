@@ -199,4 +199,17 @@ class CharacterController extends GetxController {
 
     return isLevelUp;
   }
+
+  bool taskSender(int exp, int coin) {
+    bool isSended = false;
+    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
+    additionalExp(exp);
+    additionalExp(coin);
+
+    if (exp >= expForNextLevel) {
+      additionalSpecial();
+    }
+
+    return isSended;
+  }
 }
