@@ -39,6 +39,7 @@ class FocusController extends GetxController {
   Timer? _timer;
   Timer? _eventTimer;
   Timer? _restTimer;
+  Timer? _reviveTimer;
 
   // Getters
   int get timeRemaining => _timeRemaining.value;
@@ -68,6 +69,9 @@ class FocusController extends GetxController {
   bool isRest = false;
   final RxBool _isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
+
+  final RxBool _isDead = false.obs;
+  final RxInt _deathTimeRemaining = 0.obs;
 
   // Enemy data
   RxInt damageInput = 0.obs;
@@ -191,6 +195,24 @@ class FocusController extends GetxController {
     _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
+  void _startReviveTimer() {
+    _reviveTimer?.cancel();
+    _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (_restTimeRemaining.value > 0) {
+        _deathTimeRemaining.value--;
+      } else {
+        _finisReviving();
+      }
+    });
+  }
+
+  void _finisReviving() {
+    _isResting.value = false;
+    SPCounter.value = 0;
+    _restTimer?.cancel();
+    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+  }
+
   void _stopTimers() {
     _timer?.cancel();
     _eventTimer?.cancel();
@@ -296,15 +318,39 @@ class FocusController extends GetxController {
     if (_tableController.healthReduceCondition(damageInput.value)) {
       expInput += enemyEXP;
       coinInput += enemyCoin;
+    } else {
+      _handleCharacterDeath(enemy);
     }
+  }
+
+  void _handleCharacterDeath(String enemy) {
+    _isDead.value = true;
+    _isActive.value = false;
+    _deathTimeRemaining.value = _tableController.timeTodie;
+    final deathMessage = _getDeathMessage(enemy);
+    _updateEncounter("💀", deathMessage);
+    _addLogEntry("💀", "Death", "Your character has fallen in battle.");
+
+    _startReviveTimer();
+  }
+
+  String _getDeathMessage(String enemy) {
+    final deathMessages = [
+      "ความมืดครอบคลุมสายตาของท่าน แสงสุดท้ายริบหรี่ลง\nท่านพ่ายแพ้ต่อ $enemy\nการผจญภัยของท่านจบลงแล้ว...",
+      "ลมหายใจสุดท้ายของท่านเฮือกสุดท้าย\n$enemy ยืนอยู่เหนือร่างที่ไร้วิญญาณของท่าน\nเรื่องราวของวีรบุรุษจบลงแล้ว...",
+      "โลกรอบตัวท่านหมุนวน วูบดับ\n$enemy ได้พรากชีวิตของท่านไป\nตำนานของท่านได้จบลงแล้ว...",
+      "ความเจ็บปวดจางหาย ท่านรู้สึกเบาสบาย\n$enemy ได้ส่งท่านสู่ภพภูมิใหม่\nการเดินทางครั้งสุดท้ายของท่านเริ่มต้นขึ้นแล้ว...",
+      "เสียงแห่งสงครามเงียบลง\nท่านล้มลงต่อหน้า $enemy\nบทสุดท้ายแห่งชีวิตของท่านได้ถูกเขียนขึ้นแล้ว..."
+    ];
+
+    return deathMessages[Random().nextInt(deathMessages.length)];
   }
 
   void _generateRestEvent() {
     _isResting.value = true;
-    double intelligenceBonus =
-        _getSpecialPercentage(_characterController.special.value.intelligence);
-    int healing = (Random().nextInt(31) + 20 * (1 + intelligenceBonus)).round();
+    int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
+    damageInput.value -= healing;
 
     _updateEncounter("🏕️",
         "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย\nเวลาพัก: $restDurationShow วินาที");

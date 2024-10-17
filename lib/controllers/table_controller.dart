@@ -43,7 +43,7 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 25 + special.value['s']!);
+      (special.value['e']! * 20 + special.value['s']!);
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -231,13 +231,6 @@ class TableController extends GetxController {
     return enemyChance.indexOf(selectedChance);
   }
 
-  bool healthReduceCondition(int damage) {
-    if (calculateCharacterHP - damage <= 0) {
-      return false;
-    }
-    return true;
-  }
-
   // ความเร็วการเจอเหตุการณ์
   int get timeEventRun {
     int baseTimeEvent = 10;
@@ -256,5 +249,38 @@ class TableController extends GetxController {
     int timeRest =
         ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(2, 20);
     return timeRest;
+  }
+
+  int get restHealing {
+    int healPoint =
+        (rollDice).clamp(0, 100) + (specialRoll("i") + (specialRoll("e"))) ~/ 2;
+    int totalHealing =
+        healPoint + (healPoint * _percentage(specialRoll("l"))).round();
+
+    return totalHealing;
+  }
+
+  //เหตุการณ์ตาย
+  bool healthReduceCondition(int damage) {
+    if (calculateCharacterHP - damage <= 0) {
+      return false;
+    }
+    return true;
+  }
+
+  int get timeTodie {
+    int baseTime = 90;
+    int timeEventDie = ((special.value["s"]! +
+                special.value["p"]! +
+                special.value["e"]! +
+                special.value["c"]! +
+                special.value["i"]! +
+                special.value["a"]! +
+                special.value["l"]!) ~/
+            7) -
+        7;
+    int timeDie = baseTime -
+        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(10, 90);
+    return timeDie;
   }
 }
