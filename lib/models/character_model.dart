@@ -9,6 +9,7 @@ class Character {
   final int? health;
   final int? stamina;
   final int? focusPoint;
+  final int? statusPoint;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -23,6 +24,7 @@ class Character {
     this.health,
     this.stamina,
     this.focusPoint,
+    this.statusPoint,
     this.createdAt,
     this.updatedAt,
   });
@@ -39,6 +41,7 @@ class Character {
       health: json['health'] as int,
       stamina: json['stamina'] as int,
       focusPoint: json['focus_point'] as int,
+      statusPoint: json['status_point'] as int,
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
     );
@@ -56,6 +59,7 @@ class Character {
       'health': health,
       'stamina': stamina,
       'focus_point': focusPoint,
+      "statusPoint": statusPoint,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -72,6 +76,7 @@ class Character {
     int? health,
     int? stamina,
     int? focusPoint,
+    int? statusPoint,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -86,6 +91,7 @@ class Character {
       health: health ?? this.health,
       stamina: stamina ?? this.stamina,
       focusPoint: focusPoint ?? this.focusPoint,
+      statusPoint: statusPoint ?? this.statusPoint,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -111,6 +117,7 @@ class Character {
           health == other.health &&
           stamina == other.stamina &&
           focusPoint == other.focusPoint &&
+          statusPoint == other.statusPoint &&
           createdAt == other.createdAt &&
           updatedAt == other.updatedAt;
 
@@ -126,6 +133,7 @@ class Character {
       health.hashCode ^
       stamina.hashCode ^
       focusPoint.hashCode ^
+      statusPoint.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode;
 }

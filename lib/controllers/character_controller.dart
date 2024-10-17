@@ -180,19 +180,20 @@ class CharacterController extends GetxController {
   void additionalSpecial() {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
-        focusPoint: (characterSelect.value.focusPoint ?? 0) + 3);
+        focusPoint: (characterSelect.value.statusPoint ?? 0) + 3);
     characterSelect.value = updatedCharacter;
     print(updatedCharacter);
     updateCharacterOnServer();
   }
 
-  bool checkLevelUp(int exp) {
+  bool checkLevelUp(int exp, int coin) {
     bool isLevelUp = false;
     final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
 
     if (exp >= expForNextLevel) {
       isLevelUp = true;
       additionalExp(exp);
+      additionalExp(coin);
       additionalSpecial();
     }
 
