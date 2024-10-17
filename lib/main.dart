@@ -13,6 +13,7 @@ import 'package:work_adventure/screens/todo/task_screen.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
+import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 
 void main() {
@@ -86,7 +87,7 @@ class AuthWrapper extends GetWidget<UserController> {
       if (controller.isLoading.value) {
         return const Scaffold(
           body: Center(
-            child: CircularProgressIndicator(),
+            child: SlimeLoading(),
           ),
         );
       } else if (controller.isAuthenticated.value) {

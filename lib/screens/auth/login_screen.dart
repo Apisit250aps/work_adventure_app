@@ -15,13 +15,9 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(0),
-                child: const Text(
-                  "Work Adventure!",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Image.asset(
+                  'assets/icons/Logo.png',
+                  width: 150,
                 ),
               ),
               const LoginForm(),
