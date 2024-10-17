@@ -21,18 +21,15 @@ class CharacterbarController extends GetxController {
     int expInput = (_focusController.expInput).toInt();
     int coinInput = (_focusController.coinInput).toInt();
     bool checkLevelUp = _characterController.focusSender(expInput, coinInput);
-    final (totalExp, expForNextLevel) =
+    final (expGap, expForNextLevel) =
         _characterController.calculateExpForNextLevel(expInput);
     if (checkLevelUp) {
-      int expDifference = expInput - expForNextLevel;
-      _focusController.expInputReset(expDifference);
+      _focusController.expInputReset();
       _focusController.coinInputReset();
-      return (
-        ((expDifference).clamp(1, double.infinity)).toInt(),
-        expForNextLevel
-      );
+      return (((expGap).clamp(1, double.infinity)).toInt(), expForNextLevel);
     }
-    return (((expInput)).clamp(1, double.infinity).toInt(), expForNextLevel);
+
+    return (((expGap)).clamp(1, double.infinity).toInt(), expForNextLevel);
   }
 
   (int, int) spBar() {

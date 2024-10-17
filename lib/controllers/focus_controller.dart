@@ -215,8 +215,8 @@ class FocusController extends GetxController {
     _restTimeRemaining.value = 0;
   }
 
-  void expInputReset(int value) {
-    expInput.value = value;
+  void expInputReset() {
+    expInput.value = 0;
   }
 
   void coinInputReset() {

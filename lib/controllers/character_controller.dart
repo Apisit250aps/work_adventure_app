@@ -139,36 +139,26 @@ class CharacterController extends GetxController {
 
   int calculateLevel(int exp) {
     const double base = 1.045;
-    const double C = 6000;
+    const double C = 10000;
 
     return (log(exp / C + 1) / log(base) + 1).round();
   }
 
-  int get expForNextLevel => 0;
-  int _expForNextLevel = 0;
-  set expForNextLevel(int value) {
-    _expForNextLevel = value;
-  }
-
-  int get totalExp => 0;
-  int _totalExp = 0;
-  set totalExp(int value) {
-    _totalExp = value;
-  }
+  int get currentExp => characterSelect.value.exp as int;
 
   (int, int) calculateExpForNextLevel(int add) {
     const double base = 1.045;
-    const double C = 6000;
-    int currentExp = characterSelect.value.exp as int;
+    const double C = 10000;
 
-    totalExp = currentExp + add;
+    int totalExp = currentExp + add;
     int currentLevel = calculateLevel(currentExp);
-    int nextLevel = calculateLevel(currentExp) + 1;
-    int expNextLevel = (C * (pow(base, nextLevel) - 1)).round();
-    int expCurrentLevel = (C * (pow(base, currentLevel) - 1)).round();
-    expForNextLevel = expNextLevel - expCurrentLevel;
+    int expNextLevel = (C * (pow(base, currentLevel) - 1)).round();
+    int expCurrentLevel = (C * (pow(base, currentLevel - 1) - 1)).round();
+    int expForNextLevel = expNextLevel - expCurrentLevel;
+    int expGap = totalExp - expCurrentLevel;
+    print("นนนนนนนนนนนนนนน ${expGap} ${expNextLevel}");
 
-    return (_totalExp, _expForNextLevel);
+    return (expGap, expForNextLevel);
   }
 
   void additionalExp(int add) {
@@ -197,18 +187,31 @@ class CharacterController extends GetxController {
     updateCharacterOnServer();
   }
 
-  bool get isLevelup => false;
+  bool isLevelup(int expInput) {
+    final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
+    if (expGap >= expForNextLevel) {
+      additionalSpecial();
+      return true;
+    }
+    return false;
+  }
 
   bool focusSender(int exp, int coin) {
-    bool isLevelUp = false;
-    final (totalExp, expForNextLevel) = calculateExpForNextLevel(exp);
-
-    if (exp >= expForNextLevel) {
-      isLevelUp = true;
+    if (isLevelup(exp)) {
       additionalExp(exp);
-      additionalSpecial();
+      additionalCoins(coin);
+      return true;
     }
 
-    return isLevelUp;
+    return false;
+  }
+
+  bool taskSender(int exp, int coin) {
+    additionalExp(exp);
+    additionalCoins(coin);
+    if (isLevelup(exp)) {
+      return true;
+    }
+    return false;
   }
 }
