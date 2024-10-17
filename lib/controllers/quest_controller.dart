@@ -32,22 +32,49 @@ class QuestController extends GetxController {
   void createDefaultQuests() {
     final defaultQuests = [
       Quest(
-        title: 'ออกกำลังกาย',
+        title: 'พักสายตา',
         date: DateTime.now(),
-        details: 'วิ่งเป็นเวลา 30 นาที',
+        details: 'หลับตาพักสายตาจากหน้าจอเป็นเวลา 10 นาทีทุกชั่วโมง',
       ),
       Quest(
-        title: 'อ่านหนังสือ',
+        title: 'ยืดเส้นยืดสาย',
         date: DateTime.now(),
-        details: 'อ่านหนังสือเป็นเวลา 1 ชั่วโมง',
+        details: 'ลุกขึ้นยืนและยืดเส้นยืดสายทุก 2 ชั่วโมง ทำท่าโยคะเบาๆ 5 นาที',
       ),
       Quest(
-        title: 'เรียนภาษาใหม่',
+        title: 'ดื่มน้ำให้เพียงพอ',
         date: DateTime.now(),
-        details: 'ฝึกภาษาอังกฤษ 30 นาที',
+        details: 'ดื่มน้ำให้ครบ 8 แก้วในระหว่างวัน และพักดื่มน้ำทุกชั่วโมง',
+      ),
+      Quest(
+        title: 'นั่งสมาธิ',
+        date: DateTime.now(),
+        details:
+            'นั่งสมาธิหรือลองทำการฝึกหายใจลึกๆ เป็นเวลา 10 นาที เพื่อผ่อนคลาย',
+      ),
+      Quest(
+        title: 'เดินเล่นพักสมอง',
+        date: DateTime.now(),
+        details:
+            'ออกจากโต๊ะทำงานแล้วไปเดินเล่นนอกบ้าน หรือเดินไปรอบๆ ออฟฟิศ 10 นาที',
+      ),
+      Quest(
+        title: 'ฟังเพลงผ่อนคลาย',
+        date: DateTime.now(),
+        details: 'ฟังเพลงที่ชอบเพื่อผ่อนคลายจิตใจระหว่างพักช่วงจากการทำงาน',
+      ),
+      Quest(
+        title: 'งีบสั้นๆ',
+        date: DateTime.now(),
+        details: 'งีบหลับสั้นๆ 15-20 นาทีในช่วงบ่ายเพื่อเติมพลัง',
+      ),
+      Quest(
+        title: 'ออกไปรับแสงแดด',
+        date: DateTime.now(),
+        details:
+            'ออกไปรับแสงแดดและสูดอากาศบริสุทธิ์เป็นเวลา 10 นาทีในช่วงพักกลางวัน',
       ),
     ];
-
     for (var quest in defaultQuests) {
       _questBox.add(quest);
     }
@@ -65,8 +92,10 @@ class QuestController extends GetxController {
     loadQuests();
   }
 
-  Future<void> updateQuest(String id, String title, bool isCompleted, String details) async {
-    final questToUpdate = _questBox.values.firstWhere((quest) => quest.id == id);
+  Future<void> updateQuest(
+      String id, String title, bool isCompleted, String details) async {
+    final questToUpdate =
+        _questBox.values.firstWhere((quest) => quest.id == id);
     questToUpdate.title = title;
     questToUpdate.isCompleted = isCompleted;
     questToUpdate.details = details;
@@ -75,7 +104,8 @@ class QuestController extends GetxController {
   }
 
   Future<void> deleteQuest(String id) async {
-    final questToDelete = _questBox.values.firstWhere((quest) => quest.id == id);
+    final questToDelete =
+        _questBox.values.firstWhere((quest) => quest.id == id);
     await questToDelete.delete();
     loadQuests();
   }

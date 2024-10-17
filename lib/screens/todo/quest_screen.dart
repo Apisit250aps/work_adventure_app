@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/controllers/quest_controller.dart';
 
-class DailyQuestScreen extends StatelessWidget {
-  final QuestController controller = Get.put(QuestController());
+class DailyQuestScreen extends GetWidget<QuestController> {
+  
   final TextEditingController textController = TextEditingController();
 
   DailyQuestScreen({super.key});
