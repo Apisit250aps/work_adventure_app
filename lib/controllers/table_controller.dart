@@ -253,7 +253,7 @@ class TableController extends GetxController {
 
   int get restHealing {
     int healPoint =
-        (rollDice).clamp(0, 100) + (specialRoll("i") + (specialRoll("e"))) ~/ 2;
+        (rollDice).clamp(0, 100) + (specialRoll("c") + (specialRoll("e"))) ~/ 2;
     int totalHealing =
         healPoint + (healPoint * _percentage(specialRoll("l"))).round();
 
@@ -270,17 +270,18 @@ class TableController extends GetxController {
 
   int get timeTodie {
     int baseTime = 90;
-    int timeEventDie = ((special.value["s"]! +
-                special.value["p"]! +
-                special.value["e"]! +
-                special.value["c"]! +
-                special.value["i"]! +
-                special.value["a"]! +
-                special.value["l"]!) ~/
-            7) -
-        7;
+    int timeEventDie = (((special.value["s"]! +
+                    special.value["p"]! +
+                    special.value["e"]! +
+                    special.value["c"]! +
+                    special.value["i"]! +
+                    special.value["a"]! +
+                    special.value["l"]!) ~/
+                7) -
+            7)
+        .clamp(0, 93);
     int timeDie = baseTime -
-        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(10, 90);
+        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(0, 90);
     return timeDie;
   }
 }
