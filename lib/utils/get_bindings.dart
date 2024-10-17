@@ -3,7 +3,6 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
-import 'package:work_adventure/controllers/quest_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
@@ -18,7 +17,6 @@ class OperatorBinding extends Bindings {
     Get.put(TableController());
     Get.put(FocusController());
     Get.put(CharacterbarController());
-    Get.put(QuestController());
   }
 }
 

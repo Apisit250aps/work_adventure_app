@@ -20,6 +20,7 @@ class BottomNavigation extends StatelessWidget {
       showSelectedLabels: false,
       showUnselectedLabels: false,
       selectedFontSize: 12,
+      type: BottomNavigationBarType.fixed, // ตั้งค่าชนิดเป็น fixed
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(

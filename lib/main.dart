@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/quest_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/models/hive/quest_hive_model.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
 import 'package:work_adventure/screens/auth/register_screen.dart';
 import 'package:work_adventure/screens/character/character_screen.dart';
@@ -15,7 +18,9 @@ import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(QuestAdapter());
   runApp(const WorkAdventure());
 }
 
@@ -67,6 +72,7 @@ class WorkAdventure extends StatelessWidget {
         ),
       ],
       initialBinding: BindingsBuilder(() {
+        Get.put(QuestController());
         Get.put(RestServiceController());
         Get.put(ApiService());
         Get.put(UserController());

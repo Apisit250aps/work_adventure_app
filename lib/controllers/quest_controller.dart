@@ -5,27 +5,34 @@ import 'package:work_adventure/models/hive/quest_hive_model.dart';
 class QuestController extends GetxController {
   late Box<Quest> _questBox;
   final quests = <Quest>[].obs;
+  RxBool isLoading = true.obs;
 
   @override
   void onInit() async {
     super.onInit();
-    await Hive.initFlutter();
-    Hive.registerAdapter(QuestAdapter());
+
     _questBox = await Hive.openBox<Quest>('quests');
     loadQuests();
   }
 
   void loadQuests() {
-    final today = DateTime.now();
-    quests.value = _questBox.values
-        .where((quest) =>
-            quest.date.year == today.year &&
-            quest.date.month == today.month &&
-            quest.date.day == today.day)
-        .toList();
+    isLoading.value = true;
+    try {
+      final today = DateTime.now();
+      quests.value = _questBox.values
+          .where((quest) =>
+              quest.date.year == today.year &&
+              quest.date.month == today.month &&
+              quest.date.day == today.day)
+          .toList();
 
-    if (quests.isEmpty) {
-      createDefaultQuests();
+      if (quests.isEmpty) {
+        createDefaultQuests();
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -78,7 +85,6 @@ class QuestController extends GetxController {
     for (var quest in defaultQuests) {
       _questBox.add(quest);
     }
-
     loadQuests();
   }
 
@@ -118,10 +124,24 @@ class QuestController extends GetxController {
     loadQuests();
   }
 
-  Future<void> toggleQuestStatus(String id) async {
-    final quest = _questBox.values.firstWhere((quest) => quest.id == id);
-    quest.isCompleted = !quest.isCompleted;
-    await quest.save();
+  Future<void> toggleQuestStatus(Quest quest) async {
+    isLoading.value = true;
+    print('Toggling status for quest: ${quest.id}');
+
+    try {
+      if (!quest.isCompleted) {
+        final storedQuest =
+            _questBox.values.firstWhere((q) => q.id == quest.id);
+        storedQuest.isCompleted = !storedQuest.isCompleted;
+        await storedQuest.save();
+        print('Quest status toggled successfully');
+      }
+    } catch (e) {
+      print('Error toggling quest status: $e');
+      // Optionally, you might want to rethrow the error or handle it differently
+    }
+    quests.refresh();
     loadQuests();
+    update();
   }
 }
