@@ -31,7 +31,7 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
   @override
   void initState() {
     super.initState();
-    taskNameController = TextEditingController(text: widget.task.name ?? '');
+    taskNameController = TextEditingController(text: widget.task.name);
     taskDescriptionController =
         TextEditingController(text: widget.task.description ?? '');
     taskStartController =
