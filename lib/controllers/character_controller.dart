@@ -156,7 +156,7 @@ class CharacterController extends GetxController {
     int expCurrentLevel = (C * (pow(base, currentLevel - 1) - 1)).round();
     int expForNextLevel = expNextLevel - expCurrentLevel;
     int expGap = totalExp - expCurrentLevel;
-    print("ทดสอบๆ ${expGap} ${expNextLevel} ${currentLevel + 1}");
+    print("ทดสอบๆ ${expGap} ${expForNextLevel} ${currentLevel + 1}");
 
     return (expGap, expForNextLevel);
   }
@@ -190,6 +190,7 @@ class CharacterController extends GetxController {
   bool isLevelup(int expInput) {
     final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
     if (expGap >= expForNextLevel) {
+      print("level up");
       additionalSpecial();
       return true;
     }

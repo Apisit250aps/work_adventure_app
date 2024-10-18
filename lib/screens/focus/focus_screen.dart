@@ -68,15 +68,15 @@ class FocusScreen extends GetView<FocusController> {
     String description = controller.currentEncounterDescription;
     List<InlineSpan> textSpans = [];
 
-    print("Current description: $description");
+    // print("Current description: $description");
 
     // Debug print สำหรับ enemy list
-    print("Enemy list:");
-    for (var list in controller.enemy) {
-      for (var monster in list) {
-        print("${monster.emoji} ${monster.name} (${monster.color})");
-      }
-    }
+    // print("Enemy list:");
+    // for (var list in controller.enemy) {
+    //   for (var monster in list) {
+    //     print("${monster.emoji} ${monster.name} (${monster.color})");
+    //   }
+    // }
 
     RegExp monsterRegex = RegExp(
         r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻‍♂️|⏳|🗡️|🌙)\s*([^\n]+)');
@@ -92,7 +92,7 @@ class FocusScreen extends GetView<FocusController> {
 
       String emoji = match.group(1)!;
       String monsterFullName = match.group(2)!;
-      print("Found monster: $emoji $monsterFullName");
+      // print("Found monster: $emoji $monsterFullName");
 
       MonsterName? monster =
           controller.enemy.expand((list) => list).firstWhereOrNull(
@@ -100,8 +100,8 @@ class FocusScreen extends GetView<FocusController> {
               );
 
       if (monster != null) {
-        print(
-            "Matching monster found: ${monster.toString()}, Color: ${monster.color}");
+        // print(
+        //     "Matching monster found: ${monster.toString()}, Color: ${monster.color}");
         textSpans.add(TextSpan(
           text: "$emoji ${monster.name}",
           style: TextStyle(color: monster.color, fontWeight: FontWeight.bold),
@@ -112,7 +112,7 @@ class FocusScreen extends GetView<FocusController> {
               TextSpan(text: monsterFullName.substring(monster.name.length)));
         }
       } else {
-        print("No matching monster found");
+        // print("No matching monster found");
         textSpans.add(TextSpan(text: "$emoji $monsterFullName"));
       }
 

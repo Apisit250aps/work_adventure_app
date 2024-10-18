@@ -39,11 +39,11 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.25;
+      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 20 + special.value['s']!);
+      (special.value['e']! * 10 + special.value['s']!);
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -246,8 +246,7 @@ class TableController extends GetxController {
   int get restTimer {
     int baseTimeRest = 20;
     int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 10);
-    int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(2, 20);
+    int timeRest = ((baseTimeRest - endurancePerTime)).clamp(0, 20);
     return timeRest;
   }
 
@@ -270,7 +269,7 @@ class TableController extends GetxController {
   }
 
   int get timeTodie {
-    int baseTime = 90;
+    int baseTime = 0;
     int timeEventDie = (((special.value["s"]! +
                     special.value["p"]! +
                     special.value["e"]! +

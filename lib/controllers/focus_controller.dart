@@ -64,7 +64,6 @@ class FocusController extends GetxController {
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
 
-  int get _eventIntervalSeconds => _tableController.timeEventRun;
   int get restDuration => _tableController.restTimer;
 
   // Other variables
@@ -81,7 +80,15 @@ class FocusController extends GetxController {
 
   // Rest variables
   bool isRest = false;
-  final RxBool _isResting = false.obs;
+  bool _isResting = false;
+
+  int get _eventIntervalSeconds {
+    if (_isResting) {
+      return 0;
+    }
+    return _tableController.timeEventRun;
+  }
+
   final RxInt _restTimeRemaining = 0.obs;
 
   final RxBool _isDead = false.obs;
@@ -96,7 +103,7 @@ class FocusController extends GetxController {
   final Color easyColor = Colors.green;
   final Color mediumColor = Colors.blue;
   final Color hardColor = Colors.purple;
-  final Color impossibleColor = Colors.yellow;
+  final Color impossibleColor = Colors.orange;
 
   late List<List<MonsterName>> enemy;
 
@@ -185,6 +192,7 @@ class FocusController extends GetxController {
     _eventTimer?.cancel();
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
       if (_isActive.value && _timeRemaining.value > 0) {
+        _isResting = false;
         generateEvent();
       }
     });
@@ -192,46 +200,38 @@ class FocusController extends GetxController {
 
   void _startRestTimer() {
     _restTimer?.cancel();
-    final staminaPerSecond =
-        _tableController.calculateCharacterStamina / restDuration;
+
+    final totalStaminaToRecover = _tableController.calculateCharacterStamina;
+    final staminaPerSecond = totalStaminaToRecover / restDuration;
 
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
+        int restTime = restDuration + _eventIntervalSeconds + 1;
         _restTimeRemaining.value--;
 
-        final elapsedTime = restDuration - _restTimeRemaining.value;
+        final elapsedTime = restTime - _restTimeRemaining.value;
         final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
 
-        spCounter.value = _tableController.calculateCharacterStamina -
-            (recoveredStamina ~/ 1.5);
+        spCounter.value = totalStaminaToRecover - (recoveredStamina ~/ 1.5);
       } else {
-        _finishResting();
+        spCounter.value = 0;
+        _restTimer?.cancel();
+        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
     });
-  }
-
-  void _finishResting() {
-    _isResting.value = false;
-    spCounter.value = 0;
-    _restTimer?.cancel();
-    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _startReviveTimer() {
     _reviveTimer?.cancel();
-    _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _reviveTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
         _deathTimeRemaining.value--;
       } else {
-        _finisReviving();
+        _isDead.value = false;
+        _reviveTimer?.cancel();
+        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
     });
-  }
-
-  void _finisReviving() {
-    _isDead.value = false;
-    _reviveTimer?.cancel();
-    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _stopTimers() {
@@ -248,7 +248,7 @@ class FocusController extends GetxController {
 
   void _resetSessionState() {
     _isActive.value = false;
-    _isResting.value = false;
+    _isResting = false;
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
@@ -268,13 +268,11 @@ class FocusController extends GetxController {
 
   // Event generation methods
   void generateEvent() {
-    if (!_isResting.value) {
-      spCounter++;
-      if (_tableController.timeToRest(spCounter.toInt())) {
-        _generateRestEvent();
-      } else {
-        _generateRandomEvent();
-      }
+    spCounter++;
+    if (_tableController.timeToRest(spCounter.toInt())) {
+      _generateRestEvent();
+    } else {
+      _generateRandomEvent();
     }
   }
 
@@ -367,15 +365,31 @@ class FocusController extends GetxController {
   }
 
   void _generateRestEvent() {
-    _isResting.value = true;
+    _isResting = true;
     int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
-    damageInput.value -= healing;
+    damageInput.value -= (healing).clamp(0, damageInput.value);
+
+    List<String> restDialogues = [
+      "คุณพบโอเอซิสร่มรื่นท่ามกลางทะเลทราย",
+      "คุณพบร่มเงาไม้ใหญ่ท่ามกลางป่าร้อน",
+      "คุณพบถ้ำเย็นชื้นท่ามกลางหน้าผาสูง",
+      "คุณพบธารน้ำใสท่ามกลางป่าทึบ",
+      "คุณพบลานหญ้าเขียวขจีท่ามกลางทุ่งดอกไม้",
+      "คุณพบจุดชมวิวท่ามกลางยอดเขาสูง",
+      "คุณพบลำธารเย็นท่ามกลางหุบเขาลึก",
+      "คุณพบหาดทรายสงบท่ามกลางคืนดาวพราว",
+      "คุณพบบ้านร้างปลอดภัยท่ามกลางพายุ",
+      "คุณพบชายฝั่งสงบท่ามกลางทะเลสาบกว้าง"
+    ];
+
+    String selectedDialogue =
+        restDialogues[Random().nextInt(restDialogues.length)];
 
     _updateEncounter("🏕️",
-        "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย\nเวลาพัก: $restDurationShow วินาที");
+        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพัก $restDurationShow วินาที");
     _addLogEntry("🏕️", "พัก",
-        "พบจุดพักที่ปลอดภัย รักษา $healing HP\nพักเป็นเวลา $restDurationShow วินาที");
+        "$selectedDialogue\nHP $healing เวลา $restDurationShow วินาที");
 
     _restTimeRemaining.value = restDuration;
     _startRestTimer();
@@ -434,9 +448,9 @@ class FocusController extends GetxController {
     ];
     final baseValue =
         (((rollOne).clamp(1, baseMax)) * _tableController.levelMultiplier)
-            .toInt();
+            .floor();
 
-    int coin = baseValue * multipliers[index][1];
+    int coin = (baseValue * 10) * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];
     int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 
