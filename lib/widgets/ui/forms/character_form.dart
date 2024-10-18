@@ -116,39 +116,7 @@ class _CharacterFormState extends State<CharacterForm> {
   }
 }
 
-class CharacterAvatar extends StatefulWidget {
-  final String? name;
-  const CharacterAvatar({super.key, this.name});
 
-  @override
-  State<CharacterAvatar> createState() => _CharacterAvatarState();
-}
-
-class _CharacterAvatarState extends State<CharacterAvatar> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 20,
-      ),
-      child: Column(
-        children: [
-          Image.asset('assets/images/characters/dog.png'),
-          const SizedBox(
-            height: 30,
-          ),
-          Text(
-            widget.name!,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
 
 class CharacterFormGroup extends StatelessWidget {
   final TextEditingController? nameController;
