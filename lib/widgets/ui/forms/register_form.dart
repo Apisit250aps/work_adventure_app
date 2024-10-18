@@ -79,13 +79,13 @@ class _RegisterFormState extends State<RegisterForm> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Sign Up",
+                          "ลงทะเบียนใช้งาน",
                           style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
-                        Icon(
-                          Boxicons.bx_chevron_right,
-                          color: Colors.white,
-                        )
+                        // Icon(
+                        //   Boxicons.bx_chevron_right,
+                        //   color: Colors.white,
+                        // )
                       ],
                     ),
             ),

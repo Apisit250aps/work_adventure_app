@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/widgets/ui/forms/register_form.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class RegisterScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(0),
                 child: const Text(
-                  "Work Adventure!",
+                  "Todo RPG",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
@@ -26,23 +27,26 @@ class RegisterScreen extends StatelessWidget {
               ),
               const RegisterForm(),
               const SizedBox(
-                height: 0,
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Already have an account? ",
+                    "มีบัญชีอยู่แล้ว ? ",
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      // fontWeight: FontWeight.w600,
                     ),
                   ),
                   InkWell(
-                    child: const Text(
-                      "Sign In",
+                    child: Text(
+                      "เข้าสู่ระบบ",
                       style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.italic,
+                        color: linkTextColor,
+                        // fontStyle: FontStyle.italic,
                       ),
                     ),
                     onTap: () {

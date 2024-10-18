@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/widgets/ui/forms/login_form.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -22,23 +23,27 @@ class LoginScreen extends StatelessWidget {
               ),
               const LoginForm(),
               const SizedBox(
-                height: 0,
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Don't have an account? ",
+                    "ยังไม่มีบัญชี ? ",
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      // fontWeight: FontWeight.w600,
                     ),
                   ),
                   InkWell(
-                    child: const Text(
-                      "Sign Up",
+                    child: Text(
+                      "สร้างบัญชีเพื่อใช้งาน",
                       style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.italic,
+                        color: linkTextColor,
+                        // fontWeight: FontWeight.w600,
+                        // fontStyle: FontStyle.italic,
                       ),
                     ),
                     onTap: () {

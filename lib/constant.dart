@@ -7,6 +7,7 @@ Color secondaryColor = const Color.fromARGB(255, 233, 174, 202);
 Color baseColor = const Color(0xffffffff);
 Color backgroundColor = const Color(0xffF3F4F6);
 Color textColor = const Color.fromARGB(255, 43, 52, 64);
+Color linkTextColor = const Color.fromARGB(255, 6, 43, 92);
 
 ThemeData themeData = ThemeData(
   scaffoldBackgroundColor: backgroundColor,
@@ -21,7 +22,6 @@ ThemeData themeData = ThemeData(
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: baseColor,
     selectedItemColor: textColor,
-    
   ),
   bottomSheetTheme: BottomSheetThemeData(
     backgroundColor: backgroundColor,
@@ -29,13 +29,10 @@ ThemeData themeData = ThemeData(
   dialogTheme: DialogTheme(
     backgroundColor: backgroundColor,
     insetPadding: const EdgeInsets.all(0),
-    
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(20)),
-      
     ),
-    actionsPadding:const EdgeInsets.all(5),
-    
+    actionsPadding: const EdgeInsets.all(5),
     elevation: 0,
   ),
   useMaterial3: true,
