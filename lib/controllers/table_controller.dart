@@ -38,8 +38,8 @@ class TableController extends GetxController {
   // ฟังก์ชันยูทิลิตี้
   double _percentage(int value) => (value / 100);
 
-  double get _levelMultiplier =>
-      pow(1.1, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
+  double get levelMultiplier =>
+      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.25;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
@@ -86,13 +86,13 @@ class TableController extends GetxController {
   int calculateEXP(int exp) => ((exp +
               ((exp * (specialRoll('i') / 10).clamp(1, 10)) *
                   _percentage(specialRoll('i')))) *
-          _levelMultiplier)
+          levelMultiplier)
       .round();
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
     final luckBonus = _percentage(specialRoll('l'));
-    int coinBase = (coin * _levelMultiplier).round();
+    int coinBase = (coin * levelMultiplier).round();
     int finalCoin = coinBase + ((coinBase * luckBonus) ~/ 0.65);
 
     if (_shouldReduceCoin(difficulty)) {
@@ -102,7 +102,7 @@ class TableController extends GetxController {
   }
 
   bool _shouldReduceCoin(int difficulty) {
-    final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
+    final threshold = (12 + (levelMultiplier * (difficulty + 2))).round();
     return rollDice + specialRoll('p') >= threshold;
   }
 
@@ -177,8 +177,8 @@ class TableController extends GetxController {
       [240, 600] // สำหรับเควสระดับเทพ
     ];
 
-    int exp = (questRewards[difficulty][0] * _levelMultiplier).round();
-    int gold = (questRewards[difficulty][1] * _levelMultiplier).round();
+    int exp = (questRewards[difficulty][0] * levelMultiplier).round();
+    int gold = (questRewards[difficulty][1] * levelMultiplier).round();
 
     int expReward = (exp + (exp * _percentage(specialRoll("i")))).round();
     int goldReward = (gold + (gold * _percentage(specialRoll("c")))).round();
@@ -252,10 +252,11 @@ class TableController extends GetxController {
   }
 
   int get restHealing {
-    int healPoint =
-        (rollDice).clamp(0, 100) + (specialRoll("c") + (specialRoll("e"))) ~/ 2;
+    double healPoint = ((rollDice).clamp(0, 100) +
+            (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
+        levelMultiplier;
     int totalHealing =
-        healPoint + (healPoint * _percentage(specialRoll("l"))).round();
+        (healPoint + (healPoint * _percentage(specialRoll("l")))).round();
 
     return totalHealing;
   }

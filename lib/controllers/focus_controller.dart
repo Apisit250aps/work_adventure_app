@@ -425,13 +425,16 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
+    int baseMax = (_characterController.calculateLevel(0) ~/ 2) + 3;
     final multipliers = [
       [1, 1, 1],
       [2, 3, 3],
       [4, 6, 6],
       [8, 12, 10]
     ];
-    final baseValue = (rollOne).clamp(1, 10);
+    final baseValue =
+        (((rollOne).clamp(1, baseMax)) * _tableController.levelMultiplier)
+            .toInt();
 
     int coin = baseValue * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];
