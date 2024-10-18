@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
-import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterStatusScreen extends GetWidget<SpecialController> {
   const CharacterStatusScreen({super.key});
