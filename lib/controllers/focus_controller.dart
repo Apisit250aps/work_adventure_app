@@ -188,7 +188,9 @@ class FocusController extends GetxController {
         damageInput.value ~/= 2;
         spCounter.value = 0;
       }
-      if (_isActive.value && _timeRemaining.value > 0) {
+      if (_isActive.value &&
+          _timeRemaining.value > 0 &&
+          _isDead.value == false) {
         generateEvent();
       }
     });
@@ -275,10 +277,18 @@ class FocusController extends GetxController {
     double luckBonus =
         _getSpecialPercentage(_characterController.special.value.luck);
     int ranNumber = Random().nextInt(100) + 1;
-    if (ranNumber <= (30 - luckBonus * 100).clamp(5, 30)) {
+
+    // ปรับโอกาสการเกิดเหตุการณ์ต่างๆ
+    int nothingChance = (30 - luckBonus * 100).clamp(5, 30).toInt();
+    int enemyChance = 80;
+    int treasureChance = 90;
+
+    if (ranNumber <= nothingChance) {
       _generateNothingEvent();
-    } else if (ranNumber <= 95) {
+    } else if (ranNumber <= enemyChance) {
       _generateEnemyEvent();
+    } else if (ranNumber <= treasureChance) {
+      _generateTreasureEvent();
     } else if (!questIsActive) {
       _generateVillageEvent();
     } else {
@@ -505,6 +515,85 @@ class FocusController extends GetxController {
     ];
 
     return restDialogues[Random().nextInt(restDialogues.length)];
+  }
+
+  void _generateTreasureEvent() {
+    final itemType = _tableController.randomItem();
+    final (exp, coin) = _tableController.itemReward(itemType);
+
+    final treasureType = _getRandomTreasureType(itemType);
+    final description = _getDescriptiveTreasureEvent(treasureType, itemType);
+
+    final rewardDescription = "ท่านได้พบ: $exp🧿 $coin💰";
+
+    _updateEncounter("💎", "$description\n$rewardDescription");
+    _addLogEntry("💎", "Treasure", "พบ $treasureType และได้รับรางวัล!");
+
+    expInput += exp;
+    coinInput += coin;
+  }
+
+  String _getDescriptiveTreasureEvent(String treasureType, int itemType) {
+    final List<List<String>> descriptiveEvents = [
+      [
+        "ใบไม้พลิ้วไหวแสงริบหรี่\nเผยโฉม $treasureType ให้ได้มี",
+        "เสียงโลหะดังใต้ฝ่าเท้า\nพบ $treasureType เฝ้ารอคอย",
+        "กลิ่นกาลเวลาโชยมาไกล\nนำพา $treasureType ให้ได้ไขว่"
+      ],
+      [
+        "เงาพิลึกบนผืนดิน\nใกล้เข้าไป $treasureType ถึงได้ยล",
+        "เสียงกระซิบลึกลับนำ\nค้นพบ $treasureType ล้ำค่านัก",
+        "แสงวาบวับเรียกสายตา\nเผย $treasureType น่าค้นหา"
+      ],
+      [
+        "พลังโบราณสั่นสะเทือน\nนำทางสู่ $treasureType เลื่อนลือ",
+        "ม่านพลังไหวสะท้าน\nเผย $treasureType ประจักษ์ตา",
+        "เสียงบรรเลงแว่วไพเราะ\nพา $treasureType มาเสนอ"
+      ],
+      [
+        "แสงสว่างจ้าฟ้าสะท้าน\n$treasureType ปรากฏกาล",
+        "แผ่นดินแยกเปิดทางผ่าน\n$treasureType ตำนานปรากฏ",
+        "เสียงกึกก้องโลกโบราณ\n$treasureType ผ่านกาลปรากฏ"
+      ]
+    ];
+
+    return descriptiveEvents[itemType]
+        [Random().nextInt(descriptiveEvents[itemType].length)];
+  }
+
+  String _getRandomTreasureType(int itemType) {
+    final List<List<String>> treasureTypes = [
+      [
+        "หีบไม้ผุ",
+        "ถุงหนังเก่า",
+        "เหรียญขึ้นสนิม",
+        "แหวนทองหมอง",
+        "สร้อยเงินโบราณ"
+      ],
+      [
+        "หีบโลหะลึกลับ",
+        "ถุงเวทมนตร์",
+        "เหรียญราชวงศ์",
+        "แหวนอัญมณีเรือง",
+        "สร้อยมุกเรืองรอง"
+      ],
+      [
+        "หีบทองคำโบราณ",
+        "ถุงมังกร",
+        "เหรียญจักรพรรดิ",
+        "แหวนราชันย์",
+        "สร้อยไข่มุกวิเศษ"
+      ],
+      [
+        "หีบแห่งกาลเวลา",
+        "ถุงสารพัดนึก",
+        "เหรียญเทพเจ้า",
+        "แหวนครองพิภพ",
+        "สร้อยแห่งโชคชะตา"
+      ]
+    ];
+    return treasureTypes[itemType]
+        [Random().nextInt(treasureTypes[itemType].length)];
   }
 
   @override

@@ -79,7 +79,7 @@ class FocusScreen extends GetView<FocusController> {
     // }
 
     RegExp monsterRegex = RegExp(
-        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻‍♂️|⏳|🗡️|🌙)\s*([^\n]+)');
+        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻|⏳|🗡️|🌙)\s*([^\n]+)');
 
     Iterable<RegExpMatch> matches = monsterRegex.allMatches(description);
     int lastEnd = 0;

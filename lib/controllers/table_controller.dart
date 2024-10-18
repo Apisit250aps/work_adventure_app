@@ -198,7 +198,7 @@ class TableController extends GetxController {
 
   int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
-    final characterLevel = _characterController.calculateLevel(0) ~/ 20;
+    final characterLevel = _characterController.calculateLevel(0) ~/ 10;
 
     // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
     final List<int> enemyChance = [
@@ -289,6 +289,50 @@ class TableController extends GetxController {
   }
 
   //เหตุการณ์เจอสมบัติ
+  (int, int) itemReward(int difficulty) {
+    const questRewards = [
+      [10, 20], // EXP, Coin
+      [20, 40],
+      [40, 80],
+      [80, 160]
+    ];
+
+    int exp = (questRewards[difficulty][0] * levelMultiplier).round();
+    int gold = (questRewards[difficulty][1] * levelMultiplier).round();
+    int expReward = calculateEXP(exp);
+    int goldReward = calculateCoin(gold, difficulty);
+
+    return (expReward, goldReward);
+  }
+
+  int randomItem() {
+    int luckmultiplier = (specialRoll("l") ~/ 20).clamp(0, 5);
+    final dice = singleDiceRoll().clamp(1, 100) + luckmultiplier;
+    final characterLevel = _characterController.calculateLevel(0) ~/ 10;
+
+    // คำนวณโอกาสการเกิดไอเทมแต่ละประเภท
+    final List<int> itemChance = [
+      (13 - characterLevel ~/ 1.5).clamp(7, 13), // Common
+      (5 - characterLevel).clamp(1, 5), // Uncommon
+      (2 + characterLevel).clamp(2, 7), // Rare
+      (1 + characterLevel ~/ 1.5).clamp(1, 6) // God
+    ];
+
+    // เรียงลำดับโอกาสจากน้อยไปมาก
+    final sorted = List.from(itemChance)..sort();
+
+    // เลือกประเภทศัตรูไอเทมลูกเต๋า
+    int selectedChance = dice <= sorted[3]
+        ? sorted[3]
+        : dice <= sorted[2] + sorted[3]
+            ? sorted[2]
+            : dice <= sorted[1] + sorted[2]
+                ? sorted[1]
+                : sorted[0];
+
+    // หาดัชนีของประเภทไอเทมที่ถูกเลือก
+    return itemChance.indexOf(selectedChance);
+  }
 
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
