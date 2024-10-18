@@ -57,6 +57,18 @@ class SpecialController extends GetxController {
     }
   }
 
+  Future<void> specialRefresh() async {
+    isLoading.value = true;
+    try {
+      loadSpecial();
+      loadCharacter();
+    } catch (e) {
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> loadCharacter() async {
     statusLoading.value = true;
     try {
@@ -110,7 +122,6 @@ class SpecialController extends GetxController {
   void incrementSpecial(String status) {
     if (!onUpdate.value) {
       if (characterSelect.value.statusPoint as int > 0) {
-        
         Special updatedSpecial = special.value.copyWith();
         switch (status) {
           case "STR":

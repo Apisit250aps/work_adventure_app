@@ -133,21 +133,9 @@ class WorkFloatingActionButton extends StatelessWidget {
   }
 
   void _createWorkSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, controller) {
-            return const WorkCreateForm();
-          },
-        );
-      },
-    );
+    Get.bottomSheet(const BottomSheetContent(
+      child: WorkCreateForm(),
+    ));
   }
 }
 
@@ -178,22 +166,9 @@ class QuestFloatingActionButton extends StatelessWidget {
   }
 
   void _createQuestSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          
-          expand: false,
-          builder: (_, controller) {
-            return const QuestCreateForm();
-          },
-        );
-      },
-    );
+    Get.bottomSheet(const BottomSheetContent(
+      child: QuestCreateForm(),
+    ));
   }
 }
 
@@ -227,37 +202,27 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
   }
 
   void _focusSetupSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, contexts) {
-            return Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTimerFrame(),
-                  const SizedBox(height: 40),
-                  _buildTimeDisplay(),
-                  const SizedBox(height: 20),
-                  _buildFocusEstimate(),
-                  const SizedBox(height: 20),
-                  GradientButton(
-                    onPressed: controller.toggleActive,
-                    child: const Text("Start"),
-                  ),
-                ],
+    Get.bottomSheet(
+      BottomSheetContent(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildTimerFrame(),
+              const SizedBox(height: 40),
+              _buildTimeDisplay(),
+              const SizedBox(height: 20),
+              _buildFocusEstimate(),
+              const SizedBox(height: 20),
+              GradientButton(
+                onPressed: controller.toggleActive,
+                child: const Text("Start"),
               ),
-            );
-          },
-        );
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
 
