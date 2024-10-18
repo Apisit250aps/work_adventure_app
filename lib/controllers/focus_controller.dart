@@ -27,12 +27,11 @@ class MonsterName {
   MonsterName(this.emoji, this.name, this.color);
 
   @override
-  String toString() {
-    return '$emoji $name';
-  }
+  String toString() => '$emoji $name';
 }
 
 class FocusController extends GetxController {
+  // Controllers
   final CharacterController _characterController =
       Get.find<CharacterController>();
   final TableController _tableController = Get.find<TableController>();
@@ -48,12 +47,38 @@ class FocusController extends GetxController {
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
   RxInt spCounter = 0.obs;
+  final RxBool _isResting = false.obs;
+  final RxInt _restTimeRemaining = 0.obs;
+  final RxBool _isDead = false.obs;
+  final RxInt _deathTimeRemaining = 0.obs;
+  RxInt damageInput = 0.obs;
+  RxInt expInput = 0.obs;
+  RxInt coinInput = 0.obs;
 
   // Timers
   Timer? _timer;
   Timer? _eventTimer;
   Timer? _restTimer;
   Timer? _reviveTimer;
+
+  // Other variables
+  int rollOne = 0;
+  String enemyQuestName = "";
+  int enemyQuestCounter = 0;
+  bool questIsActive = false;
+  int questNumber = 21;
+  int questGold = 0;
+  int questExp = 0;
+  int questEnemyNumber = 0;
+  bool isRest = false;
+
+  // Colors
+  final Color easyColor = Colors.green;
+  final Color mediumColor = Colors.blue;
+  final Color hardColor = Colors.purple;
+  final Color impossibleColor = Colors.orange;
+
+  late List<List<MonsterName>> enemy;
 
   // Getters
   int get timeRemaining => _timeRemaining.value;
@@ -63,48 +88,17 @@ class FocusController extends GetxController {
   String get currentEncounterIcon => _currentEncounterIcon.value;
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
-
   int get restDuration => _tableController.restTimer;
-
-  // Other variables
-  int rollOne = 0;
-
-  // Quest variables
-  String enemyQuestName = "";
-  int enemyQuestCounter = 0;
-  bool questIsActive = false;
-  int questNumber = 21;
-  int questGold = 0;
-  int questExp = 0;
-  int questEnemyNumber = 0;
-
-  // Rest variables
-  bool isRest = false;
-  final RxBool _isResting = false.obs;
-
   int get _eventIntervalSeconds => _tableController.timeEventRun;
-
-  final RxInt _restTimeRemaining = 0.obs;
-
-  final RxBool _isDead = false.obs;
-  final RxInt _deathTimeRemaining = 0.obs;
-
-  // Enemy data
-  RxInt damageInput = 0.obs;
-  RxInt expInput = 0.obs;
-  RxInt coinInput = 0.obs;
-
-  // สร้างตัวแปรสำหรับแต่ละสี
-  final Color easyColor = Colors.green;
-  final Color mediumColor = Colors.blue;
-  final Color hardColor = Colors.purple;
-  final Color impossibleColor = Colors.orange;
-
-  late List<List<MonsterName>> enemy;
 
   @override
   void onInit() {
     super.onInit();
+    _initializeEnemies();
+    _setupTableControllerListener();
+  }
+
+  void _initializeEnemies() {
     enemy = [
       [
         MonsterName("🐺", "หมาป่าจิ๋ว", easyColor),
@@ -135,6 +129,9 @@ class FocusController extends GetxController {
         MonsterName("🧙‍♂️", "จอมเวทแห่งอนันต์", impossibleColor)
       ]
     ];
+  }
+
+  void _setupTableControllerListener() {
     ever(_tableController.special, (_) {
       if (_isActive.value) {
         _startEventTimer();
@@ -185,14 +182,11 @@ class FocusController extends GetxController {
 
   void _startEventTimer() {
     _eventTimer?.cancel();
-
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
-      print("asdasdsad${_deathTimeRemaining}");
       if (_isDead.value) {
         _isDead.value = false;
         damageInput.value ~/= 2;
       }
-
       if (_isActive.value && _timeRemaining.value > 0) {
         generateEvent();
       }
@@ -219,7 +213,7 @@ class FocusController extends GetxController {
         spCounter.value = 0;
         _isResting.value = false;
         _restTimer?.cancel();
-        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+        _startEventTimer();
       }
     });
   }
@@ -229,7 +223,7 @@ class FocusController extends GetxController {
     _reviveTimer?.cancel();
     _reviveTimer = Timer(Duration(seconds: _deathTimeRemaining.value), () {
       _reviveTimer?.cancel();
-      _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
+      _startEventTimer();
     });
   }
 
@@ -263,7 +257,7 @@ class FocusController extends GetxController {
   }
 
   void coinInputReset() {
-    expInput.value = 0;
+    coinInput.value = 0;
   }
 
   // Event generation methods
@@ -354,39 +348,13 @@ class FocusController extends GetxController {
     _startReviveTimer();
   }
 
-  String _getDeathMessage(String enemy) {
-    final deathMessages = [
-      "ดวงตาพร่าเลือน $enemy ยืนเหยียดยิ้ม",
-      "เสียงกรีดร้อง $enemy ปลิดชีพท่าน",
-      "โลหิตไหลริน $enemy ยืนมองชัยชนะ",
-      "แสงริบหรี่ $enemy หัวเราะก้อง",
-      "ความมืดโอบล้อม $enemy ทอดเงายักษ์"
-    ];
-
-    return deathMessages[Random().nextInt(deathMessages.length)];
-  }
-
   void _generateRestEvent() {
     _isResting.value = true;
     int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds;
     damageInput.value -= (healing).clamp(0, damageInput.value);
 
-    List<String> restDialogues = [
-      "คุณพบโอเอซิสร่มรื่นท่ามกลางทะเลทราย",
-      "คุณพบร่มเงาไม้ใหญ่ท่ามกลางป่าร้อน",
-      "คุณพบถ้ำเย็นชื้นท่ามกลางหน้าผาสูง",
-      "คุณพบธารน้ำใสท่ามกลางป่าทึบ",
-      "คุณพบลานหญ้าเขียวขจีท่ามกลางทุ่งดอกไม้",
-      "คุณพบจุดชมวิวท่ามกลางยอดเขาสูง",
-      "คุณพบลำธารเย็นท่ามกลางหุบเขาลึก",
-      "คุณพบหาดทรายสงบท่ามกลางคืนดาวพราว",
-      "คุณพบบ้านร้างปลอดภัยท่ามกลางพายุ",
-      "คุณพบชายฝั่งสงบท่ามกลางทะเลสาบกว้าง"
-    ];
-
-    String selectedDialogue =
-        restDialogues[Random().nextInt(restDialogues.length)];
+    String selectedDialogue = _getRandomRestDialogue();
 
     _updateEncounter("🏕️",
         "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพัก $restDurationShow วินาที");
@@ -441,15 +409,17 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
-    int baseMax = (_characterController.calculateLevel(0) ~/ 2) + 3;
+    int baseMax = (_characterController.calculateLevel(0) ~/ 2) + 5;
+    int baseMin =
+        ((_characterController.calculateLevel(0) ~/ 5)).clamp(1, baseMax);
     final multipliers = [
       [1, 1, 1],
-      [2, 3, 3],
+      [2, 2, 2],
       [4, 6, 6],
-      [8, 12, 10]
+      [12, 18, 18]
     ];
     final baseValue =
-        (((rollOne).clamp(1, baseMax)) * _tableController.levelMultiplier)
+        (((rollOne).clamp(baseMin, baseMax)) * _tableController.levelMultiplier)
             .floor();
 
     int coin = (baseValue * 10) * multipliers[index][1];
@@ -462,8 +432,6 @@ class FocusController extends GetxController {
       _tableController.calculateEXP(exp)
     );
   }
-
-  // ... (previous code remains the same)
 
   String _getBattleDescription(
       int index, MonsterName enemy, int damage, int exp, int coin) {
@@ -500,6 +468,35 @@ class FocusController extends GetxController {
 
     return battleDescriptions[index]
         [Random().nextInt(battleDescriptions[index].length)];
+  }
+
+  String _getDeathMessage(String enemy) {
+    final deathMessages = [
+      "ดวงตาพร่าเลือน $enemy ยืนเหยียดยิ้ม",
+      "เสียงกรีดร้อง $enemy ปลิดชีพท่าน",
+      "โลหิตไหลริน $enemy ยืนมองชัยชนะ",
+      "แสงริบหรี่ $enemy หัวเราะก้อง",
+      "ความมืดโอบล้อม $enemy ทอดเงายักษ์"
+    ];
+
+    return deathMessages[Random().nextInt(deathMessages.length)];
+  }
+
+  String _getRandomRestDialogue() {
+    List<String> restDialogues = [
+      "คุณพบโอเอซิสร่มรื่นท่ามกลางทะเลทราย",
+      "คุณพบร่มเงาไม้ใหญ่ท่ามกลางป่าร้อน",
+      "คุณพบถ้ำเย็นชื้นท่ามกลางหน้าผาสูง",
+      "คุณพบธารน้ำใสท่ามกลางป่าทึบ",
+      "คุณพบลานหญ้าเขียวขจีท่ามกลางทุ่งดอกไม้",
+      "คุณพบจุดชมวิวท่ามกลางยอดเขาสูง",
+      "คุณพบลำธารเย็นท่ามกลางหุบเขาลึก",
+      "คุณพบหาดทรายสงบท่ามกลางคืนดาวพราว",
+      "คุณพบบ้านร้างปลอดภัยท่ามกลางพายุ",
+      "คุณพบชายฝั่งสงบท่ามกลางทะเลสาบกว้าง"
+    ];
+
+    return restDialogues[Random().nextInt(restDialogues.length)];
   }
 
   @override
