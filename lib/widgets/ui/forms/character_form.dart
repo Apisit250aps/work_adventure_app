@@ -18,7 +18,7 @@ class _CharacterFormState extends State<CharacterForm> {
   final CharacterController controller = Get.find<CharacterController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController classController = TextEditingController();
-  final TextEditingController avatarIndex = TextEditingController();
+  final TextEditingController avatarIndex = TextEditingController(text: "0");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -29,11 +29,9 @@ class _CharacterFormState extends State<CharacterForm> {
       setState(() {
         _isLoading = true;
       });
-
       try {
-        
-        final success = await controller.createCharacter(
-            nameController.text, classController.text, int.parse(avatarIndex.text));
+        final success = await controller.createCharacter(nameController.text,
+            classController.text, int.parse(avatarIndex.text));
 
         if (!success) {
           setState(() {
@@ -118,39 +116,7 @@ class _CharacterFormState extends State<CharacterForm> {
   }
 }
 
-class CharacterAvatar extends StatefulWidget {
-  final String? name;
-  const CharacterAvatar({super.key, this.name});
 
-  @override
-  State<CharacterAvatar> createState() => _CharacterAvatarState();
-}
-
-class _CharacterAvatarState extends State<CharacterAvatar> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 20,
-      ),
-      child: Column(
-        children: [
-          Image.asset('assets/images/characters/dog.png'),
-          const SizedBox(
-            height: 30,
-          ),
-          Text(
-            widget.name!,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 24,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
 
 class CharacterFormGroup extends StatelessWidget {
   final TextEditingController? nameController;

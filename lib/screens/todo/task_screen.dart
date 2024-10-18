@@ -5,6 +5,7 @@ import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/models/work_model.dart';
+import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/widgets/ui/forms/task/task_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
@@ -101,96 +102,85 @@ class TaskScreen extends GetWidget<TasksController> {
 
   void workInfoSheets(BuildContext context) {
     final Work work = controller.onWork;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: backgroundColor,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, controller) {
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const SheetHeader(title: "Work details"),
-                  Container(
-                    margin: const EdgeInsets.only(top: 20),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                        // color: baseColor,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Column(
-                      children: [
-                        _buildInfoRow(
-                          const Icon(
-                            Boxicons.bx_receipt,
-                            color: Colors.black,
-                            size: 36,
-                          ),
-                          'Work',
-                          work.name as String,
-                        ),
-                        _buildInfoRow(
-                          const Icon(
-                            Boxicons.bx_notepad,
-                            color: Colors.pink,
-                            size: 36,
-                          ),
-                          'Description',
-                          work.description ?? '--',
-                        ),
-                        _buildInfoRow(
-                          Icon(
-                            Boxicons.bx_calendar_check,
-                            color: Colors.green[600],
-                            size: 36,
-                          ),
-                          'Start Date',
-                          work.startDate.toString(),
-                        ),
-                        _buildInfoRow(
-                          Icon(
-                            Boxicons.bx_calendar_x,
-                            color: Colors.red[600],
-                            size: 36,
-                          ),
-                          'Due Date',
-                          work.dueDate.toString(),
-                        ),
-                        _buildInfoRow(
-                          Icon(
-                            Boxicons.bx_stats,
-                            color: Colors.blue[600],
-                            size: 36,
-                          ),
-                          'Status',
-                          work.status.toString(),
-                        ),
-                        _buildInfoRow(
-                          Icon(
-                            Boxicons.bx_meteor,
-                            color: Colors.blue[600],
-                            size: 36,
-                          ),
-                          'Difficulty',
-                          calculateDifficulty(),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+    Get.bottomSheet(
+      BottomSheetContent(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 20,
               ),
-            );
-          },
-        );
-      },
+              const SheetHeader(title: "Work details"),
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    // color: baseColor,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Column(
+                  children: [
+                    _buildInfoRow(
+                      const Icon(
+                        Boxicons.bx_receipt,
+                        color: Colors.black,
+                        size: 36,
+                      ),
+                      'Work',
+                      work.name as String,
+                    ),
+                    _buildInfoRow(
+                      const Icon(
+                        Boxicons.bx_notepad,
+                        color: Colors.pink,
+                        size: 36,
+                      ),
+                      'Description',
+                      work.description ?? '--',
+                    ),
+                    _buildInfoRow(
+                      Icon(
+                        Boxicons.bx_calendar_check,
+                        color: Colors.green[600],
+                        size: 36,
+                      ),
+                      'Start Date',
+                      work.startDate.toString(),
+                    ),
+                    _buildInfoRow(
+                      Icon(
+                        Boxicons.bx_calendar_x,
+                        color: Colors.red[600],
+                        size: 36,
+                      ),
+                      'Due Date',
+                      work.dueDate.toString(),
+                    ),
+                    _buildInfoRow(
+                      Icon(
+                        Boxicons.bx_stats,
+                        color: Colors.blue[600],
+                        size: 36,
+                      ),
+                      'Status',
+                      work.status.toString(),
+                    ),
+                    _buildInfoRow(
+                      Icon(
+                        Boxicons.bx_meteor,
+                        color: Colors.blue[600],
+                        size: 36,
+                      ),
+                      'Difficulty',
+                      calculateDifficulty(),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -311,23 +301,13 @@ class TaskListTile extends GetWidget<TasksController> {
   }
 
   void _showTaskOptions(BuildContext context, Task task) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, controllers) {
-            return TaskUpdateForm(
-              task: task,
-              tasksController: controller,
-            );
-          },
-        );
-      },
+    Get.bottomSheet(
+      BottomSheetContent(
+        child: TaskUpdateForm(
+          task: task,
+          tasksController: controller,
+        ),
+      ),
     );
   }
 

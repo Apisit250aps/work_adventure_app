@@ -27,11 +27,15 @@ class CharacterController extends GetxController {
   ));
 
   List<String> get characterImages => <String>[
-        'assets/images/characters/cat.png',
+        'assets/images/characters/wizard.png',
+        'assets/images/characters/cat_sit.png',
         'assets/images/characters/dog.png',
-        'assets/images/characters/john.png',
-        'assets/images/characters/monkey.png',
+        'assets/images/characters/knight1.png',
+        'assets/images/characters/knight2.png',
         'assets/images/characters/steve.png',
+        'assets/images/characters/monkey.png',
+        'assets/images/characters/john.png',
+        'assets/images/characters/cat.png'
       ];
 
   RxBool isLoading = true.obs;
@@ -157,6 +161,7 @@ class CharacterController extends GetxController {
     int expForNextLevel = expNextLevel - expCurrentLevel;
     int expGap = totalExp - expCurrentLevel;
     print("ทดสอบๆ ${expGap} ${expForNextLevel} ${currentLevel + 1}");
+    print("ทดสอบๆ $expGap $expNextLevel ${currentLevel + 1}");
 
     return (expGap, expForNextLevel);
   }

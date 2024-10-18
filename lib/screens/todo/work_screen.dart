@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
@@ -71,64 +70,36 @@ class WorkCollapseTileList extends GetWidget<WorkController> {
   }
 
   void _showWorkOptions(BuildContext context, Work work) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, controllers) {
-            return WorkUpdateForm(
-              work: work,
-              controller: controller,
-            );
-          },
-        );
-      },
+    Get.bottomSheet(
+      BottomSheetContent(
+        child: WorkUpdateForm(
+          work: work,
+          controller: controller,
+        ),
+      ),
     );
   }
 }
 
-// ListTile(
-//               leading: Container(
-//                 decoration: const BoxDecoration(
-//                   boxShadow: [
-//                     BoxShadow(
-//                       color: Color.fromRGBO(0, 0, 0, 0.1),
-//                       offset: Offset(0, 10), // corresponds to 0px 10px
-//                       blurRadius: 50, // corresponds to 50px
-//                     )
-//                   ],
-//                 ),
-//                 child: IconButton(
-//                   iconSize: 24,
-//                   padding: const EdgeInsets.all(0),
-//                   onPressed: () {},
-//                   icon: Icon(
-//                     Boxicons.bx_check,
-//                     color: task.isDone ? Colors.white : Colors.black,
-//                   ),
-//                   style: ButtonStyle(
-//                     backgroundColor: WidgetStatePropertyAll(
-//                       task.isDone ? secondaryColor : Colors.white,
-//                     ),
-//                     elevation: const WidgetStatePropertyAll(
-//                       5,
-//                     ), // ยังคงมี elevation ได้
-//                   ),
-//                 ),
-//               ),
-//               title: Text(
-//                 task.name,
-//                 style: TextStyle(
-//                   decoration: task.isDone ? TextDecoration.lineThrough : null,
-//                   fontWeight: FontWeight.w600,
-//                 ),
-//               ),
-//             );
+class BottomSheetContent extends StatelessWidget {
+  final Widget? child;
+  const BottomSheetContent({super.key, this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
 class TaskOfWork extends StatelessWidget {
   final Task task;
   const TaskOfWork({super.key, required this.task});
