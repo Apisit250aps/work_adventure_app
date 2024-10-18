@@ -29,6 +29,7 @@ class SpecialController extends GetxController {
   ).obs;
   final RxBool isLoading = false.obs;
   final RxBool statusLoading = false.obs;
+  final RxBool onUpdate = false.obs;
 
   @override
   void onInit() {
@@ -107,43 +108,46 @@ class SpecialController extends GetxController {
   }
 
   void incrementSpecial(String status) {
-    if (characterSelect.value.statusPoint as int > 0) {
-      Special updatedSpecial = special.value.copyWith();
-      switch (status) {
-        case "STR":
-          updatedSpecial =
-              updatedSpecial.copyWith(strength: updatedSpecial.strength + 1);
-          break;
-        case "PER":
-          updatedSpecial = updatedSpecial.copyWith(
-              perception: updatedSpecial.perception + 1);
-          break;
-        case "END":
-          updatedSpecial =
-              updatedSpecial.copyWith(endurance: updatedSpecial.endurance + 1);
-          break;
-        case "CHA":
-          updatedSpecial =
-              updatedSpecial.copyWith(charisma: updatedSpecial.charisma + 1);
-          break;
-        case "INT":
-          updatedSpecial = updatedSpecial.copyWith(
-              intelligence: updatedSpecial.intelligence + 1);
-          break;
-        case "AGI":
-          updatedSpecial =
-              updatedSpecial.copyWith(agility: updatedSpecial.agility + 1);
-          break;
-        case "LUK":
-          updatedSpecial =
-              updatedSpecial.copyWith(luck: updatedSpecial.luck + 1);
-          break;
-      }
+    if (!onUpdate.value) {
+      if (characterSelect.value.statusPoint as int > 0) {
+        
+        Special updatedSpecial = special.value.copyWith();
+        switch (status) {
+          case "STR":
+            updatedSpecial =
+                updatedSpecial.copyWith(strength: updatedSpecial.strength + 1);
+            break;
+          case "PER":
+            updatedSpecial = updatedSpecial.copyWith(
+                perception: updatedSpecial.perception + 1);
+            break;
+          case "END":
+            updatedSpecial = updatedSpecial.copyWith(
+                endurance: updatedSpecial.endurance + 1);
+            break;
+          case "CHA":
+            updatedSpecial =
+                updatedSpecial.copyWith(charisma: updatedSpecial.charisma + 1);
+            break;
+          case "INT":
+            updatedSpecial = updatedSpecial.copyWith(
+                intelligence: updatedSpecial.intelligence + 1);
+            break;
+          case "AGI":
+            updatedSpecial =
+                updatedSpecial.copyWith(agility: updatedSpecial.agility + 1);
+            break;
+          case "LUK":
+            updatedSpecial =
+                updatedSpecial.copyWith(luck: updatedSpecial.luck + 1);
+            break;
+        }
 
-      special.value = updatedSpecial;
-      print("Incremented $status: ${special.value.toJson()}");
-      updateSpecialOnServer();
-      update();
+        special.value = updatedSpecial;
+        print("Incremented $status: ${special.value.toJson()}");
+        updateSpecialOnServer();
+        update();
+      }
     }
   }
 
@@ -202,6 +206,7 @@ class SpecialController extends GetxController {
 
   Future<void> updateSpecialOnServer() async {
     statusLoading.value = true;
+    onUpdate.value = true;
     try {
       String path = _rest.updateSpecial;
       String endpoints = "$path/${special.value.id}";
@@ -229,6 +234,7 @@ class SpecialController extends GetxController {
     } finally {
       await loadCharacter();
       statusLoading.value = false;
+      onUpdate.value = false;
     }
   }
 }
