@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 
@@ -16,6 +17,19 @@ class LogEntry {
     required this.description,
     required this.timestamp,
   });
+}
+
+class MonsterName {
+  final String emoji;
+  final String name;
+  final Color color;
+
+  MonsterName(this.emoji, this.name, this.color);
+
+  @override
+  String toString() {
+    return '$emoji $name';
+  }
 }
 
 class FocusController extends GetxController {
@@ -77,40 +91,48 @@ class FocusController extends GetxController {
   RxInt damageInput = 0.obs;
   RxInt expInput = 0.obs;
   RxInt coinInput = 0.obs;
-  final List<List<String>> enemy = [
-    [
-      "🐺 หมาป่าจิ๋ว",
-      "🦇 ค้างคาวราตรี",
-      "🐗 หมูป่าพิฆาต",
-      "🦊 จิ้งจอกไฟ",
-      "🐍 อสรพิษ"
-    ],
-    [
-      "🧟 ซอมบี้ราชา",
-      "💀 โครงกระดูกอมตะ",
-      "🧛 แวมไพร์เลือดเย็น",
-      "🐲 มังกรไฟนรก",
-      "🧙 พ่อมดมรณะ"
-    ],
-    [
-      "🐉 มังกรทมิฬ",
-      "💀 ราชาลิชอนธการ",
-      "🌑 ปีศาจแห่งความมืด",
-      "🧛🏻‍♂️ เจ้าแวมไพร์ไร้พ่าย",
-      "🧙🏻‍♂️ จอมมารแห่งหายนะ"
-    ],
-    [
-      "💀 ราชันวิญญาณ",
-      "⏳ เทพแห่งกาลเวลา",
-      "🗡️ อัศวินแห่งความมืด",
-      "🌙 เทพจันทราและความฝัน",
-      "🧙‍♂️ จอมเวทแห่งอนันต์"
-    ]
-  ];
+
+  // สร้างตัวแปรสำหรับแต่ละสี
+  final Color easyColor = Colors.green;
+  final Color mediumColor = Colors.blue;
+  final Color hardColor = Colors.purple;
+  final Color impossibleColor = Colors.yellow;
+
+  late List<List<MonsterName>> enemy;
 
   @override
   void onInit() {
     super.onInit();
+    enemy = [
+      [
+        MonsterName("🐺", "หมาป่าจิ๋ว", easyColor),
+        MonsterName("🦇", "ค้างคาวราตรี", easyColor),
+        MonsterName("🐗", "หมูป่าพิฆาต", easyColor),
+        MonsterName("🦊", "จิ้งจอกไฟ", easyColor),
+        MonsterName("🐍", "อสรพิษ", easyColor)
+      ],
+      [
+        MonsterName("🧟", "ซอมบี้ราชา", mediumColor),
+        MonsterName("💀", "โครงกระดูกอมตะ", mediumColor),
+        MonsterName("🧛", "แวมไพร์เลือดเย็น", mediumColor),
+        MonsterName("🐲", "มังกรไฟนรก", mediumColor),
+        MonsterName("🧙", "พ่อมดมรณะ", mediumColor)
+      ],
+      [
+        MonsterName("🐉", "มังกรทมิฬ", hardColor),
+        MonsterName("💀", "ราชาลิชอนธการ", hardColor),
+        MonsterName("🌑", "ปีศาจแห่งความมืด", hardColor),
+        MonsterName("🧛🏻‍♂️", "เจ้าแวมไพร์ไร้พ่าย", hardColor),
+        MonsterName("🧙🏻‍♂️", "จอมมารแห่งหายนะ", hardColor)
+      ],
+      [
+        MonsterName("💀", "ราชันวิญญาณ", impossibleColor),
+        MonsterName("⏳", "เทพแห่งกาลเวลา", impossibleColor),
+        MonsterName("🗡️", "อัศวินแห่งความมืด", impossibleColor),
+        MonsterName("🌙", "เทพจันทราและความฝัน", impossibleColor),
+        MonsterName("🧙‍♂️", "จอมเวทแห่งอนันต์", impossibleColor)
+      ]
+    ];
     ever(_tableController.special, (_) {
       if (_isActive.value) {
         _startEventTimer();
@@ -276,7 +298,7 @@ class FocusController extends GetxController {
     final villageType = _getRandomVillageType();
     final questDifficulty = _tableController.selectQuest;
     questNumber = questDifficulty;
-    final questDescription = _getQuestDescription(questDifficulty);
+    final MonsterName questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
     enemyQuestCounter = enemyCount;
     final (exp, gold) = _tableController.questReward(questDifficulty);
@@ -286,7 +308,7 @@ class FocusController extends GetxController {
 
     _updateEncounter("🏡", """
     $villageType
-    เควส: กำจัด $questDescription $enemyCount ตัว
+    เควส: กำจัด ${questDescription.toString()} $enemyCount ตัว
     ความยาก: ${_getQuestDifficulty(questDifficulty)}
     รางวัล: $exp EXP, $gold Gold
     """);
@@ -304,14 +326,14 @@ class FocusController extends GetxController {
   void _generateEnemyEvent() {
     rollOne = _tableController.singleDiceRoll();
     final index = TableController().getEnemyIndex(questNumber, questIsActive);
-    final enemy = _getRandomEnemy(index);
+    final MonsterName enemy = _getRandomEnemy(index);
     final (enemyCoin, enemyDamage, enemyEXP) = _calculateEnemyStats(index);
 
     final battleDescription =
         _getBattleDescription(index, enemy, enemyDamage, enemyEXP, enemyCoin);
-    _updateEncounter(enemy.split(" ")[0], battleDescription);
-    _addLogEntry("⚔️", "Battle",
-        "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
+    _updateEncounter(enemy.emoji, battleDescription);
+    _addLogEntry(
+        "⚔️", "Battle", "Encountered a ${enemy.name}! $battleDescription");
 
     damageInput += enemyDamage;
     if (_tableController.healthReduceCondition(damageInput.value)) {
@@ -322,10 +344,10 @@ class FocusController extends GetxController {
     }
   }
 
-  void _handleCharacterDeath(String enemy) {
+  void _handleCharacterDeath(MonsterName enemy) {
     _isDead.value = true;
     _deathTimeRemaining.value = _tableController.timeTodie;
-    final deathMessage = _getDeathMessage(enemy);
+    final deathMessage = _getDeathMessage(enemy.toString());
     _updateEncounter("💀", "$deathMessage\n${_deathTimeRemaining.value}");
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
 
@@ -389,17 +411,17 @@ class FocusController extends GetxController {
     return villageTypes[Random().nextInt(villageTypes.length)];
   }
 
-  String _getQuestDescription(int difficulty) {
+  MonsterName _getQuestDescription(int difficulty) {
     return enemy[difficulty][Random().nextInt(enemy[difficulty].length)];
+  }
+
+  MonsterName _getRandomEnemy(int index) {
+    return enemy[index][Random().nextInt(enemy[index].length)];
   }
 
   String _getQuestDifficulty(int difficulty) {
     final questDifficulties = ["ง่าย", "ปานกลาง", "ท้าทาย", "เป็นไปไม่ได้"];
     return questDifficulties[difficulty];
-  }
-
-  String _getRandomEnemy(int index) {
-    return enemy[index][Random().nextInt(enemy[index].length)];
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
@@ -425,35 +447,35 @@ class FocusController extends GetxController {
   // ... (previous code remains the same)
 
   String _getBattleDescription(
-      int index, String enemy, int damage, int exp, int coin) {
+      int index, MonsterName enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "$enemy พุ่งดั่งสายฟ้า\nเลือดท่านกระเซ็น $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
-        "$enemy ตวัดกรงเล็บ\nกระดูกท่านสั่น $damage🩸\nศัตรูล้มครืน $exp🧿 $coin💰",
-        "$enemy โจมตีไร้ปรานี\nเนื้อท่านฉีก $damage🩸\nศัตรูขาดวิ่น $exp🧿 $coin💰",
-        "$enemy โผล่จากเงา\nเลือดท่านพุ่ง $damage🩸\nศัตรูยับเยิน $exp🧿 $coin💰",
-        "$enemy คำรามสนั่น\nแผลท่านแสบ $damage🩸\nศัตรูเป็นผุยผง $exp🧿 $coin💰"
+        "${enemy.toString()} พุ่งดั่งสายฟ้า\nเลือดท่านกระเซ็น $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
+        "${enemy.toString()} ตวัดกรงเล็บ\nกระดูกท่านสั่น $damage🩸\nศัตรูล้มครืน $exp🧿 $coin💰",
+        "${enemy.toString()} โจมตีไร้ปรานี\nเนื้อท่านฉีก $damage🩸\nศัตรูขาดวิ่น $exp🧿 $coin💰",
+        "${enemy.toString()} โผล่จากเงา\nเลือดท่านพุ่ง $damage🩸\nศัตรูยับเยิน $exp🧿 $coin💰",
+        "${enemy.toString()} คำรามสนั่น\nแผลท่านแสบ $damage🩸\nศัตรูเป็นผุยผง $exp🧿 $coin💰"
       ],
       [
-        "$enemy โฉบดั่งพายุ\nเลือดท่านสาด $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
-        "$enemy รุมเร้าต่อเนื่อง\nร่างท่านระบม $damage🩸\nศัตรูขาดสะบั้น $exp🧿 $coin💰",
-        "$enemy ถีบทรงพลัง\nกระดูกท่านร้าว $damage🩸\nศัตรูล้มไม่ลุก $exp🧿 $coin💰",
-        "$enemy หมุนดั่งทอร์นาโด\nเนื้อท่านขาด $damage🩸\nศัตรูเป็นธุลี $exp🧿 $coin💰",
-        "$enemy ทะยานฟาดฟัน\nร่างท่านพรุน $damage🩸\nศัตรูไหม้เกรียม $exp🧿 $coin💰"
+        "${enemy.toString()} โฉบดั่งพายุ\nเลือดท่านสาด $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
+        "${enemy.toString()} รุมเร้าต่อเนื่อง\nร่างท่านระบม $damage🩸\nศัตรูขาดสะบั้น $exp🧿 $coin💰",
+        "${enemy.toString()} ถีบทรงพลัง\nกระดูกท่านร้าว $damage🩸\nศัตรูล้มไม่ลุก $exp🧿 $coin💰",
+        "${enemy.toString()} หมุนดั่งทอร์นาโด\nเนื้อท่านขาด $damage🩸\nศัตรูเป็นธุลี $exp🧿 $coin💰",
+        "${enemy.toString()} ทะยานฟาดฟัน\nร่างท่านพรุน $damage🩸\nศัตรูไหม้เกรียม $exp🧿 $coin💰"
       ],
       [
-        "$enemy ปล่อยคลื่นทำลาย\nโลหิตท่านทะลัก $damage🩸\nศัตรูสิ้นซาก $exp🧿 $coin💰",
-        "$enemy พุ่งเหนือสายตา\nร่างท่านแหลก $damage🩸\nศัตรูหายวับ $exp🧿 $coin💰",
-        "$enemy ทะลุมิติโจมตี\nเนื้อท่านไหม้ $damage🩸\nศัตรูสูญในความว่าง $exp🧿 $coin💰",
-        "$enemy แผ่อำนาจล้นฟ้า\nตัวตนท่านสลาย $damage🩸\nศัตรูหายจากภพ $exp🧿 $coin💰",
-        "$enemy หยุดเวลาชั่วขณะ\nจิตท่านดับ $damage🩸\nศัตรูสิ้นทุกมิติ $exp🧿 $coin💰"
+        "${enemy.toString()} ปล่อยคลื่นทำลาย\nโลหิตท่านทะลัก $damage🩸\nศัตรูสิ้นซาก $exp🧿 $coin💰",
+        "${enemy.toString()} พุ่งเหนือสายตา\nร่างท่านแหลก $damage🩸\nศัตรูหายวับ $exp🧿 $coin💰",
+        "${enemy.toString()} ทะลุมิติโจมตี\nเนื้อท่านไหม้ $damage🩸\nศัตรูสูญในความว่าง $exp🧿 $coin💰",
+        "${enemy.toString()} แผ่อำนาจล้นฟ้า\nตัวตนท่านสลาย $damage🩸\nศัตรูหายจากภพ $exp🧿 $coin💰",
+        "${enemy.toString()} หยุดเวลาชั่วขณะ\nจิตท่านดับ $damage🩸\nศัตรูสิ้นทุกมิติ $exp🧿 $coin💰"
       ],
       [
-        "$enemy ปรากฏทั่วพร้อมกัน\nร่างท่านแตก $damage🩸\nศัตรูหายจากจริง $exp🧿 $coin💰",
-        "$enemy เป็นพลังบริสุทธิ์\nตัวท่านละลาย $damage🩸\nศัตรูพ้นสรรพสิ่ง $exp🧿 $coin💰",
-        "$enemy ทำลายกฎธรรมชาติ\nท่านหายจากกาล $damage🩸\nศัตรูดับทุกเป็นไปได้ $exp🧿 $coin💰",
-        "$enemy บิดเบือนความจริง\nท่านหายจากทรงจำ $damage🩸\nศัตรูสู่ไร้ตัวตน $exp🧿 $coin💰",
-        "$enemy ข้ามขอบตรรกะ\nท่านถูกลบจากอยู่ $damage🩸\nศัตรูสลายทุกมิติกาล $exp🧿 $coin💰"
+        "${enemy.toString()} ปรากฏทั่วพร้อมกัน\nร่างท่านแตก $damage🩸\nศัตรูหายจากจริง $exp🧿 $coin💰",
+        "${enemy.toString()} เป็นพลังบริสุทธิ์\nตัวท่านละลาย $damage🩸\nศัตรูพ้นสรรพสิ่ง $exp🧿 $coin💰",
+        "${enemy.toString()} ทำลายกฎธรรมชาติ\nท่านหายจากกาล $damage🩸\nศัตรูดับทุกเป็นไปได้ $exp🧿 $coin💰",
+        "${enemy.toString()} บิดเบือนความจริง\nท่านหายจากทรงจำ $damage🩸\nศัตรูสู่ไร้ตัวตน $exp🧿 $coin💰",
+        "${enemy.toString()} ข้ามขอบตรรกะ\nท่านถูกลบจากอยู่ $damage🩸\nศัตรูสลายทุกมิติกาล $exp🧿 $coin💰"
       ]
     ];
 

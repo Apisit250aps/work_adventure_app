@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
+import 'package:collection/collection.dart';
 
 class FocusScreen extends GetView<FocusController> {
   const FocusScreen({super.key, required int totalTime});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,12 +48,7 @@ class FocusScreen extends GetView<FocusController> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
-                          child: Obx(() => Text(
-                                controller.currentEncounterDescription,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.grey[800]),
-                              )),
+                          child: Obx(() => _buildEncounterDescription()),
                         ),
                       ],
                     ),
@@ -64,6 +61,74 @@ class FocusScreen extends GetView<FocusController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEncounterDescription() {
+    String description = controller.currentEncounterDescription;
+    List<InlineSpan> textSpans = [];
+
+    print("Current description: $description");
+
+    // Debug print สำหรับ enemy list
+    print("Enemy list:");
+    for (var list in controller.enemy) {
+      for (var monster in list) {
+        print("${monster.emoji} ${monster.name} (${monster.color})");
+      }
+    }
+
+    RegExp monsterRegex = RegExp(
+        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻‍♂️|⏳|🗡️|🌙)\s*([^\n]+)');
+
+    Iterable<RegExpMatch> matches = monsterRegex.allMatches(description);
+    int lastEnd = 0;
+
+    for (RegExpMatch match in matches) {
+      if (match.start > lastEnd) {
+        textSpans
+            .add(TextSpan(text: description.substring(lastEnd, match.start)));
+      }
+
+      String emoji = match.group(1)!;
+      String monsterFullName = match.group(2)!;
+      print("Found monster: $emoji $monsterFullName");
+
+      MonsterName? monster =
+          controller.enemy.expand((list) => list).firstWhereOrNull(
+                (m) => m.emoji == emoji && monsterFullName.startsWith(m.name),
+              );
+
+      if (monster != null) {
+        print(
+            "Matching monster found: ${monster.toString()}, Color: ${monster.color}");
+        textSpans.add(TextSpan(
+          text: "$emoji ${monster.name}",
+          style: TextStyle(color: monster.color, fontWeight: FontWeight.bold),
+        ));
+        // เพิ่มส่วนที่เหลือของข้อความ (ถ้ามี)
+        if (monsterFullName.length > monster.name.length) {
+          textSpans.add(
+              TextSpan(text: monsterFullName.substring(monster.name.length)));
+        }
+      } else {
+        print("No matching monster found");
+        textSpans.add(TextSpan(text: "$emoji $monsterFullName"));
+      }
+
+      lastEnd = match.end;
+    }
+
+    if (lastEnd < description.length) {
+      textSpans.add(TextSpan(text: description.substring(lastEnd)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: TextStyle(fontSize: 18, color: Colors.grey[800]),
+        children: textSpans,
+      ),
+      textAlign: TextAlign.center,
     );
   }
 
@@ -86,26 +151,26 @@ class FocusScreen extends GetView<FocusController> {
       ),
     );
   }
+}
 
-  void showAdventureLog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.2,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return AdventureLogBottomSheet(
-              scrollController: scrollController,
-            );
-          },
-        );
-      },
-    );
-  }
+void showAdventureLog(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.2,
+        maxChildSize: 0.9,
+        builder: (_, scrollController) {
+          return AdventureLogBottomSheet(
+            scrollController: scrollController,
+          );
+        },
+      );
+    },
+  );
 }
 
 class CircularTimer extends StatelessWidget {
