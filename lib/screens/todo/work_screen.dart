@@ -55,7 +55,7 @@ class WorkCollapseTileList extends GetWidget<WorkController> {
         controller.selectIndex(index);
         Get.toNamed('/tasks');
       },
-      onLongPress: () => _showWorkOptions(context, work),
+      onLongPress: () => _showWorkOptions(work),
       title: work.name ?? 'Untitled',
       child: SizedBox(
         child: ListView.builder(
@@ -69,7 +69,7 @@ class WorkCollapseTileList extends GetWidget<WorkController> {
     );
   }
 
-  void _showWorkOptions(BuildContext context, Work work) {
+  void _showWorkOptions(Work work) {
     Get.bottomSheet(
       BottomSheetContent(
         child: WorkUpdateForm(

@@ -43,20 +43,30 @@ class OperatorScreen extends GetView<PageControllerX> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: PageView(
-        controller: controller.pageController,
-        onPageChanged: controller.changePage,
-        children: pages.map((page) => page.widget).toList(),
-      ),
-      floatingActionButton: Obx(() =>
-          pages[controller.pageIndex.value].floatingActionButton(context)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Obx(
-        () => BottomNavigation(
-          currentIndex: controller.pageIndex.value,
-          onTap: controller.changePage,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await controller.showExitConfirmationDialog();
+        if (shouldPop) {
+          Get.back();
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: PageView(
+          controller: controller.pageController,
+          onPageChanged: controller.changePage,
+          children: pages.map((page) => page.widget).toList(),
+        ),
+        floatingActionButton: Obx(() =>
+            pages[controller.pageIndex.value].floatingActionButton(context)),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: Obx(
+          () => BottomNavigation(
+            currentIndex: controller.pageIndex.value,
+            onTap: controller.changePage,
+          ),
         ),
       ),
     );

@@ -43,7 +43,7 @@ class TaskScreen extends GetWidget<TasksController> {
                 iconSize: const WidgetStatePropertyAll(28),
               ),
               icon: const Icon(Boxicons.bx_calendar),
-              onPressed: () => workInfoSheets(context),
+              onPressed: () => workInfoSheets(),
             ),
           ],
 
@@ -100,7 +100,7 @@ class TaskScreen extends GetWidget<TasksController> {
     });
   }
 
-  void workInfoSheets(BuildContext context) {
+  void workInfoSheets() {
     final Work work = controller.onWork;
     Get.bottomSheet(
       BottomSheetContent(
@@ -255,7 +255,7 @@ class TaskListTile extends GetWidget<TasksController> {
   Widget build(BuildContext context) {
     return ListTile(
       leading: _buildLeadingIcon(),
-      onLongPress: () => _showTaskOptions(context, task),
+      onLongPress: () => _showTaskOptions(task),
       title: Text(
         task.name,
         style: TextStyle(
@@ -300,7 +300,7 @@ class TaskListTile extends GetWidget<TasksController> {
     return colors[index - 1];
   }
 
-  void _showTaskOptions(BuildContext context, Task task) {
+  void _showTaskOptions(Task task) {
     Get.bottomSheet(
       BottomSheetContent(
         child: TaskUpdateForm(
@@ -356,7 +356,7 @@ class TaskFloatingActionButton extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: FloatingActionButton(
-        onPressed: () => createTaskSheets(context),
+        onPressed: () => createTaskSheets(),
         backgroundColor: Colors.transparent,
         elevation: 0,
         child: const Icon(Icons.add, color: Colors.white),
@@ -364,21 +364,9 @@ class TaskFloatingActionButton extends StatelessWidget {
     );
   }
 
-  void createTaskSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.5,
-          maxChildSize: 0.75,
-          expand: false,
-          builder: (_, controller) {
-            return const TaskCreateForm();
-          },
-        );
-      },
-    );
+  void createTaskSheets() {
+    Get.bottomSheet(const BottomSheetContent(
+      child: TaskCreateForm(),
+    ));
   }
 }

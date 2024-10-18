@@ -6,6 +6,7 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
+import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
@@ -52,11 +53,11 @@ class CharacterScreen extends GetView<CharacterController> {
                   );
                 },
                 options: CarouselOptions(
+                  height: Get.height * 0.5,
                   aspectRatio: 1,
                   enlargeCenterPage: true,
                   onPageChanged: (index, reason) {
                     controller.selectIndex(index);
-                    print('???$index');
                   },
                 ),
               ),
@@ -71,22 +72,6 @@ class CharacterScreen extends GetView<CharacterController> {
         icon: const Icon(Boxicons.bx_plus, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  void createCharacterSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 1,
-          child: const Column(
-            children: [],
-          ),
-        );
-      },
     );
   }
 }
@@ -108,26 +93,43 @@ class CharacterCard extends GetWidget<CharacterController> {
     return GestureDetector(
       onTap: onTap,
       onDoubleTap: onDoubleTap,
+      onLongPress: () => editCharacterSheets(character),
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(5),
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.1),
+              offset: Offset(0, 5), // corresponds to 0px 10px
+              blurRadius: 5, // corresponds to 50px
+            )
+          ],
+        ),
         child: Column(
           children: [
             Image.asset(
               controller.characterImages[character.avatarIndex as int],
               width: 250,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 0),
             Text(
               character.name as String,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 36,
+                fontSize: 24,
               ),
             )
           ],
         ),
       ),
     );
+  }
+
+  void editCharacterSheets(character) {
+    Get.bottomSheet(const BottomSheetContent());
   }
 }
 
