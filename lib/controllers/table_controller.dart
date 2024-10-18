@@ -287,4 +287,13 @@ class TableController extends GetxController {
             .clamp(10, 90);
     return timeDie;
   }
+
+  //สุ่มเหตุการณ์
+  // void generateRandomEvent() {
+
+  //     _generateNothingEvent();
+  //     _generateEnemyEvent();
+  //     _generateVillageEvent();
+
+  // }
 }
