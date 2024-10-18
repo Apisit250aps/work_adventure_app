@@ -80,14 +80,9 @@ class FocusController extends GetxController {
 
   // Rest variables
   bool isRest = false;
-  bool _isResting = false;
+  final RxBool _isResting = false.obs;
 
-  int get _eventIntervalSeconds {
-    if (_isResting) {
-      return 0;
-    }
-    return _tableController.timeEventRun;
-  }
+  int get _eventIntervalSeconds => _tableController.timeEventRun;
 
   final RxInt _restTimeRemaining = 0.obs;
 
@@ -192,7 +187,6 @@ class FocusController extends GetxController {
     _eventTimer?.cancel();
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
       if (_isActive.value && _timeRemaining.value > 0) {
-        _isResting = false;
         generateEvent();
       }
     });
@@ -206,15 +200,16 @@ class FocusController extends GetxController {
 
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
-        int restTime = restDuration + _eventIntervalSeconds + 1;
+        int restTime = restDuration + _eventIntervalSeconds;
         _restTimeRemaining.value--;
 
         final elapsedTime = restTime - _restTimeRemaining.value;
         final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
 
-        spCounter.value = totalStaminaToRecover - (recoveredStamina ~/ 1.5);
+        spCounter.value = totalStaminaToRecover - recoveredStamina;
       } else {
         spCounter.value = 0;
+        _isResting.value = false;
         _restTimer?.cancel();
         _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
@@ -228,6 +223,7 @@ class FocusController extends GetxController {
         _deathTimeRemaining.value--;
       } else {
         _isDead.value = false;
+        damageInput.value ~/= 2;
         _reviveTimer?.cancel();
         _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
@@ -248,7 +244,7 @@ class FocusController extends GetxController {
 
   void _resetSessionState() {
     _isActive.value = false;
-    _isResting = false;
+    _isResting.value = false;
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
@@ -365,7 +361,7 @@ class FocusController extends GetxController {
   }
 
   void _generateRestEvent() {
-    _isResting = true;
+    _isResting.value = true;
     int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
     damageInput.value -= (healing).clamp(0, damageInput.value);

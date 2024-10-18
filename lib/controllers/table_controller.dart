@@ -233,9 +233,9 @@ class TableController extends GetxController {
 
   // ความเร็วการเจอเหตุการณ์
   int get timeEventRun {
-    int baseTimeEvent = 10;
-    int agilityPerTime = ((special.value["a"]!) / 10).round();
-    int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 10);
+    int baseTimeEvent = 15;
+    int agilityPerTime = ((special.value["a"]!) / 15).round();
+    int timeEvent = (baseTimeEvent - agilityPerTime).clamp(2, 15);
     return timeEvent;
   }
 
@@ -244,9 +244,10 @@ class TableController extends GetxController {
       (counter > calculateCharacterStamina) ? true : false;
 
   int get restTimer {
-    int baseTimeRest = 20;
-    int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 10);
-    int timeRest = ((baseTimeRest - endurancePerTime)).clamp(0, 20);
+    int baseTimeRest = 15;
+    int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 15);
+    int timeRest =
+        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(0, 20);
     return timeRest;
   }
 
