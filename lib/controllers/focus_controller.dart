@@ -341,6 +341,7 @@ class FocusController extends GetxController {
 
   void _handleCharacterDeath(MonsterName enemy) {
     _isDead.value = true;
+    spCounter.value = _tableController.calculateCharacterStamina;
     _deathTimeRemaining.value = _tableController.timeTodie;
     final deathMessage = _getDeathMessage(enemy.toString());
     _updateEncounter("💀", "$deathMessage\n${_deathTimeRemaining.value}");
@@ -423,7 +424,7 @@ class FocusController extends GetxController {
         (((rollOne).clamp(baseMin, baseMax)) * _tableController.levelMultiplier)
             .round();
 
-    int coin = (baseValue * 10) * multipliers[index][1];
+    int coin = (baseValue * 2) * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];
     int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 

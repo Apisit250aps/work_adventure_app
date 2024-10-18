@@ -171,10 +171,10 @@ class TableController extends GetxController {
 
   (int, int) questReward(int difficulty) {
     const questRewards = [
-      [30, 50], // EXP, Coin สำหรับเควสธรรมดา
-      [60, 150], // สำหรับเควสไม่ธรรมดา
-      [120, 300], // สำหรับเควสหายาก
-      [240, 600] // สำหรับเควสระดับเทพ
+      [40, 70], // EXP, Coin สำหรับเควสธรรมดา
+      [80, 210], // สำหรับเควสไม่ธรรมดา
+      [160, 420], // สำหรับเควสหายาก
+      [320, 840] // สำหรับเควสระดับเทพ
     ];
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
