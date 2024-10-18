@@ -343,7 +343,7 @@ class FocusController extends GetxController {
     _isDead.value = true;
     spCounter.value = _tableController.calculateCharacterStamina;
     _deathTimeRemaining.value = _tableController.timeTodie;
-    int deathTimeShow = _deathTimeRemaining.value + _eventIntervalSeconds;
+    int deathTimeShow = _deathTimeRemaining.value + _eventIntervalSeconds + 1;
     final deathMessage = _getDeathMessage(enemy.toString());
     _updateEncounter("💀", "$deathMessage\n$deathTimeShow");
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
@@ -412,18 +412,18 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
-    int baseMax = (_characterController.calculateLevel(0) ~/ 2) + 5;
-    int baseMin =
-        ((_characterController.calculateLevel(0) ~/ 5)).clamp(1, baseMax);
+    int baseMax = (_characterController.calculateLevel(0) ~/ 2).clamp(1, 50);
+    int baseMin = ((_characterController.calculateLevel(0) ~/ 5)).clamp(1, 30);
     final multipliers = [
       [1, 1, 1],
       [2, 2, 2],
       [4, 6, 6],
       [12, 18, 18]
     ];
-    final baseValue =
-        (((rollOne).clamp(baseMin, baseMax)) * _tableController.levelMultiplier)
-            .round();
+    final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
+                _tableController.levelMultiplier)
+            .round()) +
+        3;
 
     int coin = (baseValue * 2) * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];

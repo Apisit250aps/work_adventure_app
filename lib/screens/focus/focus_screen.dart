@@ -308,7 +308,7 @@ class ProgressBar extends StatelessWidget {
     required this.color,
     required this.label,
     this.isReversed = false,
-    this.animationDuration = const Duration(milliseconds: 800),
+    this.animationDuration = const Duration(milliseconds: 1000),
   });
 
   @override

@@ -288,6 +288,8 @@ class TableController extends GetxController {
     return timeDie;
   }
 
+  //เหตุการณ์เจอสมบัติ
+
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
 
