@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:get/get.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
@@ -31,7 +30,7 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
   @override
   void initState() {
     super.initState();
-    taskNameController = TextEditingController(text: widget.task.name);
+    taskNameController = TextEditingController(text: widget.task.name ?? '');
     taskDescriptionController =
         TextEditingController(text: widget.task.description ?? '');
     taskStartController =
@@ -105,11 +104,7 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
                     controller: taskDueController,
                   ),
                   CustomSingleSelectToggle(
-                    initValue: [
-                      "Easy",
-                      "Medium",
-                      "Hard"
-                    ][int.parse(taskDifficultyController.text) - 1],
+                    initValue: ["Easy", "Medium", "Hard"][int.parse(taskDifficultyController.text) - 1],
                     options: const ["Easy", "Medium", "Hard"],
                     onSelected: (index) {
                       print(
@@ -182,10 +177,14 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
       final success = await widget.tasksController.updateTask(updatedTask);
 
       if (success) {
-        Get.snackbar("Success!", "Successfully to update task");
-        Get.back();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Task updated successfully')),
+        );
+        Navigator.of(context).pop(true);
       } else {
-        Get.snackbar("Fail!", "Failed to update task");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update task')),
+        );
       }
     }
   }
@@ -206,8 +205,8 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                final success =
-                    await widget.tasksController.deleteTask(widget.task.id);
+                final success = await widget.tasksController
+                    .deleteTask(widget.task.id);
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Task deleted successfully')),
