@@ -33,7 +33,7 @@ class FocusController extends GetxController {
       "Waiting for adventure...\n".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
-  RxInt SPCounter = 0.obs;
+  RxInt spCounter = 0.obs;
 
   // Timers
   Timer? _timer;
@@ -180,7 +180,7 @@ class FocusController extends GetxController {
         final elapsedTime = restDuration - _restTimeRemaining.value;
         final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
 
-        SPCounter.value = _tableController.calculateCharacterStamina -
+        spCounter.value = _tableController.calculateCharacterStamina -
             (recoveredStamina ~/ 1.5);
       } else {
         _finishResting();
@@ -190,7 +190,7 @@ class FocusController extends GetxController {
 
   void _finishResting() {
     _isResting.value = false;
-    SPCounter.value = 0;
+    spCounter.value = 0;
     _restTimer?.cancel();
     _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
@@ -232,7 +232,7 @@ class FocusController extends GetxController {
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
     eventCount.value = 0;
     _showingSummary.value = false;
-    SPCounter.value = 0;
+    spCounter.value = 0;
     _restTimeRemaining.value = 0;
   }
 
@@ -247,8 +247,8 @@ class FocusController extends GetxController {
   // Event generation methods
   void generateEvent() {
     if (!_isResting.value) {
-      SPCounter++;
-      if (_tableController.timeToRest(SPCounter.toInt())) {
+      spCounter++;
+      if (_tableController.timeToRest(spCounter.toInt())) {
         _generateRestEvent();
       } else {
         _generateRandomEvent();
