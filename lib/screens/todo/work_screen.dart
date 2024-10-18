@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
