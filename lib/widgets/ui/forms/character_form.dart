@@ -18,7 +18,7 @@ class _CharacterFormState extends State<CharacterForm> {
   final CharacterController controller = Get.find<CharacterController>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController classController = TextEditingController();
-  final TextEditingController avatarIndex = TextEditingController();
+  final TextEditingController avatarIndex = TextEditingController(text: "0");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -29,11 +29,9 @@ class _CharacterFormState extends State<CharacterForm> {
       setState(() {
         _isLoading = true;
       });
-
       try {
-        
-        final success = await controller.createCharacter(
-            nameController.text, classController.text, int.parse(avatarIndex.text));
+        final success = await controller.createCharacter(nameController.text,
+            classController.text, int.parse(avatarIndex.text));
 
         if (!success) {
           setState(() {
