@@ -365,7 +365,7 @@ class ProgressBar extends StatelessWidget {
                 color: color.computeLuminance() > 0.5
                     ? Colors.black
                     : Colors.black,
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
             ),

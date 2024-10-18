@@ -113,7 +113,7 @@ class TableController extends GetxController {
     const scalingFactor = 0.025;
     const lateGameBoost = 1.5;
 
-    final physicalRoll = ((specialRoll('s') * 1.5) + specialRoll('e')) ~/ 2.5;
+    final physicalRoll = specialRoll('s') ~/ 1.5;
     double reductionPercentage = _calculateBaseReduction(
         physicalRoll, baseReduction, maxReduction, scalingFactor);
 
@@ -334,6 +334,7 @@ class TableController extends GetxController {
     return itemChance.indexOf(selectedChance);
   }
 
+  //รีเลือด
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
 
