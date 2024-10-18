@@ -29,14 +29,13 @@ class CharacterController extends GetxController {
   List<String> get characterImages => <String>[
         'assets/images/characters/wizard.png',
         'assets/images/characters/cat_sit.png',
+        'assets/images/characters/dog.png',
         'assets/images/characters/knight1.png',
         'assets/images/characters/knight2.png',
         'assets/images/characters/steve.png',
         'assets/images/characters/monkey.png',
         'assets/images/characters/john.png',
         'assets/images/characters/cat.png'
-
-
       ];
 
   RxBool isLoading = true.obs;
