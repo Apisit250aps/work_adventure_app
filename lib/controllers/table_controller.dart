@@ -38,12 +38,12 @@ class TableController extends GetxController {
   // ฟังก์ชันยูทิลิตี้
   double _percentage(int value) => (value / 100);
 
-  double get _levelMultiplier =>
-      pow(1.1, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
+  double get levelMultiplier =>
+      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 20 + special.value['s']!);
+      (special.value['e']! * 10 + special.value['s']!);
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -86,13 +86,13 @@ class TableController extends GetxController {
   int calculateEXP(int exp) => ((exp +
               ((exp * (specialRoll('i') / 10).clamp(1, 10)) *
                   _percentage(specialRoll('i')))) *
-          _levelMultiplier)
+          levelMultiplier)
       .round();
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
     final luckBonus = _percentage(specialRoll('l'));
-    int coinBase = (coin * _levelMultiplier).round();
+    int coinBase = (coin * levelMultiplier).round();
     int finalCoin = coinBase + ((coinBase * luckBonus) ~/ 0.65);
 
     if (_shouldReduceCoin(difficulty)) {
@@ -102,7 +102,7 @@ class TableController extends GetxController {
   }
 
   bool _shouldReduceCoin(int difficulty) {
-    final threshold = (12 + (_levelMultiplier * (difficulty + 2))).round();
+    final threshold = (12 + (levelMultiplier * (difficulty + 2))).round();
     return rollDice + specialRoll('p') >= threshold;
   }
 
@@ -177,8 +177,8 @@ class TableController extends GetxController {
       [240, 600] // สำหรับเควสระดับเทพ
     ];
 
-    int exp = (questRewards[difficulty][0] * _levelMultiplier).round();
-    int gold = (questRewards[difficulty][1] * _levelMultiplier).round();
+    int exp = (questRewards[difficulty][0] * levelMultiplier).round();
+    int gold = (questRewards[difficulty][1] * levelMultiplier).round();
 
     int expReward = (exp + (exp * _percentage(specialRoll("i")))).round();
     int goldReward = (gold + (gold * _percentage(specialRoll("c")))).round();
@@ -246,16 +246,16 @@ class TableController extends GetxController {
   int get restTimer {
     int baseTimeRest = 20;
     int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 10);
-    int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(2, 20);
+    int timeRest = ((baseTimeRest - endurancePerTime)).clamp(0, 20);
     return timeRest;
   }
 
   int get restHealing {
-    int healPoint =
-        (rollDice).clamp(0, 100) + (specialRoll("i") + (specialRoll("e"))) ~/ 2;
+    double healPoint = ((rollDice).clamp(0, 100) +
+            (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
+        levelMultiplier;
     int totalHealing =
-        healPoint + (healPoint * _percentage(specialRoll("l"))).round();
+        (healPoint + (healPoint * _percentage(specialRoll("l")))).round();
 
     return totalHealing;
   }
@@ -269,18 +269,19 @@ class TableController extends GetxController {
   }
 
   int get timeTodie {
-    int baseTime = 90;
-    int timeEventDie = ((special.value["s"]! +
-                special.value["p"]! +
-                special.value["e"]! +
-                special.value["c"]! +
-                special.value["i"]! +
-                special.value["a"]! +
-                special.value["l"]!) ~/
-            7) -
-        7;
+    int baseTime = 0;
+    int timeEventDie = (((special.value["s"]! +
+                    special.value["p"]! +
+                    special.value["e"]! +
+                    special.value["c"]! +
+                    special.value["i"]! +
+                    special.value["a"]! +
+                    special.value["l"]!) ~/
+                7) -
+            7)
+        .clamp(0, 93);
     int timeDie = baseTime -
-        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(10, 90);
+        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(0, 90);
     return timeDie;
   }
 }

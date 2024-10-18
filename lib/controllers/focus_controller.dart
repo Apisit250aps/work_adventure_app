@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 
@@ -18,6 +19,19 @@ class LogEntry {
   });
 }
 
+class MonsterName {
+  final String emoji;
+  final String name;
+  final Color color;
+
+  MonsterName(this.emoji, this.name, this.color);
+
+  @override
+  String toString() {
+    return '$emoji $name';
+  }
+}
+
 class FocusController extends GetxController {
   final CharacterController _characterController =
       Get.find<CharacterController>();
@@ -33,7 +47,7 @@ class FocusController extends GetxController {
       "Waiting for adventure...\n".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
-  RxInt SPCounter = 0.obs;
+  RxInt spCounter = 0.obs;
 
   // Timers
   Timer? _timer;
@@ -50,7 +64,6 @@ class FocusController extends GetxController {
   String get currentEncounterDescription => _currentEncounterDescription.value;
   bool get showingSummary => _showingSummary.value;
 
-  int get _eventIntervalSeconds => _tableController.timeEventRun;
   int get restDuration => _tableController.restTimer;
 
   // Other variables
@@ -67,7 +80,15 @@ class FocusController extends GetxController {
 
   // Rest variables
   bool isRest = false;
-  final RxBool _isResting = false.obs;
+  bool _isResting = false;
+
+  int get _eventIntervalSeconds {
+    if (_isResting) {
+      return 0;
+    }
+    return _tableController.timeEventRun;
+  }
+
   final RxInt _restTimeRemaining = 0.obs;
 
   final RxBool _isDead = false.obs;
@@ -77,40 +98,48 @@ class FocusController extends GetxController {
   RxInt damageInput = 0.obs;
   RxInt expInput = 0.obs;
   RxInt coinInput = 0.obs;
-  final List<List<String>> enemy = [
-    [
-      "🐺 หมาป่าจิ๋ว",
-      "🦇 ค้างคาวราตรี",
-      "🐗 หมูป่าพิฆาต",
-      "🦊 จิ้งจอกไฟ",
-      "🐍 อสรพิษ"
-    ],
-    [
-      "🧟 ซอมบี้ราชา",
-      "💀 โครงกระดูกอมตะ",
-      "🧛 แวมไพร์เลือดเย็น",
-      "🐲 มังกรไฟนรก",
-      "🧙 พ่อมดมรณะ"
-    ],
-    [
-      "🐉 มังกรทมิฬ",
-      "💀 ราชาลิชอนธการ",
-      "🌑 ปีศาจแห่งความมืด",
-      "🧛🏻‍♂️ เจ้าแวมไพร์ไร้พ่าย",
-      "🧙🏻‍♂️ จอมมารแห่งหายนะ"
-    ],
-    [
-      "💀 ราชันวิญญาณ",
-      "⏳ เทพแห่งกาลเวลา",
-      "🗡️ อัศวินแห่งความมืด",
-      "🌙 เทพจันทราและความฝัน",
-      "🧙‍♂️ จอมเวทแห่งอนันต์"
-    ]
-  ];
+
+  // สร้างตัวแปรสำหรับแต่ละสี
+  final Color easyColor = Colors.green;
+  final Color mediumColor = Colors.blue;
+  final Color hardColor = Colors.purple;
+  final Color impossibleColor = Colors.orange;
+
+  late List<List<MonsterName>> enemy;
 
   @override
   void onInit() {
     super.onInit();
+    enemy = [
+      [
+        MonsterName("🐺", "หมาป่าจิ๋ว", easyColor),
+        MonsterName("🦇", "ค้างคาวราตรี", easyColor),
+        MonsterName("🐗", "หมูป่าพิฆาต", easyColor),
+        MonsterName("🦊", "จิ้งจอกไฟ", easyColor),
+        MonsterName("🐍", "อสรพิษ", easyColor)
+      ],
+      [
+        MonsterName("🧟", "ซอมบี้ราชา", mediumColor),
+        MonsterName("💀", "โครงกระดูกอมตะ", mediumColor),
+        MonsterName("🧛", "แวมไพร์เลือดเย็น", mediumColor),
+        MonsterName("🐲", "มังกรไฟนรก", mediumColor),
+        MonsterName("🧙", "พ่อมดมรณะ", mediumColor)
+      ],
+      [
+        MonsterName("🐉", "มังกรทมิฬ", hardColor),
+        MonsterName("💀", "ราชาลิชอนธการ", hardColor),
+        MonsterName("🌑", "ปีศาจแห่งความมืด", hardColor),
+        MonsterName("🧛🏻‍♂️", "เจ้าแวมไพร์ไร้พ่าย", hardColor),
+        MonsterName("🧙🏻‍♂️", "จอมมารแห่งหายนะ", hardColor)
+      ],
+      [
+        MonsterName("💀", "ราชันวิญญาณ", impossibleColor),
+        MonsterName("⏳", "เทพแห่งกาลเวลา", impossibleColor),
+        MonsterName("🗡️", "อัศวินแห่งความมืด", impossibleColor),
+        MonsterName("🌙", "เทพจันทราและความฝัน", impossibleColor),
+        MonsterName("🧙‍♂️", "จอมเวทแห่งอนันต์", impossibleColor)
+      ]
+    ];
     ever(_tableController.special, (_) {
       if (_isActive.value) {
         _startEventTimer();
@@ -163,6 +192,7 @@ class FocusController extends GetxController {
     _eventTimer?.cancel();
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
       if (_isActive.value && _timeRemaining.value > 0) {
+        _isResting = false;
         generateEvent();
       }
     });
@@ -170,47 +200,38 @@ class FocusController extends GetxController {
 
   void _startRestTimer() {
     _restTimer?.cancel();
-    final staminaPerSecond =
-        _tableController.calculateCharacterStamina / restDuration;
+
+    final totalStaminaToRecover = _tableController.calculateCharacterStamina;
+    final staminaPerSecond = totalStaminaToRecover / restDuration;
 
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
+        int restTime = restDuration + _eventIntervalSeconds + 1;
         _restTimeRemaining.value--;
 
-        final elapsedTime = restDuration - _restTimeRemaining.value;
+        final elapsedTime = restTime - _restTimeRemaining.value;
         final recoveredStamina = (staminaPerSecond * elapsedTime).floor();
 
-        SPCounter.value = _tableController.calculateCharacterStamina -
-            (recoveredStamina ~/ 1.5);
+        spCounter.value = totalStaminaToRecover - (recoveredStamina ~/ 1.5);
       } else {
-        _finishResting();
+        spCounter.value = 0;
+        _restTimer?.cancel();
+        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
     });
-  }
-
-  void _finishResting() {
-    _isResting.value = false;
-    SPCounter.value = 0;
-    _restTimer?.cancel();
-    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _startReviveTimer() {
     _reviveTimer?.cancel();
-    _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _reviveTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
         _deathTimeRemaining.value--;
       } else {
-        _finisReviving();
+        _isDead.value = false;
+        _reviveTimer?.cancel();
+        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
       }
     });
-  }
-
-  void _finisReviving() {
-    _isResting.value = false;
-    SPCounter.value = 0;
-    _restTimer?.cancel();
-    _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
   }
 
   void _stopTimers() {
@@ -227,13 +248,13 @@ class FocusController extends GetxController {
 
   void _resetSessionState() {
     _isActive.value = false;
-    _isResting.value = false;
+    _isResting = false;
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
     eventCount.value = 0;
     _showingSummary.value = false;
-    SPCounter.value = 0;
+    spCounter.value = 0;
     _restTimeRemaining.value = 0;
   }
 
@@ -247,13 +268,11 @@ class FocusController extends GetxController {
 
   // Event generation methods
   void generateEvent() {
-    if (!_isResting.value) {
-      SPCounter++;
-      if (_tableController.timeToRest(SPCounter.toInt())) {
-        _generateRestEvent();
-      } else {
-        _generateRandomEvent();
-      }
+    spCounter++;
+    if (_tableController.timeToRest(spCounter.toInt())) {
+      _generateRestEvent();
+    } else {
+      _generateRandomEvent();
     }
   }
 
@@ -277,7 +296,7 @@ class FocusController extends GetxController {
     final villageType = _getRandomVillageType();
     final questDifficulty = _tableController.selectQuest;
     questNumber = questDifficulty;
-    final questDescription = _getQuestDescription(questDifficulty);
+    final MonsterName questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
     enemyQuestCounter = enemyCount;
     final (exp, gold) = _tableController.questReward(questDifficulty);
@@ -287,7 +306,7 @@ class FocusController extends GetxController {
 
     _updateEncounter("🏡", """
     $villageType
-    เควส: กำจัด $questDescription $enemyCount ตัว
+    เควส: กำจัด ${questDescription.toString()} $enemyCount ตัว
     ความยาก: ${_getQuestDifficulty(questDifficulty)}
     รางวัล: $exp EXP, $gold Gold
     """);
@@ -305,14 +324,14 @@ class FocusController extends GetxController {
   void _generateEnemyEvent() {
     rollOne = _tableController.singleDiceRoll();
     final index = TableController().getEnemyIndex(questNumber, questIsActive);
-    final enemy = _getRandomEnemy(index);
+    final MonsterName enemy = _getRandomEnemy(index);
     final (enemyCoin, enemyDamage, enemyEXP) = _calculateEnemyStats(index);
 
     final battleDescription =
         _getBattleDescription(index, enemy, enemyDamage, enemyEXP, enemyCoin);
-    _updateEncounter(enemy.split(" ")[0], battleDescription);
-    _addLogEntry("⚔️", "Battle",
-        "Encountered a ${enemy.split(" ").sublist(1).join(" ")}! $battleDescription");
+    _updateEncounter(enemy.emoji, battleDescription);
+    _addLogEntry(
+        "⚔️", "Battle", "Encountered a ${enemy.name}! $battleDescription");
 
     damageInput += enemyDamage;
     if (_tableController.healthReduceCondition(damageInput.value)) {
@@ -323,12 +342,11 @@ class FocusController extends GetxController {
     }
   }
 
-  void _handleCharacterDeath(String enemy) {
+  void _handleCharacterDeath(MonsterName enemy) {
     _isDead.value = true;
-    _isActive.value = false;
     _deathTimeRemaining.value = _tableController.timeTodie;
-    final deathMessage = _getDeathMessage(enemy);
-    _updateEncounter("💀", deathMessage);
+    final deathMessage = _getDeathMessage(enemy.toString());
+    _updateEncounter("💀", "$deathMessage\n${_deathTimeRemaining.value}");
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
 
     _startReviveTimer();
@@ -336,26 +354,42 @@ class FocusController extends GetxController {
 
   String _getDeathMessage(String enemy) {
     final deathMessages = [
-      "ความมืดครอบคลุมสายตาของท่าน แสงสุดท้ายริบหรี่ลง\nท่านพ่ายแพ้ต่อ $enemy\nการผจญภัยของท่านจบลงแล้ว...",
-      "ลมหายใจสุดท้ายของท่านเฮือกสุดท้าย\n$enemy ยืนอยู่เหนือร่างที่ไร้วิญญาณของท่าน\nเรื่องราวของวีรบุรุษจบลงแล้ว...",
-      "โลกรอบตัวท่านหมุนวน วูบดับ\n$enemy ได้พรากชีวิตของท่านไป\nตำนานของท่านได้จบลงแล้ว...",
-      "ความเจ็บปวดจางหาย ท่านรู้สึกเบาสบาย\n$enemy ได้ส่งท่านสู่ภพภูมิใหม่\nการเดินทางครั้งสุดท้ายของท่านเริ่มต้นขึ้นแล้ว...",
-      "เสียงแห่งสงครามเงียบลง\nท่านล้มลงต่อหน้า $enemy\nบทสุดท้ายแห่งชีวิตของท่านได้ถูกเขียนขึ้นแล้ว..."
+      "ดวงตาพร่าเลือน $enemy ยืนเหยียดยิ้ม",
+      "เสียงกรีดร้อง $enemy ปลิดชีพท่าน",
+      "โลหิตไหลริน $enemy ยืนมองชัยชนะ",
+      "แสงริบหรี่ $enemy หัวเราะก้อง",
+      "ความมืดโอบล้อม $enemy ทอดเงายักษ์"
     ];
 
     return deathMessages[Random().nextInt(deathMessages.length)];
   }
 
   void _generateRestEvent() {
-    _isResting.value = true;
+    _isResting = true;
     int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds + 1;
-    damageInput.value -= healing;
+    damageInput.value -= (healing).clamp(0, damageInput.value);
+
+    List<String> restDialogues = [
+      "คุณพบโอเอซิสร่มรื่นท่ามกลางทะเลทราย",
+      "คุณพบร่มเงาไม้ใหญ่ท่ามกลางป่าร้อน",
+      "คุณพบถ้ำเย็นชื้นท่ามกลางหน้าผาสูง",
+      "คุณพบธารน้ำใสท่ามกลางป่าทึบ",
+      "คุณพบลานหญ้าเขียวขจีท่ามกลางทุ่งดอกไม้",
+      "คุณพบจุดชมวิวท่ามกลางยอดเขาสูง",
+      "คุณพบลำธารเย็นท่ามกลางหุบเขาลึก",
+      "คุณพบหาดทรายสงบท่ามกลางคืนดาวพราว",
+      "คุณพบบ้านร้างปลอดภัยท่ามกลางพายุ",
+      "คุณพบชายฝั่งสงบท่ามกลางทะเลสาบกว้าง"
+    ];
+
+    String selectedDialogue =
+        restDialogues[Random().nextInt(restDialogues.length)];
 
     _updateEncounter("🏕️",
-        "คุณพบจุดพักที่ปลอดภัยท่ามกลางธรรมชาติ\nพลังชีวิตของคุณเพิ่มขึ้น $healing หน่วย\nเวลาพัก: $restDurationShow วินาที");
+        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพัก $restDurationShow วินาที");
     _addLogEntry("🏕️", "พัก",
-        "พบจุดพักที่ปลอดภัย รักษา $healing HP\nพักเป็นเวลา $restDurationShow วินาที");
+        "$selectedDialogue\nHP $healing เวลา $restDurationShow วินาที");
 
     _restTimeRemaining.value = restDuration;
     _startRestTimer();
@@ -391,8 +425,12 @@ class FocusController extends GetxController {
     return villageTypes[Random().nextInt(villageTypes.length)];
   }
 
-  String _getQuestDescription(int difficulty) {
+  MonsterName _getQuestDescription(int difficulty) {
     return enemy[difficulty][Random().nextInt(enemy[difficulty].length)];
+  }
+
+  MonsterName _getRandomEnemy(int index) {
+    return enemy[index][Random().nextInt(enemy[index].length)];
   }
 
   String _getQuestDifficulty(int difficulty) {
@@ -400,20 +438,19 @@ class FocusController extends GetxController {
     return questDifficulties[difficulty];
   }
 
-  String _getRandomEnemy(int index) {
-    return enemy[index][Random().nextInt(enemy[index].length)];
-  }
-
   (int, int, int) _calculateEnemyStats(int index) {
+    int baseMax = (_characterController.calculateLevel(0) ~/ 2) + 3;
     final multipliers = [
       [1, 1, 1],
       [2, 3, 3],
       [4, 6, 6],
       [8, 12, 10]
     ];
-    final baseValue = (rollOne).clamp(1, 10);
+    final baseValue =
+        (((rollOne).clamp(1, baseMax)) * _tableController.levelMultiplier)
+            .floor();
 
-    int coin = baseValue * multipliers[index][1];
+    int coin = (baseValue * 10) * multipliers[index][1];
     int damage = baseValue * multipliers[index][2];
     int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 
@@ -427,35 +464,35 @@ class FocusController extends GetxController {
   // ... (previous code remains the same)
 
   String _getBattleDescription(
-      int index, String enemy, int damage, int exp, int coin) {
+      int index, MonsterName enemy, int damage, int exp, int coin) {
     final battleDescriptions = [
       [
-        "$enemy พุ่งใส่\nเลือดท่านกระเซ็น $damage🩸\nบดขยี้ศัตรูราบคาบ $exp🧿 $coin💰",
-        "$enemy ตวัดเล็บ\nกระดูกท่านสั่น $damage🩸\nหักเขี้ยวเล็บศัตรูสิ้น $exp🧿 $coin💰",
-        "$enemy โจมตี\nเนื้อท่านฉีก $damage🩸\nเชือดเฉือนศัตรูขาดวิ่น $exp🧿 $coin💰",
-        "$enemy โผล่มา\nเลือดท่านพุ่ง $damage🩸\nเหยียบศัตรูย่อยยับ $exp🧿 $coin💰",
-        "$enemy คำราม\nแผลท่านแดงฉาน $damage🩸\nบดศัตรูเป็นจุณ $exp🧿 $coin💰"
+        "${enemy.toString()} พุ่งดั่งสายฟ้า\nเลือดท่านกระเซ็น $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
+        "${enemy.toString()} ตวัดกรงเล็บ\nกระดูกท่านสั่น $damage🩸\nศัตรูล้มครืน $exp🧿 $coin💰",
+        "${enemy.toString()} โจมตีไร้ปรานี\nเนื้อท่านฉีก $damage🩸\nศัตรูขาดวิ่น $exp🧿 $coin💰",
+        "${enemy.toString()} โผล่จากเงา\nเลือดท่านพุ่ง $damage🩸\nศัตรูยับเยิน $exp🧿 $coin💰",
+        "${enemy.toString()} คำรามสนั่น\nแผลท่านแสบ $damage🩸\nศัตรูเป็นผุยผง $exp🧿 $coin💰"
       ],
       [
-        "$enemy โฉบลง\nเลือดท่านสาด $damage🩸\nฉีกศัตรูเป็นชิ้นๆ $exp🧿 $coin💰",
-        "$enemy รุมเร้า\nร่างท่านระบม $damage🩸\nบั่นคอศัตรูขาดกระเด็น $exp🧿 $coin💰",
-        "$enemy ถีบ\nกระดูกท่านร้าว $damage🩸\nทิ้งศัตรูเป็นซากศพ $exp🧿 $coin💰",
-        "$enemy หมุนโจมตี\nเนื้อท่านแหลก $damage🩸\nสังหารศัตรูไม่เหลือซาก $exp🧿 $coin💰",
-        "$enemy ทะยานเข้า\nร่างท่านพรุน $damage🩸\nเผาศัตรูเป็นจุณ $exp🧿 $coin💰"
+        "${enemy.toString()} โฉบดั่งพายุ\nเลือดท่านสาด $damage🩸\nศัตรูแหลกลาญ $exp🧿 $coin💰",
+        "${enemy.toString()} รุมเร้าต่อเนื่อง\nร่างท่านระบม $damage🩸\nศัตรูขาดสะบั้น $exp🧿 $coin💰",
+        "${enemy.toString()} ถีบทรงพลัง\nกระดูกท่านร้าว $damage🩸\nศัตรูล้มไม่ลุก $exp🧿 $coin💰",
+        "${enemy.toString()} หมุนดั่งทอร์นาโด\nเนื้อท่านขาด $damage🩸\nศัตรูเป็นธุลี $exp🧿 $coin💰",
+        "${enemy.toString()} ทะยานฟาดฟัน\nร่างท่านพรุน $damage🩸\nศัตรูไหม้เกรียม $exp🧿 $coin💰"
       ],
       [
-        "$enemy ปล่อยคลื่นพลัง\nโลหิตท่านทะลัก $damage🩸\nทำลายล้างศัตรูสิ้นซาก $exp🧿 $coin💰",
-        "$enemy เคลื่อนเร็วเหนือตา\nร่างท่านแหลกลาญ $damage🩸\nลบศัตรูออกจากความทรงจำ $exp🧿 $coin💰",
-        "$enemy ทะลุมิติ\nเนื้อท่านไหม้เกรียม $damage🩸\nบดขยี้ศัตรูสู่ความว่างเปล่า $exp🧿 $coin💰",
-        "$enemy แผ่อำนาจ\nตัวตนท่านสลาย $damage🩸\nลบศัตรูออกจากทุกภพภูมิ $exp🧿 $coin💰",
-        "$enemy หยุดเวลา\nจิตท่านดับสูญ $damage🩸\nทำลายล้างศัตรูจากทุกมิติ $exp🧿 $coin💰"
+        "${enemy.toString()} ปล่อยคลื่นทำลาย\nโลหิตท่านทะลัก $damage🩸\nศัตรูสิ้นซาก $exp🧿 $coin💰",
+        "${enemy.toString()} พุ่งเหนือสายตา\nร่างท่านแหลก $damage🩸\nศัตรูหายวับ $exp🧿 $coin💰",
+        "${enemy.toString()} ทะลุมิติโจมตี\nเนื้อท่านไหม้ $damage🩸\nศัตรูสูญในความว่าง $exp🧿 $coin💰",
+        "${enemy.toString()} แผ่อำนาจล้นฟ้า\nตัวตนท่านสลาย $damage🩸\nศัตรูหายจากภพ $exp🧿 $coin💰",
+        "${enemy.toString()} หยุดเวลาชั่วขณะ\nจิตท่านดับ $damage🩸\nศัตรูสิ้นทุกมิติ $exp🧿 $coin💰"
       ],
       [
-        "$enemy ปรากฏทุกหนแห่ง\nร่างท่านแตกดับ $damage🩸\nล้างศัตรูออกจากความจริง $exp🧿 $coin💰",
-        "$enemy กลายเป็นพลังงาน\nตัวตนท่านสูญสิ้น $damage🩸\nกวาดศัตรูพ้นสรรพสิ่ง $exp🧿 $coin💰",
-        "$enemy ทำลายกฎธรรมชาติ\nท่านถูกลบจากกาลเวลา $damage🩸\nผลาญศัตรูจากความเป็นไปได้ $exp🧿 $coin💰",
-        "$enemy บิดเบือนความจริง\nท่านหายไปจากความทรงจำ $damage🩸\nบดศัตรูสู่ความไม่มีตัวตน $exp🧿 $coin💰",
-        "$enemy ก้าวข้ามตรรกะ\nท่านถูกลบจากความเป็นจริง $damage🩸\nลบศัตรูออกจากการดำรงอยู่ $exp🧿 $coin💰"
+        "${enemy.toString()} ปรากฏทั่วพร้อมกัน\nร่างท่านแตก $damage🩸\nศัตรูหายจากจริง $exp🧿 $coin💰",
+        "${enemy.toString()} เป็นพลังบริสุทธิ์\nตัวท่านละลาย $damage🩸\nศัตรูพ้นสรรพสิ่ง $exp🧿 $coin💰",
+        "${enemy.toString()} ทำลายกฎธรรมชาติ\nท่านหายจากกาล $damage🩸\nศัตรูดับทุกเป็นไปได้ $exp🧿 $coin💰",
+        "${enemy.toString()} บิดเบือนความจริง\nท่านหายจากทรงจำ $damage🩸\nศัตรูสู่ไร้ตัวตน $exp🧿 $coin💰",
+        "${enemy.toString()} ข้ามขอบตรรกะ\nท่านถูกลบจากอยู่ $damage🩸\nศัตรูสลายทุกมิติกาล $exp🧿 $coin💰"
       ]
     ];
 
