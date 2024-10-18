@@ -43,6 +43,7 @@ class _CollapseContentState extends State<CollapseContent> {
           onDoubleTap: widget.onDoubleTap,
           onLongPress: widget.onLongPress,
           child: Container(
+            margin: const EdgeInsets.only(bottom: 10),
             decoration: BoxDecoration(
               color: baseColor,
               borderRadius: BorderRadius.circular(10),
