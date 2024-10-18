@@ -185,7 +185,14 @@ class FocusController extends GetxController {
 
   void _startEventTimer() {
     _eventTimer?.cancel();
+
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
+      print("asdasdsad${_deathTimeRemaining}");
+      if (_isDead.value) {
+        _isDead.value = false;
+        damageInput.value ~/= 2;
+      }
+
       if (_isActive.value && _timeRemaining.value > 0) {
         generateEvent();
       }
@@ -193,6 +200,7 @@ class FocusController extends GetxController {
   }
 
   void _startRestTimer() {
+    _eventTimer?.cancel();
     _restTimer?.cancel();
 
     final totalStaminaToRecover = _tableController.calculateCharacterStamina;
@@ -217,16 +225,11 @@ class FocusController extends GetxController {
   }
 
   void _startReviveTimer() {
+    _eventTimer?.cancel();
     _reviveTimer?.cancel();
-    _reviveTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (_restTimeRemaining.value > 0) {
-        _deathTimeRemaining.value--;
-      } else {
-        _isDead.value = false;
-        damageInput.value ~/= 2;
-        _reviveTimer?.cancel();
-        _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
-      }
+    _reviveTimer = Timer(Duration(seconds: _deathTimeRemaining.value), () {
+      _reviveTimer?.cancel();
+      _startEventTimer(); // เริ่มตัวจับเวลาเหตุการณ์อีกครั้งหลังจากพัก
     });
   }
 
@@ -234,6 +237,7 @@ class FocusController extends GetxController {
     _timer?.cancel();
     _eventTimer?.cancel();
     _restTimer?.cancel();
+    _reviveTimer?.cancel();
   }
 
   void _endSession() {
@@ -329,7 +333,9 @@ class FocusController extends GetxController {
     _addLogEntry(
         "⚔️", "Battle", "Encountered a ${enemy.name}! $battleDescription");
 
-    damageInput += enemyDamage;
+    damageInput += (enemyDamage)
+        .clamp(0, (_tableController.calculateCharacterHP - damageInput.value));
+
     if (_tableController.healthReduceCondition(damageInput.value)) {
       expInput += enemyEXP;
       coinInput += enemyCoin;
@@ -363,7 +369,7 @@ class FocusController extends GetxController {
   void _generateRestEvent() {
     _isResting.value = true;
     int healing = _tableController.restHealing;
-    int restDurationShow = restDuration + _eventIntervalSeconds + 1;
+    int restDurationShow = restDuration + _eventIntervalSeconds;
     damageInput.value -= (healing).clamp(0, damageInput.value);
 
     List<String> restDialogues = [

@@ -270,7 +270,7 @@ class TableController extends GetxController {
   }
 
   int get timeTodie {
-    int baseTime = 0;
+    int baseTime = 90;
     int timeEventDie = (((special.value["s"]! +
                     special.value["p"]! +
                     special.value["e"]! +
@@ -281,8 +281,10 @@ class TableController extends GetxController {
                 7) -
             7)
         .clamp(0, 93);
-    int timeDie = baseTime -
-        ((baseTime * _percentage(timeEventDie)).toInt()).clamp(0, 90);
+    int timeDie =
+        ((baseTime - ((baseTime * _percentage(timeEventDie)).toInt())) -
+                (timeEventRun + 1))
+            .clamp(10, 90);
     return timeDie;
   }
 }
