@@ -71,6 +71,7 @@ class WorkCollapseTileList extends GetWidget<WorkController> {
 
   void _showWorkOptions(Work work) {
     Get.bottomSheet(
+      isScrollControlled: true,
       BottomSheetContent(
         child: WorkUpdateForm(
           work: work,
@@ -83,11 +84,13 @@ class WorkCollapseTileList extends GetWidget<WorkController> {
 
 class BottomSheetContent extends StatelessWidget {
   final Widget? child;
-  const BottomSheetContent({super.key, this.child});
+  final double? height;
+  const BottomSheetContent({super.key, this.child, this.height});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height ?? Get.height * 0.7,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: const BorderRadius.only(
@@ -95,7 +98,9 @@ class BottomSheetContent extends StatelessWidget {
           topRight: Radius.circular(25),
         ),
       ),
-      child: child,
+      child: SingleChildScrollView(
+        child: child,
+      ),
     );
   }
 }
@@ -124,6 +129,7 @@ class TaskOfWork extends StatelessWidget {
       title: Text(
         task.name,
         style: TextStyle(
+          color: task.isDone ? Colors.grey : textColor,
           fontWeight: FontWeight.w600,
           decoration: task.isDone ? TextDecoration.lineThrough : null,
         ),

@@ -43,50 +43,6 @@ class DailyQuestScreen extends GetWidget<QuestController> {
   }
 }
 
-// ListTile(
-//                   title: Text(quest.title),
-//                   trailing: Row(
-//                     mainAxisSize: MainAxisSize.min,
-//                     children: [
-//                       Checkbox(
-//                         value: quest.isCompleted,
-//                         onChanged: (_) =>
-//                             controller.toggleQuestStatus(quest.id),
-//                       ),
-//                       IconButton(
-//                         icon: const Icon(Icons.delete),
-//                         onPressed: () => controller.deleteQuest(quest.id),
-//                       ),
-//                     ],
-//                   ),
-//                   onTap: () {
-//                     // Open edit dialog
-//                     Get.dialog(
-//                       AlertDialog(
-//                         title: const Text('Edit Quest'),
-//                         content: TextField(
-//                           controller: TextEditingController(text: quest.title),
-//                           onChanged: (value) => quest.title = value,
-//                         ),
-//                         actions: [
-//                           TextButton(
-//                             child: const Text('Cancel'),
-//                             onPressed: () => Get.back(),
-//                           ),
-//                           TextButton(
-//                             child: const Text('Save'),
-//                             onPressed: () {
-//                               controller.updateQuest(
-//                                   quest.id, quest.title, quest.isCompleted, '');
-//                               Get.back();
-//                             },
-//                           ),
-//                         ],
-//                       ),
-//                     );
-//                   },
-//                 )
-
 class QuestTileList extends GetWidget<QuestController> {
   final Quest quest;
   const QuestTileList(this.quest, {super.key});
@@ -124,6 +80,7 @@ class QuestTileList extends GetWidget<QuestController> {
                         Text(
                           quest.title,
                           style: TextStyle(
+                            color: quest.isCompleted?Colors.grey:textColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             decoration: quest.isCompleted
