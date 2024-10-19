@@ -69,7 +69,7 @@ class CustomConfirmDialog extends StatelessWidget {
                   onPressed: () => Get.back(),
                   child: Text(
                     cancelText ?? "Cencel",
-                    style: TextStyle(color: Colors.black54),
+                    style: const TextStyle(color: Colors.black54),
                   ),
                 ),
               ),

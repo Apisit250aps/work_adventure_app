@@ -7,7 +7,6 @@ import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
-import 'package:work_adventure/widgets/ui/dialog/custom_confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
