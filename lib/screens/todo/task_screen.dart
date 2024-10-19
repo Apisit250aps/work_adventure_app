@@ -260,6 +260,7 @@ class TaskListTile extends GetWidget<TasksController> {
         task.name,
         style: TextStyle(
           fontWeight: FontWeight.w600,
+          color: task.isDone?Colors.grey:textColor,
           decoration: task.isDone ? TextDecoration.lineThrough : null,
         ),
       ),

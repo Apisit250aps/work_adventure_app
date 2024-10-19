@@ -129,6 +129,7 @@ class TaskOfWork extends StatelessWidget {
       title: Text(
         task.name,
         style: TextStyle(
+          color: task.isDone ? Colors.grey : textColor,
           fontWeight: FontWeight.w600,
           decoration: task.isDone ? TextDecoration.lineThrough : null,
         ),

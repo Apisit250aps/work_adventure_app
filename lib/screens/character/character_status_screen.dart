@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/models/character_model.dart';
 
 class CharacterStatusScreen extends GetWidget<SpecialController> {
-  const CharacterStatusScreen({Key? key}) : super(key: key);
+  const CharacterStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -199,10 +200,9 @@ class StatBar extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
-                value: value / 255,
+                value: value / 100,
                 backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
                 minHeight: 10,
               ),
             ),
@@ -216,7 +216,7 @@ class StatBar extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add, size: 20),
             onPressed: onIncrement,
-            padding: EdgeInsets.zero,
+            padding: EdgeInsets.all(10),
             constraints: const BoxConstraints(),
           ),
         ],
