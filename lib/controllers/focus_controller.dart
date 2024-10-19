@@ -635,8 +635,8 @@ class FocusController extends GetxController {
 
     final rewardDescription = "ท่านได้พบ: $exp🧿 $coin💰";
 
-    _updateEncounter("💎", "$description\n$rewardDescription");
-    _addLogEntry("💎", "Treasure", "พบ $treasureType และได้รับรางวัล!");
+    _updateEncounter("🎴", "$description\n$rewardDescription");
+    _addLogEntry("🎴", "Treasure", "พบ $treasureType และได้รับรางวัล!");
 
     expInput += exp;
     coinInput += coin;

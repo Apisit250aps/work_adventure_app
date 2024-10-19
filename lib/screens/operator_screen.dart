@@ -242,10 +242,32 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
               const SizedBox(height: 20),
               _buildFocusEstimate(),
               const SizedBox(height: 20),
-              Obx(() => GradientButton(
-                    onPressed: controller.toggleActive,
-                    child: Text(controller.isActive ? "Stop" : "Start"),
-                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Obx(() => GradientButton(
+                          onPressed: () {
+                            controller.toggleActive();
+                            if (controller.isActive) {
+                              Get.back(); // ย้อนกลับเมื่อกดปุ่มขณะที่กำลังทำงานอยู่
+                            }
+                          },
+                          child: Text(controller.isActive ? "Stop" : "Start"),
+                        )),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: GradientButton(
+                      onPressed: () {
+                        controller.resetFocus();
+                        Get.back(); // ปิด Bottom Sheet หลังจาก reset
+                      },
+                      child: const Text("Finish"),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
