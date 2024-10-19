@@ -37,8 +37,8 @@ class FocusController extends GetxController {
   final TableController _tableController = Get.find<TableController>();
 
   // Observable variables
-  RxInt _timeRemaining = 3600.obs;
-  final RxInt _totalTime = 3600.obs;
+  RxInt _timeRemaining = 600.obs;
+  final RxInt _totalTime = 600.obs;
   final RxBool _isActive = false.obs;
   final RxList<LogEntry> _adventureLog = <LogEntry>[].obs;
   final RxString _currentEncounterIcon = "🌟".obs;
