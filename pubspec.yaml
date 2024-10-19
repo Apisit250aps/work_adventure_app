@@ -81,6 +81,7 @@ flutter:
     - assets/images/characters/cat.png
     - assets/images/characters/monkey.png
     - assets/images/characters/dog.png
+    - assets/images/characters/chicky.png
 
     - assets/images/characters/wizard.png
     - assets/images/characters/cat_sit.png
