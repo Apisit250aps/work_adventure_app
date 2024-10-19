@@ -35,7 +35,8 @@ class CharacterController extends GetxController {
         'assets/images/characters/steve.png',
         'assets/images/characters/monkey.png',
         'assets/images/characters/john.png',
-        'assets/images/characters/cat.png'
+        'assets/images/characters/cat.png',
+        'assets/images/characters/chicky.png',
       ];
 
   RxBool isLoading = true.obs;
