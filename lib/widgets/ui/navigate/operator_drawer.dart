@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class OperatorDrawer extends StatelessWidget {
-  const OperatorDrawer({Key? key}) : super(key: key);
+  const OperatorDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +10,8 @@ class OperatorDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -36,34 +35,34 @@ class OperatorDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   _buildStatTile('XP', '12,345', Icons.star),
                   _buildStatTile('Quests Completed', '87', Icons.assignment_turned_in),
                   _buildStatTile('Items Collected', '254', Icons.category),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'Quick Actions',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildActionButton('Daily Reward', Icons.card_giftcard, () {
                     // โค้ดสำหรับรับรางวัลประจำวัน
                   }),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildActionButton('Inventory', Icons.inventory, () {
                     // โค้ดสำหรับเปิดหน้า Inventory
                   }),
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
               onTap: () {
                 // โค้ดสำหรับเปิดหน้าตั้งค่า
               },
@@ -80,12 +79,12 @@ class OperatorDrawer extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, size: 20, color: Colors.blue),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(fontSize: 14, color: Colors.grey)),
-              Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -101,7 +100,7 @@ class OperatorDrawer extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
         backgroundColor: Colors.blue,
-        minimumSize: Size(double.infinity, 40),
+        minimumSize: const Size(double.infinity, 40),
       ),
     );
   }

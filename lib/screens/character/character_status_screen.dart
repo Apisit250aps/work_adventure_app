@@ -69,11 +69,11 @@ class CharacterInfoCard extends StatelessWidget {
   final SpecialController controller;
 
   const CharacterInfoCard({
-    Key? key,
+    super.key,
     required this.character,
     required this.characterController,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +216,7 @@ class StatBar extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add, size: 20),
             onPressed: onIncrement,
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             constraints: const BoxConstraints(),
           ),
         ],
