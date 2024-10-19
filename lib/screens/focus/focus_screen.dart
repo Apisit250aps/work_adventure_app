@@ -333,7 +333,7 @@ class ProgressBar extends StatelessWidget {
               child: FractionallySizedBox(
                 widthFactor: tweenValue,
                 child: Container(
-                  height: 20,
+                  height: 23,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [color.withOpacity(0.7), color],
@@ -351,10 +351,10 @@ class ProgressBar extends StatelessWidget {
           },
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 1000),
           child: Container(
             key: ValueKey<int>(value),
-            height: 20,
+            height: 23,
             alignment:
                 textAlignRight ? Alignment.centerRight : Alignment.centerLeft,
             padding: EdgeInsets.only(
@@ -419,7 +419,7 @@ class HPEXPBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
-    final _tabController = Get.find<TableController>();
+    final tabController = Get.find<TableController>();
 
     return Positioned(
       bottom: 0,
@@ -442,7 +442,8 @@ class HPEXPBars extends StatelessWidget {
                   max: expMax,
                   color: const Color(0xFF5B84B1),
                   label: 'EXP',
-                  customText: (value, max) => 'EXP: $value',
+                  customText: (value, max) =>
+                      'EXP: $value (+${(((tabController.calculateEXP(100)) / 100) - tabController.levelMultiplier).toInt()}%)',
                 ),
               ),
             ),
@@ -458,7 +459,7 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFC766A),
                     label: 'HP',
                     customText: (value, max) =>
-                        'HP: $value/$max (+${_tabController.healthRegeneration}/5s)',
+                        'HP: $value/$max (+${tabController.healthRegeneration}/5s)',
                   ),
                 ),
                 Expanded(
