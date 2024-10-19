@@ -81,14 +81,17 @@ class _LoginFormState extends State<LoginForm> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Sign In",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                          "เข้าสู่ระบบ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                          ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(
-                          Boxicons.bx_chevron_right,
-                          color: Colors.white,
-                        )
+                        // SizedBox(width: 8),
+                        // Icon(
+                        //   Boxicons.bx_chevron_right,
+                        //   color: Colors.white,
+                        // )
                       ],
                     ),
             ),
