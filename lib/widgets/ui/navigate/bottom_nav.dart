@@ -35,17 +35,6 @@ class BottomNavigation extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(
-            Boxicons.bx_time,
-            color: textColor,
-          ),
-          activeIcon: Icon(
-            Boxicons.bxs_time,
-            color: textColor,
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(
             Boxicons.bx_receipt,
             color: textColor,
           ),
@@ -55,6 +44,18 @@ class BottomNavigation extends StatelessWidget {
           ),
           label: '',
         ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Boxicons.bx_time,
+            color: textColor,
+          ),
+          activeIcon: Icon(
+            Boxicons.bxs_time,
+            color: textColor,
+          ),
+          label: '',
+        ),
+        
         BottomNavigationBarItem(
           icon: Icon(
             Boxicons.bx_user,

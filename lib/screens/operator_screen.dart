@@ -24,16 +24,16 @@ class OperatorScreen extends GetView<PageControllerX> {
       floatingActionButton: (context) => const WorkFloatingActionButton(),
     ),
     PageData(
-      title: "Focus",
-      widget: const FocusScreen(
-        totalTime: 3600,
-      ),
-      floatingActionButton: (context) => const FocusFloatingActionButton(),
-    ),
-    PageData(
       title: "Dairy Quests",
       widget: DailyQuestScreen(),
       floatingActionButton: (context) => const QuestFloatingActionButton(),
+    ),
+    PageData(
+      title: "Focus",
+      widget: const FocusScreen(
+        totalTime: 600,
+      ),
+      floatingActionButton: (context) => const FocusFloatingActionButton(),
     ),
     PageData(
       title: "Status",

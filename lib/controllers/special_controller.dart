@@ -58,6 +58,7 @@ class SpecialController extends GetxController {
   }
 
   Future<void> specialRefresh() async {
+    onUpdate.value = true;
     isLoading.value = true;
     try {
       loadSpecial();
@@ -66,6 +67,7 @@ class SpecialController extends GetxController {
       print(e);
     } finally {
       isLoading.value = false;
+      onUpdate.value = false;
     }
   }
 
