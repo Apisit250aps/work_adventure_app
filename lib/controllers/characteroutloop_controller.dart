@@ -29,7 +29,7 @@ class CharacterbarController extends GetxController {
       _focusController.coinInputReset();
       if (focusInput == 600) {
         _focusController.focusCounterReset();
-        
+        _characterController.additionalFocus();
       }
 
       return (((expGap).clamp(1, double.infinity)).toInt(), expForNextLevel);
