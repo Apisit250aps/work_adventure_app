@@ -415,6 +415,7 @@ class FocusController extends GetxController {
   }
 
   void _handleCharacterDeath(MonsterName enemy) {
+    mustSender.value = true;
     _isDead.value = true;
     spCounter.value = _tableController.calculateCharacterStamina;
     _deathTimeRemaining.value = _tableController.timeTodie;
@@ -428,6 +429,7 @@ class FocusController extends GetxController {
 
   void _generateRestEvent() {
     _isResting.value = true;
+    mustSender.value = true;
     int healing = _tableController.restHealing;
     int restDurationShow = restDuration + _eventIntervalSeconds;
     damageInput.value -= (healing).clamp(0, damageInput.value);
