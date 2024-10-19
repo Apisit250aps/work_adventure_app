@@ -8,12 +8,12 @@ class MessageDialog extends StatelessWidget {
   final String? btnText;
 
   const MessageDialog({
-    Key? key,
+    super.key,
     this.title,
     required this.message,
     required this.icon,
     this.btnText = "Okay",
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

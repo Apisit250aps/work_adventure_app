@@ -60,7 +60,7 @@ class UserController extends GetxController {
     isAuthenticated.value = false;
   }
 
-  Future<bool> register(String email, String username, String password) async {
+  Future<int> register(String email, String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse(_rest.register),
@@ -71,14 +71,14 @@ class UserController extends GetxController {
           'password': password,
         }),
       );
-      return response.statusCode == 201;
+      return response.statusCode;
     } catch (e) {
       print('Error during registration: $e');
-      return false;
+      throw Error;
     }
   }
 
-  Future<bool> login(String username, String password) async {
+  Future<int> login(String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse(_rest.login),
@@ -92,13 +92,12 @@ class UserController extends GetxController {
           await JwtStorage.saveToken(newToken);
           token.value = newToken;
           await _loadToken();
-          return true;
         }
       }
-      return false;
+      return response.statusCode;
     } catch (e) {
       print('Error during login: $e');
-      return false;
+      throw Error;
     }
   }
 

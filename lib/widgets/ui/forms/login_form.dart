@@ -5,6 +5,7 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/main.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/message_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class LoginForm extends StatefulWidget {
@@ -30,12 +31,21 @@ class _LoginFormState extends State<LoginForm> {
         _isLoading = true;
       });
       try {
-        await userController.login(
+        final status = await userController.login(
           usernameController.text,
           passwordController.text,
         );
-        characterController.loadCharacters();
-        Get.offAll(() => const AuthWrapper());
+        if (status == 200) {
+          characterController.loadCharacters();
+          Get.offAll(() => const AuthWrapper());
+        } else if (status == 401) {
+          Get.dialog(const MessageDialog(
+            title: "Error!",
+            message: "Invalid username or password!",
+            icon: "error",
+            btnText: "Close",
+          ));
+        }
       } catch (e) {
         Get.snackbar(
           'Login Error',

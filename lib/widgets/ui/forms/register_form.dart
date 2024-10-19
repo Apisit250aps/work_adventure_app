@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/message_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -25,23 +26,28 @@ class _RegisterFormState extends State<RegisterForm> {
         _isLoading = true;
       });
       try {
-        await userController
-            .register(
+        final status = await userController.register(
           emailController.text,
           usernameController.text,
           passwordController.text,
-        )
-            .then((success) {
-          Get.toNamed('/login');
-        });
-      } catch (e) {
-        Get.snackbar(
-          'Register Error',
-          e.toString(),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
         );
+        if (status == 201) {
+          Get.toNamed('/login');
+        } else if (status == 409) {
+          Get.dialog(const MessageDialog(
+            title: "Error!",
+            message: "Username already exists!",
+            icon: "error",
+            btnText: "Close",
+          ));
+        }
+      } catch (e) {
+        Get.dialog(const MessageDialog(
+          title: "Error!",
+          message: "Server Error",
+          icon: "error",
+          btnText: "Close",
+        ));
       } finally {
         setState(() {
           _isLoading = false;
@@ -49,7 +55,6 @@ class _RegisterFormState extends State<RegisterForm> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Form(

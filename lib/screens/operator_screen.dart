@@ -10,7 +10,6 @@ import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/screens/todo/quest_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
 import 'package:work_adventure/widgets/ui/dialog/confirm_dialog.dart';
-import 'package:work_adventure/widgets/ui/dialog/custom_confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/quest/quest_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
@@ -82,7 +81,7 @@ class OperatorScreen extends GetView<PageControllerX> {
         icon: "warning",
         onConfirm: () => Get.back(result: true),
       ),
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
     print(result);
     return result ?? false;
