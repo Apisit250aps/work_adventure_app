@@ -89,6 +89,12 @@ class TableController extends GetxController {
           levelMultiplier)
       .round();
 
+  double get expIncreasePercentage {
+    double intmultiplier = (special.value["i"]! / 10).clamp(1, 10) * 100;
+    double intPercentage = _percentage(special.value["i"]!);
+    return intmultiplier + intPercentage - 100;
+  }
+
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
     final luckBonus = _percentage(specialRoll('l'));
@@ -337,7 +343,7 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3.5)
+        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3)
                 .floor())
             .clamp(0, 400);
     return regeneration;

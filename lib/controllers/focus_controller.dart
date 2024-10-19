@@ -491,7 +491,7 @@ class FocusController extends GetxController {
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)
             .round()) +
-        3.5;
+        4;
 
     int coin = ((baseValue * 2) * multipliers[index][1]).toInt();
     int damage = (baseValue * multipliers[index][2]).toInt();

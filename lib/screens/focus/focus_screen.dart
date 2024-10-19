@@ -443,7 +443,7 @@ class HPEXPBars extends StatelessWidget {
                   color: const Color(0xFF5B84B1),
                   label: 'EXP',
                   customText: (value, max) =>
-                      'EXP: $value (+${(((tabController.calculateEXP(100)) / 100) - tabController.levelMultiplier).toInt()}%)',
+                      'EXP: $value (+${((((tabController.expIncreasePercentage)))).toStringAsFixed(2)}%)',
                 ),
               ),
             ),
