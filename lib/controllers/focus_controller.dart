@@ -60,6 +60,7 @@ class FocusController extends GetxController {
   RxInt spCounter = 0.obs;
   RxInt regenerationCounter = 0.obs;
   RxInt focusCounter = 0.obs;
+  RxBool mustSender = false.obs;
   final RxBool _isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
   final RxBool _isDead = false.obs;

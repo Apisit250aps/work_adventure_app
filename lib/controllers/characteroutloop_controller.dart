@@ -24,7 +24,8 @@ class CharacterbarController extends GetxController {
     final (expGap, expForNextLevel) =
         _characterController.calculateExpForNextLevel(expInput);
     if (_characterController.focusSender(expInput, coinInput) ||
-        focusInput == 600) {
+        focusInput == 600 ||
+        _focusController.mustSender.value) {
       _focusController.expInputReset();
       _focusController.coinInputReset();
       if (focusInput == 600) {

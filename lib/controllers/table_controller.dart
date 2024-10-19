@@ -19,10 +19,6 @@ class TableController extends GetxController {
     _updateSpecial(_specialController.special.value);
   }
 
-  void testCalculations() {
-    // เพิ่มการทดสอบฟังก์ชันอื่นๆ ตามต้องการ
-  }
-
   _updateSpecial(Special specialValue) {
     special.value = {
       's': specialValue.strength,
