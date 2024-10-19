@@ -54,7 +54,7 @@ class FocusController extends GetxController {
   final RxList<LogEntry> _adventureLog = <LogEntry>[].obs;
   final RxString _currentEncounterIcon = "🌟".obs;
   final RxString _currentEncounterDescription =
-      "Waiting for adventure...\n".obs;
+      "รอการผจญภัย...\nใจเต้นระรัวความคาดหวังพลุ่งพล่าน".obs;
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
   RxInt spCounter = 0.obs;
@@ -231,7 +231,8 @@ class FocusController extends GetxController {
   void _resetSessionVariables() {
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
-    _currentEncounterDescription.value = "รอการผจญภัย...\n";
+    _currentEncounterDescription.value =
+        "รอการผจญภัย...\nใจเต้นระรัวความคาดหวังพลุ่งพล่าน";
     eventCount.value = 0;
     _showingSummary.value = false;
     spCounter.value = 0;
