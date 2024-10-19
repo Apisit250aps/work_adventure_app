@@ -6,6 +6,7 @@ import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
 import 'package:collection/collection.dart';
+import 'package:work_adventure/controllers/table_controller.dart';
 
 class FocusScreen extends GetView<FocusController> {
   const FocusScreen({super.key, required int totalTime});
@@ -68,20 +69,12 @@ class FocusScreen extends GetView<FocusController> {
     String description = controller.currentEncounterDescription;
     List<InlineSpan> textSpans = [];
 
-    // print("Current description: $description");
+    // สร้าง RegExp ที่รวมทั้ง emoji ของมอนสเตอร์และไอเทม
+    RegExp combinedRegex = RegExp(
+        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻|⏳|🗡️|🌙|' +
+            r'📦|👝|🪙|💍|⛓️|🗃️|🎒|💰|💎|🦪|🏺|🎇|🔶|👑|🧬|⏳|🌌|🌟|💫|🔮)\s*([^\n]+)');
 
-    // Debug print สำหรับ enemy list
-    // print("Enemy list:");
-    // for (var list in controller.enemy) {
-    //   for (var monster in list) {
-    //     print("${monster.emoji} ${monster.name} (${monster.color})");
-    //   }
-    // }
-
-    RegExp monsterRegex = RegExp(
-        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻|⏳|🗡️|🌙)\s*([^\n]+)');
-
-    Iterable<RegExpMatch> matches = monsterRegex.allMatches(description);
+    Iterable<RegExpMatch> matches = combinedRegex.allMatches(description);
     int lastEnd = 0;
 
     for (RegExpMatch match in matches) {
@@ -91,29 +84,31 @@ class FocusScreen extends GetView<FocusController> {
       }
 
       String emoji = match.group(1)!;
-      String monsterFullName = match.group(2)!;
-      // print("Found monster: $emoji $monsterFullName");
+      String fullName = match.group(2)!;
 
-      MonsterName? monster =
-          controller.enemy.expand((list) => list).firstWhereOrNull(
-                (m) => m.emoji == emoji && monsterFullName.startsWith(m.name),
+      // ตรวจสอบว่าเป็นมอนสเตอร์หรือไอเทม
+      var entity = controller.enemy.expand((list) => list).firstWhereOrNull(
+                (m) => m.emoji == emoji && fullName.startsWith(m.name),
+              ) ??
+          controller.items.expand((list) => list).firstWhereOrNull(
+                (i) => i.emoji == emoji && fullName.startsWith(i.name),
               );
 
-      if (monster != null) {
-        // print(
-        //     "Matching monster found: ${monster.toString()}, Color: ${monster.color}");
+      if (entity != null) {
+        String name =
+            entity is MonsterName ? entity.name : (entity as ItemName).name;
+        Color color =
+            entity is MonsterName ? entity.color : (entity as ItemName).color;
         textSpans.add(TextSpan(
-          text: "$emoji ${monster.name}",
-          style: TextStyle(color: monster.color, fontWeight: FontWeight.bold),
+          text: "$emoji $name",
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ));
-        // เพิ่มส่วนที่เหลือของข้อความ (ถ้ามี)
-        if (monsterFullName.length > monster.name.length) {
-          textSpans.add(
-              TextSpan(text: monsterFullName.substring(monster.name.length)));
+        // Add remaining text (if any)
+        if (fullName.length > name.length) {
+          textSpans.add(TextSpan(text: fullName.substring(name.length)));
         }
       } else {
-        // print("No matching monster found");
-        textSpans.add(TextSpan(text: "$emoji $monsterFullName"));
+        textSpans.add(TextSpan(text: "$emoji $fullName"));
       }
 
       lastEnd = match.end;
@@ -300,6 +295,8 @@ class ProgressBar extends StatelessWidget {
   final String label;
   final bool isReversed;
   final Duration animationDuration;
+  final String Function(int value, int max)? customText;
+  final bool textAlignRight;
 
   const ProgressBar({
     super.key,
@@ -309,6 +306,8 @@ class ProgressBar extends StatelessWidget {
     required this.label,
     this.isReversed = false,
     this.animationDuration = const Duration(milliseconds: 1000),
+    this.customText,
+    this.textAlignRight = false,
   });
 
   @override
@@ -334,7 +333,7 @@ class ProgressBar extends StatelessWidget {
               child: FractionallySizedBox(
                 widthFactor: tweenValue,
                 child: Container(
-                  height: 20,
+                  height: 23,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [color.withOpacity(0.7), color],
@@ -352,20 +351,23 @@ class ProgressBar extends StatelessWidget {
           },
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 1000),
           child: Container(
             key: ValueKey<int>(value),
-            height: 20,
+            height: 23,
             alignment:
-                isReversed ? Alignment.centerRight : Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+                textAlignRight ? Alignment.centerRight : Alignment.centerLeft,
+            padding: EdgeInsets.only(
+                left: textAlignRight ? 0 : 8, right: textAlignRight ? 8 : 0),
             child: Text(
-              '$label: $value/$max',
+              customText != null
+                  ? customText!(value, max)
+                  : '$label: $value/$max',
               style: TextStyle(
                 color: color.computeLuminance() > 0.5
                     ? Colors.black
                     : Colors.black,
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -417,6 +419,7 @@ class HPEXPBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
+    final tabController = Get.find<TableController>();
 
     return Positioned(
       bottom: 0,
@@ -429,7 +432,7 @@ class HPEXPBars extends StatelessWidget {
 
         return Column(
           children: [
-            // Stamina bar
+            // EXP bar
             Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
@@ -439,11 +442,12 @@ class HPEXPBars extends StatelessWidget {
                   max: expMax,
                   color: const Color(0xFF5B84B1),
                   label: 'EXP',
+                  customText: (value, max) =>
+                      'EXP: $value (+${((((tabController.expIncreasePercentage)))).toStringAsFixed(2)}%)',
                 ),
               ),
             ),
-            const SizedBox(height: 0),
-            // HP and EXP bars
+            // HP and SP bars
             Row(
               children: [
                 Expanded(
@@ -453,6 +457,8 @@ class HPEXPBars extends StatelessWidget {
                     max: healthMax,
                     color: const Color(0xFFFC766A),
                     label: 'HP',
+                    customText: (value, max) =>
+                        'HP: $value/$max (+${tabController.healthRegeneration}/5s)',
                   ),
                 ),
                 Expanded(
@@ -463,6 +469,8 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFFD700),
                     label: 'SP',
                     isReversed: true,
+                    textAlignRight: true,
+                    customText: (value, max) => 'SP: $value/$max',
                   ),
                 ),
               ],

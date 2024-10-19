@@ -30,6 +30,17 @@ class MonsterName {
   String toString() => '$emoji $name';
 }
 
+class ItemName {
+  final String emoji;
+  final String name;
+  final Color color;
+
+  ItemName(this.emoji, this.name, this.color);
+
+  @override
+  String toString() => '$emoji $name';
+}
+
 class FocusController extends GetxController {
   // Controllers
   final CharacterController _characterController =
@@ -47,6 +58,7 @@ class FocusController extends GetxController {
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
   RxInt spCounter = 0.obs;
+  RxInt regenerationCounter = 0.obs;
   final RxBool _isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
   final RxBool _isDead = false.obs;
@@ -73,10 +85,10 @@ class FocusController extends GetxController {
   bool isRest = false;
 
   // Colors
-  final Color easyColor = Colors.green;
-  final Color mediumColor = Colors.blue;
-  final Color hardColor = Colors.purple;
-  final Color impossibleColor = Colors.orange;
+  final Color commonColor = Colors.green;
+  final Color uncommonColor = Colors.blue;
+  final Color rareColor = Colors.purple;
+  final Color epicColor = Colors.orange;
 
   late List<List<MonsterName>> enemy;
 
@@ -91,42 +103,78 @@ class FocusController extends GetxController {
   int get restDuration => _tableController.restTimer;
   int get _eventIntervalSeconds => _tableController.timeEventRun;
 
+  late List<List<ItemName>> items;
+
   @override
   void onInit() {
     super.onInit();
     _initializeEnemies();
+    _initializeItems();
     _setupTableControllerListener();
   }
 
   void _initializeEnemies() {
     enemy = [
       [
-        MonsterName("🐺", "หมาป่าจิ๋ว", easyColor),
-        MonsterName("🦇", "ค้างคาวราตรี", easyColor),
-        MonsterName("🐗", "หมูป่าพิฆาต", easyColor),
-        MonsterName("🦊", "จิ้งจอกไฟ", easyColor),
-        MonsterName("🐍", "อสรพิษ", easyColor)
+        MonsterName("🐺", "หมาป่าจิ๋ว", commonColor),
+        MonsterName("🦇", "ค้างคาวราตรี", commonColor),
+        MonsterName("🐗", "หมูป่าพิฆาต", commonColor),
+        MonsterName("🦊", "จิ้งจอกไฟ", commonColor),
+        MonsterName("🐍", "อสรพิษ", commonColor)
       ],
       [
-        MonsterName("🧟", "ซอมบี้ราชา", mediumColor),
-        MonsterName("💀", "โครงกระดูกอมตะ", mediumColor),
-        MonsterName("🧛", "แวมไพร์เลือดเย็น", mediumColor),
-        MonsterName("🐲", "มังกรไฟนรก", mediumColor),
-        MonsterName("🧙", "พ่อมดมรณะ", mediumColor)
+        MonsterName("🧟", "ซอมบี้ราชา", uncommonColor),
+        MonsterName("💀", "โครงกระดูกอมตะ", uncommonColor),
+        MonsterName("🧛", "แวมไพร์เลือดเย็น", uncommonColor),
+        MonsterName("🐲", "มังกรไฟนรก", uncommonColor),
+        MonsterName("🧙", "พ่อมดมรณะ", uncommonColor)
       ],
       [
-        MonsterName("🐉", "มังกรทมิฬ", hardColor),
-        MonsterName("💀", "ราชาลิชอนธการ", hardColor),
-        MonsterName("🌑", "ปีศาจแห่งความมืด", hardColor),
-        MonsterName("🧛🏻", "เจ้าแวมไพร์ไร้พ่าย", hardColor),
-        MonsterName("🧙🏻", "จอมมารแห่งหายนะ", hardColor)
+        MonsterName("🐉", "มังกรทมิฬ", rareColor),
+        MonsterName("💀", "ราชาลิชอนธการ", rareColor),
+        MonsterName("🌑", "ปีศาจแห่งความมืด", rareColor),
+        MonsterName("🧛🏻", "เจ้าแวมไพร์ไร้พ่าย", rareColor),
+        MonsterName("🧙🏻", "จอมมารแห่งหายนะ", rareColor)
       ],
       [
-        MonsterName("💀", "ราชันวิญญาณ", impossibleColor),
-        MonsterName("⏳", "เทพแห่งกาลเวลา", impossibleColor),
-        MonsterName("🗡️", "อัศวินแห่งความมืด", impossibleColor),
-        MonsterName("🌙", "เทพจันทราและความฝัน", impossibleColor),
-        MonsterName("🧙", "จอมเวทแห่งอนันต์", impossibleColor)
+        MonsterName("💀", "ราชันวิญญาณ", epicColor),
+        MonsterName("⏳", "เทพแห่งกาลเวลา", epicColor),
+        MonsterName("🗡️", "อัศวินแห่งความมืด", epicColor),
+        MonsterName("🌙", "เทพจันทราและความฝัน", epicColor),
+        MonsterName("🧙", "จอมเวทแห่งอนันต์", epicColor)
+      ]
+    ];
+  }
+
+  void _initializeItems() {
+    items = [
+      [
+        ItemName("📦", "หีบไม้ผุ", commonColor),
+        ItemName("👝", "ถุงหนังเก่า", commonColor),
+        ItemName("🪙", "เหรียญขึ้นสนิม", commonColor),
+        ItemName("💍", "แหวนทองหมอง", commonColor),
+        ItemName("⛓️", "สร้อยเงินโบราณ", commonColor)
+      ],
+      [
+        ItemName("🗃️", "หีบโลหะลึกลับ", uncommonColor),
+        ItemName("🎒", "ถุงเวทมนตร์", uncommonColor),
+        ItemName("💰", "เหรียญราชวงศ์", uncommonColor),
+        ItemName("💎", "แหวนอัญมณีเรือง", uncommonColor),
+        ItemName("🦪", "สร้อยมุกเรืองรอง", uncommonColor)
+      ],
+      [
+        ItemName("🏺", "หีบทองคำโบราณ", rareColor),
+        ItemName("🎇", "ถุงมังกร", rareColor),
+        ItemName("🔶", "เหรียญจักรพรรดิ", rareColor),
+        ItemName("👑", "แหวนราชันย์", rareColor),
+        ItemName("🧬", "สร้อยไข่มุกวิเศษ", rareColor)
+      ],
+      [
+        ItemName("⏳", "หีบแห่งกาลเวลา", epicColor),
+        ItemName("🌌", "ถุงสารพัดนึก", epicColor),
+        ItemName("🌟", "เหรียญเทพเจ้า", epicColor),
+        ItemName("💫", "แหวนครองพิภพ", epicColor),
+        ItemName("🔮", "สร้อยแห่งโชคชะตา", epicColor)
       ]
     ];
   }
@@ -174,6 +222,16 @@ class FocusController extends GetxController {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_timeRemaining.value > 0) {
         _timeRemaining--;
+        regenerationCounter++;
+        if (_tableController.timeToRegenerate(regenerationCounter.value)) {
+          if (!_isDead.value) {
+            print("Regeneration is working");
+            damageInput.value -=
+                _tableController.healthRegeneration.clamp(0, damageInput.value);
+            print("damge after: ${damageInput.value} ");
+          }
+          regenerationCounter.value = 0;
+        }
       } else {
         _endSession();
       }
@@ -280,8 +338,8 @@ class FocusController extends GetxController {
 
     // ปรับโอกาสการเกิดเหตุการณ์ต่างๆ
     int nothingChance = (30 - luckBonus * 100).clamp(5, 30).toInt();
-    int enemyChance = 80;
-    int treasureChance = 90;
+    int enemyChance = 0;
+    int treasureChance = 100;
 
     if (ranNumber <= nothingChance) {
       _generateNothingEvent();
@@ -340,7 +398,7 @@ class FocusController extends GetxController {
 
     damageInput += (enemyDamage)
         .clamp(0, (_tableController.calculateCharacterHP - damageInput.value));
-
+    print("damge before: ${damageInput.value} ");
     if (_tableController.healthReduceCondition(damageInput.value)) {
       expInput += enemyEXP;
       coinInput += enemyCoin;
@@ -433,10 +491,10 @@ class FocusController extends GetxController {
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)
             .round()) +
-        3;
+        4;
 
-    int coin = (baseValue * 2) * multipliers[index][1];
-    int damage = baseValue * multipliers[index][2];
+    int coin = ((baseValue * 2) * multipliers[index][1]).toInt();
+    int damage = (baseValue * multipliers[index][2]).toInt();
     int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 
     return (
@@ -533,6 +591,10 @@ class FocusController extends GetxController {
     coinInput += coin;
   }
 
+  String _getRandomTreasureType(int itemType) {
+    return items[itemType][Random().nextInt(items[itemType].length)].toString();
+  }
+
   String _getDescriptiveTreasureEvent(String treasureType, int itemType) {
     final List<List<String>> descriptiveEvents = [
       [
@@ -559,41 +621,6 @@ class FocusController extends GetxController {
 
     return descriptiveEvents[itemType]
         [Random().nextInt(descriptiveEvents[itemType].length)];
-  }
-
-  String _getRandomTreasureType(int itemType) {
-    final List<List<String>> treasureTypes = [
-      [
-        "หีบไม้ผุ",
-        "ถุงหนังเก่า",
-        "เหรียญขึ้นสนิม",
-        "แหวนทองหมอง",
-        "สร้อยเงินโบราณ"
-      ],
-      [
-        "หีบโลหะลึกลับ",
-        "ถุงเวทมนตร์",
-        "เหรียญราชวงศ์",
-        "แหวนอัญมณีเรือง",
-        "สร้อยมุกเรืองรอง"
-      ],
-      [
-        "หีบทองคำโบราณ",
-        "ถุงมังกร",
-        "เหรียญจักรพรรดิ",
-        "แหวนราชันย์",
-        "สร้อยไข่มุกวิเศษ"
-      ],
-      [
-        "หีบแห่งกาลเวลา",
-        "ถุงสารพัดนึก",
-        "เหรียญเทพเจ้า",
-        "แหวนครองพิภพ",
-        "สร้อยแห่งโชคชะตา"
-      ]
-    ];
-    return treasureTypes[itemType]
-        [Random().nextInt(treasureTypes[itemType].length)];
   }
 
   @override

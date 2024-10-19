@@ -84,10 +84,16 @@ class TableController extends GetxController {
 
   // การคำนวณประสบการณ์
   int calculateEXP(int exp) => ((exp +
-              ((exp * (specialRoll('i') / 10).clamp(1, 10)) *
+              ((exp * (specialRoll('i') / 10)) *
                   _percentage(specialRoll('i')))) *
           levelMultiplier)
       .round();
+
+  double get expIncreasePercentage {
+    double intmultiplier = (special.value["i"]! / 10).clamp(1, 10) * 100;
+    double intPercentage = _percentage(special.value["i"]!);
+    return intmultiplier + intPercentage - 100;
+  }
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
@@ -252,7 +258,7 @@ class TableController extends GetxController {
   }
 
   int get restHealing {
-    double healPoint = ((rollDice).clamp(0, 100) +
+    double healPoint = ((rollDice / 2).clamp(0, 50) +
             (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
         levelMultiplier;
     int totalHealing =
@@ -335,6 +341,16 @@ class TableController extends GetxController {
   }
 
   //รีเลือด
+  int get healthRegeneration {
+    int regeneration =
+        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3)
+                .floor())
+            .clamp(0, 400);
+    return regeneration;
+  }
+
+  bool timeToRegenerate(int time) => (time == 5) ? true : false;
+
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
 
