@@ -8,15 +8,20 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/widgets/ui/dialog/message_dialog.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
+import 'package:work_adventure/widgets/ui/navigate/operator_drawer.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
-  const CharacterScreen({super.key});
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  CharacterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     Get.find<UserController>();
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: backgroundColor,
         centerTitle: true,
         title: const Text(
@@ -26,7 +31,17 @@ class CharacterScreen extends GetView<CharacterController> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              print('Drawer button pressed'); // Для отладки
+              _scaffoldKey.currentState?.openEndDrawer();
+            },
+            icon: const Icon(Boxicons.bx_menu_alt_right),
+          )
+        ],
       ),
+      endDrawer: const OperatorDrawer(),
       body: RefreshIndicator(
         onRefresh: controller.loadCharacters,
         child: Obx(() {
