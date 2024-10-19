@@ -338,8 +338,8 @@ class FocusController extends GetxController {
 
     // ปรับโอกาสการเกิดเหตุการณ์ต่างๆ
     int nothingChance = (30 - luckBonus * 100).clamp(5, 30).toInt();
-    int enemyChance = 100;
-    int treasureChance = 0;
+    int enemyChance = 0;
+    int treasureChance = 100;
 
     if (ranNumber <= nothingChance) {
       _generateNothingEvent();

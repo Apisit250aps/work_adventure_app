@@ -447,7 +447,6 @@ class HPEXPBars extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 0),
             // HP and SP bars
             Row(
               children: [
