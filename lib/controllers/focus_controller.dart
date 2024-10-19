@@ -371,6 +371,10 @@ class FocusController extends GetxController {
     focusCounter.value = 0;
   }
 
+  void mustSenderReset() {
+    mustSender.value = false;
+  }
+
   // Event generation methods
   void generateEvent() {
     spCounter++;

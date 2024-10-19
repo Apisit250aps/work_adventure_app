@@ -3,6 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/page_controller.dart';
 import 'package:work_adventure/screens/character/character_status_screen.dart';
 import 'package:work_adventure/screens/focus/focus_screen.dart';
@@ -228,6 +229,8 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
 
   void _focusSetupSheets(BuildContext context) {
     final FocusController controller = Get.find<FocusController>();
+    final CharacterController characterController =
+        Get.find<CharacterController>();
 
     Get.bottomSheet(
       BottomSheetContent(
@@ -260,8 +263,21 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
                   Expanded(
                     child: GradientButton(
                       onPressed: () {
-                        controller.resetFocus();
+                        controller.mustSender.value = true;
+
+                        // แยกการคำนวณ exp ออกมา
+                        int expInput = controller.expInput.toInt();
+                        int coinInput = controller.coinInput.toInt();
+
+                        // เรียกใช้ฟังก์ชันที่จัดการการส่ง exp และ coin โดยตรง
+                        characterController.focusSender(expInput, coinInput);
+                        // รีเซ็ตค่าต่างๆ
+                        controller.expInputReset();
+                        controller.coinInputReset();
+                        controller.mustSenderReset();
+
                         Get.back(); // ปิด Bottom Sheet หลังจาก reset
+                        controller.resetFocus();
                       },
                       child: const Text("Finish"),
                     ),

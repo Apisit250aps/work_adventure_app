@@ -146,24 +146,26 @@ class CharacterController extends GetxController {
     const double base = 1.045;
     const double C = 10000;
 
-    return (log(exp / C + 1) / log(base) + 1).round();
+    return (log(exp / C + 1) / log(base) + 1).toInt();
   }
 
   int get currentExp => characterSelect.value.exp as int;
 
-  (int, int) calculateExpForNextLevel(int add) {
+  (int, int) calculateExpForNextLevel(int exp) {
     const double base = 1.045;
     const double C = 10000;
 
-    int totalExp = currentExp + add;
+    int totalExp = currentExp + exp;
     int currentLevel = calculateLevel(currentExp);
-    int expNextLevel = (C * (pow(base, currentLevel) - 1)).round();
-    int expCurrentLevel = (C * (pow(base, currentLevel - 1) - 1)).round();
+    int expNextLevel = (C * (pow(base, currentLevel) - 1)).toInt();
+    int expCurrentLevel = (C * (pow(base, currentLevel - 1) - 1)).toInt();
     int expForNextLevel = expNextLevel - expCurrentLevel;
     int expGap = totalExp - expCurrentLevel;
-    print("ทดสอบๆ $expGap $expForNextLevel ${currentLevel + 1}");
-    print("ทดสอบๆ $expGap $expNextLevel ${currentLevel + 1}");
+    print("ทดสอบๆ $expGap $expForNextLevel ${currentLevel}");
+    print("$totalExp $expCurrentLevel");
+    print("EXP : $currentExp");
     print(characterSelect.value.toJson());
+    print(calculateLevel(900));
 
     return (expGap, expForNextLevel);
   }
@@ -216,16 +218,11 @@ class CharacterController extends GetxController {
   }
 
   bool focusSender(int exp, int coin) {
-    if (isLevelup(exp)) {
-      print("level up");
-      print("ส่งค่า $exp");
-      print("ส่งค่า $coin");
-      additionalExp(exp);
-      additionalCoins(coin);
-      return true;
-    }
-
-    return false;
+    print("ส่งค่า $exp");
+    print("ส่งค่า $coin");
+    additionalExp(exp);
+    additionalCoins(coin);
+    return true;
   }
 
   bool taskSender(int exp, int coin) {

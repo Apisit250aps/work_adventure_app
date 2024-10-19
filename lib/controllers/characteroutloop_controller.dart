@@ -19,28 +19,42 @@ class CharacterbarController extends GetxController {
 
   (int, int) expBar() {
     int focusInput = _focusController.focusCounter.value;
-    int expInput = (_focusController.expInput).toInt();
-    int coinInput = (_focusController.coinInput).toInt();
-    final (expGap, expForNextLevel) =
-        _characterController.calculateExpForNextLevel(expInput);
+    int expInput = _focusController.expInput.toInt();
 
-    if (_characterController.focusSender(expInput, coinInput) ||
-        focusInput == 600 ||
-        _focusController.mustSender.value) {
-      _focusController.expInputReset();
-      _focusController.coinInputReset();
-
-      if (focusInput == 600) {
-        _focusController.focusCounterReset();
-        _characterController.additionalFocus();
-      }
-
-      _focusController.mustSender.value = false;
-
-      return (((expGap).clamp(1, double.infinity)).toInt(), expForNextLevel);
+    if (_shouldResetInputs(expInput)) {
+      _resetInputs();
     }
 
-    return (((expGap)).clamp(1, double.infinity).toInt(), expForNextLevel);
+    if (focusInput == 600) {
+      _resetFocusAndAddAdditional();
+      _resetInputs();
+    }
+
+    return _calculateExpForNextLevel(expInput);
+  }
+
+  bool _shouldResetInputs(int expInput) {
+    return _characterController.isLevelup(expInput) ||
+        _focusController.mustSender.value;
+  }
+
+  void _resetInputs() {
+    _characterController.focusSender(
+        _focusController.expInput.toInt(), _focusController.coinInput.toInt());
+    _focusController.expInputReset();
+    _focusController.coinInputReset();
+    _focusController.mustSenderReset();
+  }
+
+  void _resetFocusAndAddAdditional() {
+    _focusController.focusCounterReset();
+    _characterController.additionalFocus();
+  }
+
+  (int, int) _calculateExpForNextLevel(int expInput) {
+    final (expGap, expForNextLevel) =
+        _characterController.calculateExpForNextLevel(expInput);
+    return (expGap.clamp(1, double.infinity).toInt(), expForNextLevel);
   }
 
   (int, int) spBar() {
