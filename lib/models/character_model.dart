@@ -59,7 +59,7 @@ class Character {
       'health': health,
       'stamina': stamina,
       'focus_point': focusPoint,
-      "statusPoint": statusPoint,
+      "status_Point": statusPoint,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };

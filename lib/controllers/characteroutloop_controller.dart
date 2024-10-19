@@ -18,14 +18,20 @@ class CharacterbarController extends GetxController {
   }
 
   (int, int) expBar() {
+    int focusInput = _focusController.focusCounter.value;
     int expInput = (_focusController.expInput).toInt();
     int coinInput = (_focusController.coinInput).toInt();
-    bool checkLevelUp = _characterController.focusSender(expInput, coinInput);
     final (expGap, expForNextLevel) =
         _characterController.calculateExpForNextLevel(expInput);
-    if (checkLevelUp) {
+    if (_characterController.focusSender(expInput, coinInput) ||
+        focusInput == 600) {
       _focusController.expInputReset();
       _focusController.coinInputReset();
+      if (focusInput == 600) {
+        _focusController.focusCounterReset();
+        
+      }
+
       return (((expGap).clamp(1, double.infinity)).toInt(), expForNextLevel);
     }
 

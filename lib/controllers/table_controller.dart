@@ -305,7 +305,7 @@ class TableController extends GetxController {
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
     int gold = (questRewards[difficulty][1] * levelMultiplier).round();
-    int expReward = calculateEXP(exp);
+    int expReward = calculateEXP(exp) * 10;
     int goldReward = calculateCoin(gold, difficulty);
 
     return (expReward, goldReward);

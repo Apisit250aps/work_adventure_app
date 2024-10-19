@@ -163,6 +163,7 @@ class CharacterController extends GetxController {
     int expGap = totalExp - expCurrentLevel;
     print("ทดสอบๆ $expGap $expForNextLevel ${currentLevel + 1}");
     print("ทดสอบๆ $expGap $expNextLevel ${currentLevel + 1}");
+    print(characterSelect.value.toJson());
 
     return (expGap, expForNextLevel);
   }
@@ -186,9 +187,19 @@ class CharacterController extends GetxController {
   }
 
   void additionalSpecial() {
+    print("เพิ่ม special +3");
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
-        statusPoint: (characterSelect.value.statusPoint ?? 0) + 3);
+        statusPoint: (updatedCharacter.statusPoint ?? 0) + 3);
+    characterSelect.value = updatedCharacter;
+    updateCharacterOnServer();
+  }
+
+  void additionalFocus() {
+    print("เพิ่ม focus +1");
+    Character updatedCharacter = characterSelect.value.copyWith();
+    updatedCharacter = updatedCharacter.copyWith(
+        statusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
     characterSelect.value = updatedCharacter;
     updateCharacterOnServer();
   }
@@ -198,6 +209,7 @@ class CharacterController extends GetxController {
     if (expGap >= expForNextLevel) {
       print("level up");
       additionalSpecial();
+      print(characterSelect.value.toJson());
       return true;
     }
     return false;
@@ -205,6 +217,9 @@ class CharacterController extends GetxController {
 
   bool focusSender(int exp, int coin) {
     if (isLevelup(exp)) {
+      print("level up");
+      print("ส่งค่า $exp");
+      print("ส่งค่า $coin");
       additionalExp(exp);
       additionalCoins(coin);
       return true;

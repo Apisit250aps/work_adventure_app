@@ -59,6 +59,7 @@ class FocusController extends GetxController {
   final RxBool _showingSummary = false.obs;
   RxInt spCounter = 0.obs;
   RxInt regenerationCounter = 0.obs;
+  RxInt focusCounter = 0.obs;
   final RxBool _isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
   final RxBool _isDead = false.obs;
@@ -223,6 +224,7 @@ class FocusController extends GetxController {
       if (_timeRemaining.value > 0) {
         _timeRemaining--;
         regenerationCounter++;
+        focusCounter++;
         if (_tableController.timeToRegenerate(regenerationCounter.value)) {
           if (!_isDead.value) {
             print("Regeneration is working");
@@ -319,6 +321,10 @@ class FocusController extends GetxController {
 
   void coinInputReset() {
     coinInput.value = 0;
+  }
+
+  void focusCounterReset() {
+    focusCounter.value = 0;
   }
 
   // Event generation methods
