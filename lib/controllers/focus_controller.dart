@@ -222,6 +222,16 @@ class FocusController extends GetxController {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_timeRemaining.value > 0) {
         _timeRemaining--;
+        regenerationCounter++;
+        if (_tableController.timeToRegenerate(regenerationCounter.value)) {
+          if (!_isDead.value) {
+            print("Regeneration is working");
+            damageInput.value -=
+                _tableController.healthRegeneration.clamp(0, damageInput.value);
+            print("damge after: ${damageInput.value} ");
+          }
+          regenerationCounter.value = 0;
+        }
       } else {
         _endSession();
       }
@@ -313,15 +323,7 @@ class FocusController extends GetxController {
 
   // Event generation methods
   void generateEvent() {
-    regenerationCounter++;
     spCounter++;
-    if (_tableController.timeToRegenerate(regenerationCounter.value)) {
-      print("Regeneration is working");
-      regenerationCounter.value = 0;
-      damageInput.value -=
-          _tableController.healthRegeneration.clamp(0, damageInput.value);
-      print("damge after: ${damageInput.value} ");
-    }
     if (_tableController.timeToRest(spCounter.toInt())) {
       _generateRestEvent();
     } else {

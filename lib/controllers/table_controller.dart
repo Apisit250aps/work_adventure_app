@@ -337,12 +337,13 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        (((special.value["a"]! * 2) + (special.value["i"]! / 2)).round())
+        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3.5)
+                .floor())
             .clamp(0, 400);
     return regeneration;
   }
 
-  bool timeToRegenerate(int time) => (time == 2) ? true : false;
+  bool timeToRegenerate(int time) => (time == 5) ? true : false;
 
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {

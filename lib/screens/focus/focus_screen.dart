@@ -295,6 +295,8 @@ class ProgressBar extends StatelessWidget {
   final String label;
   final bool isReversed;
   final Duration animationDuration;
+  final String Function(int value, int max)? customText;
+  final bool textAlignRight;
 
   const ProgressBar({
     super.key,
@@ -304,6 +306,8 @@ class ProgressBar extends StatelessWidget {
     required this.label,
     this.isReversed = false,
     this.animationDuration = const Duration(milliseconds: 1000),
+    this.customText,
+    this.textAlignRight = false,
   });
 
   @override
@@ -352,15 +356,18 @@ class ProgressBar extends StatelessWidget {
             key: ValueKey<int>(value),
             height: 20,
             alignment:
-                isReversed ? Alignment.centerRight : Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+                textAlignRight ? Alignment.centerRight : Alignment.centerLeft,
+            padding: EdgeInsets.only(
+                left: textAlignRight ? 0 : 8, right: textAlignRight ? 8 : 0),
             child: Text(
-              '$label: $value/$max',
+              customText != null
+                  ? customText!(value, max)
+                  : '$label: $value/$max',
               style: TextStyle(
                 color: color.computeLuminance() > 0.5
                     ? Colors.black
                     : Colors.black,
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -412,6 +419,7 @@ class HPEXPBars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
+    final _tabController = Get.find<TableController>();
 
     return Positioned(
       bottom: 0,
@@ -424,7 +432,7 @@ class HPEXPBars extends StatelessWidget {
 
         return Column(
           children: [
-            // Stamina bar
+            // EXP bar
             Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
@@ -434,11 +442,12 @@ class HPEXPBars extends StatelessWidget {
                   max: expMax,
                   color: const Color(0xFF5B84B1),
                   label: 'EXP',
+                  customText: (value, max) => 'EXP: $value',
                 ),
               ),
             ),
             const SizedBox(height: 0),
-            // HP and EXP bars
+            // HP and SP bars
             Row(
               children: [
                 Expanded(
@@ -448,6 +457,8 @@ class HPEXPBars extends StatelessWidget {
                     max: healthMax,
                     color: const Color(0xFFFC766A),
                     label: 'HP',
+                    customText: (value, max) =>
+                        'HP: $value/$max (+${_tabController.healthRegeneration}/5s)',
                   ),
                 ),
                 Expanded(
@@ -458,6 +469,8 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFFD700),
                     label: 'SP',
                     isReversed: true,
+                    textAlignRight: true,
+                    customText: (value, max) => 'SP: $value/$max',
                   ),
                 ),
               ],
