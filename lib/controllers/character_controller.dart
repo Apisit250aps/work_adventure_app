@@ -188,7 +188,7 @@ class CharacterController extends GetxController {
   void additionalSpecial() {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
-        focusPoint: (characterSelect.value.statusPoint ?? 0) + 3);
+        statusPoint: (characterSelect.value.statusPoint ?? 0) + 3);
     characterSelect.value = updatedCharacter;
     updateCharacterOnServer();
   }
