@@ -200,18 +200,67 @@ class FocusController extends GetxController {
   void toggleActive() {
     _isActive.toggle();
     if (_isActive.value) {
-      _startTimer();
-      _startEventTimer();
+      _startSession();
     } else {
-      _stopTimers();
+      pauseFocus();
     }
   }
 
+  void _startSession() {
+    _resetSessionVariables();
+    _startTimer();
+    _startEventTimer();
+    _addLogEntry("🏁", "Adventure Start", "Your journey begins!");
+  }
+
   void resetFocus() {
-    _stopTimers();
+    pauseFocus();
     _timeRemaining.value = _totalTime.value;
-    _resetSessionState();
+    _resetSessionVariables();
+    _resetQuestVariables();
     _addLogEntry("🔄", "Reset", "Your adventure has been reset.");
+  }
+
+  void pauseFocus() {
+    _stopTimers();
+    _isActive.value = false;
+    _isResting.value = false;
+    _isDead.value = false;
+  }
+
+  void _resetSessionVariables() {
+    _adventureLog.clear();
+    _currentEncounterIcon.value = "🌟";
+    _currentEncounterDescription.value = "รอการผจญภัย...\n";
+    eventCount.value = 0;
+    _showingSummary.value = false;
+    spCounter.value = 0;
+    regenerationCounter.value = 0;
+    focusCounter.value = 0;
+    mustSender.value = false;
+    _restTimeRemaining.value = 0;
+    _deathTimeRemaining.value = 0;
+    damageInput.value = 0;
+    expInput.value = 0;
+    coinInput.value = 0;
+  }
+
+  void _resetQuestVariables() {
+    enemyQuestName = "";
+    enemyQuestCounter = 0;
+    questIsActive = false;
+    questNumber = 21;
+    questGold = 0;
+    questExp = 0;
+    questEnemyNumber = 0;
+    isRest = false;
+  }
+
+  void _stopTimers() {
+    _timer?.cancel();
+    _eventTimer?.cancel();
+    _restTimer?.cancel();
+    _reviveTimer?.cancel();
   }
 
   void showSummary() {
@@ -289,13 +338,6 @@ class FocusController extends GetxController {
       _reviveTimer?.cancel();
       _startEventTimer();
     });
-  }
-
-  void _stopTimers() {
-    _timer?.cancel();
-    _eventTimer?.cancel();
-    _restTimer?.cancel();
-    _reviveTimer?.cancel();
   }
 
   void _endSession() {

@@ -227,6 +227,8 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
   }
 
   void _focusSetupSheets(BuildContext context) {
+    final FocusController controller = Get.find<FocusController>();
+
     Get.bottomSheet(
       BottomSheetContent(
         child: Container(
@@ -240,10 +242,10 @@ class FocusFloatingActionButton extends GetWidget<FocusController> {
               const SizedBox(height: 20),
               _buildFocusEstimate(),
               const SizedBox(height: 20),
-              GradientButton(
-                onPressed: controller.toggleActive,
-                child: const Text("Start"),
-              ),
+              Obx(() => GradientButton(
+                    onPressed: controller.toggleActive,
+                    child: Text(controller.isActive ? "Stop" : "Start"),
+                  )),
             ],
           ),
         ),
