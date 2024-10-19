@@ -12,11 +12,11 @@ class OperatorBinding extends Bindings {
   @override
   void dependencies() {
     Get.put(PageControllerX());
-    Get.put(WorkController());
-    Get.put(SpecialController());
-    Get.put(TableController());
-    Get.put(FocusController());
-    Get.put(CharacterbarController());
+    // Get.put(WorkController());
+    // Get.put(SpecialController());
+    // Get.put(TableController());
+    // Get.put(FocusController());
+    // Get.put(CharacterbarController());
   }
 }
 
