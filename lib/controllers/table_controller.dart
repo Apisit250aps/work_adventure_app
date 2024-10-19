@@ -252,7 +252,7 @@ class TableController extends GetxController {
   }
 
   int get restHealing {
-    double healPoint = ((rollDice).clamp(0, 100) +
+    double healPoint = ((rollDice / 2).clamp(0, 50) +
             (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
         levelMultiplier;
     int totalHealing =
@@ -335,6 +335,15 @@ class TableController extends GetxController {
   }
 
   //รีเลือด
+  int get healthRegeneration {
+    int regeneration =
+        (((special.value["a"]! * 2) + (special.value["i"]! / 2)).round())
+            .clamp(0, 400);
+    return regeneration;
+  }
+
+  bool timeToRegenerate(int time) => (time == 2) ? true : false;
+
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
 

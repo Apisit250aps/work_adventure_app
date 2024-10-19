@@ -58,6 +58,7 @@ class FocusController extends GetxController {
   final RxInt eventCount = 0.obs;
   final RxBool _showingSummary = false.obs;
   RxInt spCounter = 0.obs;
+  RxInt regenerationCounter = 0.obs;
   final RxBool _isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
   final RxBool _isDead = false.obs;
@@ -312,7 +313,15 @@ class FocusController extends GetxController {
 
   // Event generation methods
   void generateEvent() {
+    regenerationCounter++;
     spCounter++;
+    if (_tableController.timeToRegenerate(regenerationCounter.value)) {
+      print("Regeneration is working");
+      regenerationCounter.value = 0;
+      damageInput.value -=
+          _tableController.healthRegeneration.clamp(0, damageInput.value);
+      print("damge after: ${damageInput.value} ");
+    }
     if (_tableController.timeToRest(spCounter.toInt())) {
       _generateRestEvent();
     } else {
@@ -327,8 +336,8 @@ class FocusController extends GetxController {
 
     // ปรับโอกาสการเกิดเหตุการณ์ต่างๆ
     int nothingChance = (30 - luckBonus * 100).clamp(5, 30).toInt();
-    int enemyChance = 0;
-    int treasureChance = 100;
+    int enemyChance = 100;
+    int treasureChance = 0;
 
     if (ranNumber <= nothingChance) {
       _generateNothingEvent();
@@ -387,7 +396,7 @@ class FocusController extends GetxController {
 
     damageInput += (enemyDamage)
         .clamp(0, (_tableController.calculateCharacterHP - damageInput.value));
-
+    print("damge before: ${damageInput.value} ");
     if (_tableController.healthReduceCondition(damageInput.value)) {
       expInput += enemyEXP;
       coinInput += enemyCoin;
@@ -480,10 +489,10 @@ class FocusController extends GetxController {
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)
             .round()) +
-        3;
+        3.5;
 
-    int coin = (baseValue * 2) * multipliers[index][1];
-    int damage = baseValue * multipliers[index][2];
+    int coin = ((baseValue * 2) * multipliers[index][1]).toInt();
+    int damage = (baseValue * multipliers[index][2]).toInt();
     int exp = ((rollOne + 10).clamp(10, 20)) * multipliers[index][0];
 
     return (
