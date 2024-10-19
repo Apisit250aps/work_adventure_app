@@ -9,6 +9,7 @@ import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/screens/todo/quest_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/dialog/custom_confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/quest/quest_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
@@ -75,23 +76,11 @@ class OperatorScreen extends GetView<PageControllerX> {
 
   Future<bool> _showExitConfirmationDialog() async {
     final result = await Get.dialog<bool>(
-      CustomConfirmDialog(
-        title: 'Are you sure you want to exit?',
+      ConfirmDialog(
+        title: "Warning!",
+        message: "Do you want to exit?",
+        icon: "warning",
         onConfirm: () => Get.back(result: true),
-        icon: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.red.withOpacity(0.1),
-          ),
-          child: Icon(
-            Icons.exit_to_app,
-            color: Colors.red[300],
-            size: 30,
-          ),
-        ),
-        confirmText: 'Exit',
-        cancelText: 'Stay',
       ),
       barrierDismissible: false,
     );

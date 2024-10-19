@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CustomConfirmDialog extends StatelessWidget {
-  final String title;
-  final Widget icon;
+class ConfirmDialog extends StatelessWidget {
+  final String? title;
+  final String message;
+  final String icon;
   final VoidCallback onConfirm;
   final String? confirmText;
   final String? cancelText;
 
-  const CustomConfirmDialog({
+  const ConfirmDialog({
     super.key,
-    required this.title,
-    required this.onConfirm,
-    this.confirmText = "Confirm",
-    this.cancelText,
+    this.title,
+    required this.message,
     required this.icon,
+    required this.onConfirm,
+    this.confirmText,
+    this.cancelText,
   });
 
   @override
@@ -29,12 +31,10 @@ class CustomConfirmDialog extends StatelessWidget {
     );
   }
 
-  Widget contentBox(context) {
+  Widget contentBox(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.symmetric(
-        horizontal: 10,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       width: Get.width * 0.75,
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
@@ -44,13 +44,14 @@ class CustomConfirmDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          icon,
-          const SizedBox(height: 15),
+          iconDialog(),
+          if (title != null) titleDialog(),
           Text(
-            title,
+            message,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
+              color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
@@ -83,10 +84,7 @@ class CustomConfirmDialog extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
-                  onPressed: () {
-                    Get.back();
-                    onConfirm();
-                  },
+                  onPressed: onConfirm,
                   child: Text(
                     confirmText ?? 'Confirm',
                     style: const TextStyle(color: Colors.white),
@@ -98,5 +96,71 @@ class CustomConfirmDialog extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget iconDialog() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _getColor().withOpacity(0.1),
+          ),
+          child: Icon(
+            _getIconData(),
+            color: _getColor(),
+            size: 30,
+          ),
+        ),
+        const SizedBox(height: 15),
+      ],
+    );
+  }
+
+  Widget titleDialog() {
+    return Column(
+      children: [
+        Text(
+          title!,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Color _getColor() {
+    switch (icon) {
+      case 'error':
+        return Colors.red;
+      case 'success':
+        return Colors.green;
+      case 'warning':
+        return Colors.orange;
+      case 'info':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getIconData() {
+    switch (icon) {
+      case 'error':
+        return Icons.error_outline;
+      case 'success':
+        return Icons.check_circle_outline;
+      case 'warning':
+        return Icons.warning_amber_rounded;
+      case 'info':
+        return Icons.info_outline;
+      default:
+        return Icons.help_outline;
+    }
   }
 }

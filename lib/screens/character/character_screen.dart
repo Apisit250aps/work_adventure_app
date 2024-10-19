@@ -7,6 +7,7 @@ import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
+import 'package:work_adventure/widgets/ui/dialog/message_dialog.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
@@ -182,7 +183,7 @@ class CharacterCard extends GetWidget<CharacterController> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      '${character.className} • Level ${character.level}',
+                      '${character.className} • Level ${controller.calculateLevel(character.exp as int)}',
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: 18,
@@ -223,7 +224,12 @@ class CharacterCard extends GetWidget<CharacterController> {
   }
 
   void editCharacterSheets(Character character) {
-    Get.bottomSheet(const BottomSheetContent());
+    Get.dialog(const MessageDialog(
+      message: "message",
+      title: "Error!",
+      icon: "info",
+    ));
+    // Get.bottomSheet(const BottomSheetContent());
   }
 }
 
