@@ -68,20 +68,12 @@ class FocusScreen extends GetView<FocusController> {
     String description = controller.currentEncounterDescription;
     List<InlineSpan> textSpans = [];
 
-    // print("Current description: $description");
+    // สร้าง RegExp ที่รวมทั้ง emoji ของมอนสเตอร์และไอเทม
+    RegExp combinedRegex = RegExp(
+        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻|⏳|🗡️|🌙|' +
+            r'📦|👝|🪙|💍|⛓️|🗃️|🎒|💰|💎|🦪|🏺|🎇|🔶|👑|🧬|⏳|🌌|🌟|💫|🔮)\s*([^\n]+)');
 
-    // Debug print สำหรับ enemy list
-    // print("Enemy list:");
-    // for (var list in controller.enemy) {
-    //   for (var monster in list) {
-    //     print("${monster.emoji} ${monster.name} (${monster.color})");
-    //   }
-    // }
-
-    RegExp monsterRegex = RegExp(
-        r'(🐺|🦇|🐗|🦊|🐍|🧟|💀|🧛|🐲|🧙|🐉|🌑|🧛🏻‍♂️|🧙🏻|⏳|🗡️|🌙)\s*([^\n]+)');
-
-    Iterable<RegExpMatch> matches = monsterRegex.allMatches(description);
+    Iterable<RegExpMatch> matches = combinedRegex.allMatches(description);
     int lastEnd = 0;
 
     for (RegExpMatch match in matches) {
@@ -91,29 +83,31 @@ class FocusScreen extends GetView<FocusController> {
       }
 
       String emoji = match.group(1)!;
-      String monsterFullName = match.group(2)!;
-      // print("Found monster: $emoji $monsterFullName");
+      String fullName = match.group(2)!;
 
-      MonsterName? monster =
-          controller.enemy.expand((list) => list).firstWhereOrNull(
-                (m) => m.emoji == emoji && monsterFullName.startsWith(m.name),
+      // ตรวจสอบว่าเป็นมอนสเตอร์หรือไอเทม
+      var entity = controller.enemy.expand((list) => list).firstWhereOrNull(
+                (m) => m.emoji == emoji && fullName.startsWith(m.name),
+              ) ??
+          controller.items.expand((list) => list).firstWhereOrNull(
+                (i) => i.emoji == emoji && fullName.startsWith(i.name),
               );
 
-      if (monster != null) {
-        // print(
-        //     "Matching monster found: ${monster.toString()}, Color: ${monster.color}");
+      if (entity != null) {
+        String name =
+            entity is MonsterName ? entity.name : (entity as ItemName).name;
+        Color color =
+            entity is MonsterName ? entity.color : (entity as ItemName).color;
         textSpans.add(TextSpan(
-          text: "$emoji ${monster.name}",
-          style: TextStyle(color: monster.color, fontWeight: FontWeight.bold),
+          text: "$emoji $name",
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ));
-        // เพิ่มส่วนที่เหลือของข้อความ (ถ้ามี)
-        if (monsterFullName.length > monster.name.length) {
-          textSpans.add(
-              TextSpan(text: monsterFullName.substring(monster.name.length)));
+        // Add remaining text (if any)
+        if (fullName.length > name.length) {
+          textSpans.add(TextSpan(text: fullName.substring(name.length)));
         }
       } else {
-        // print("No matching monster found");
-        textSpans.add(TextSpan(text: "$emoji $monsterFullName"));
+        textSpans.add(TextSpan(text: "$emoji $fullName"));
       }
 
       lastEnd = match.end;
