@@ -9,6 +9,7 @@ import 'package:work_adventure/screens/focus/focus_screen.dart';
 import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/screens/todo/quest_screen.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/custom_confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/quest/quest_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
@@ -43,23 +44,59 @@ class OperatorScreen extends GetView<PageControllerX> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: PageView(
-        controller: controller.pageController,
-        onPageChanged: controller.changePage,
-        children: pages.map((page) => page.widget).toList(),
-      ),
-      floatingActionButton: Obx(() =>
-          pages[controller.pageIndex.value].floatingActionButton(context)),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Obx(
-        () => BottomNavigation(
-          currentIndex: controller.pageIndex.value,
-          onTap: controller.changePage,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await _showExitConfirmationDialog();
+        if (shouldPop) {
+          Get.back();
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: PageView(
+          controller: controller.pageController,
+          onPageChanged: controller.changePage,
+          children: pages.map((page) => page.widget).toList(),
+        ),
+        floatingActionButton: Obx(() =>
+            pages[controller.pageIndex.value].floatingActionButton(context)),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: Obx(
+          () => BottomNavigation(
+            currentIndex: controller.pageIndex.value,
+            onTap: controller.changePage,
+          ),
         ),
       ),
     );
+  }
+
+  Future<bool> _showExitConfirmationDialog() async {
+    final result = await Get.dialog<bool>(
+      CustomConfirmDialog(
+        title: 'Are you sure you want to exit?',
+        onConfirm: () => Get.back(result: true),
+        icon: Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.red.withOpacity(0.1),
+          ),
+          child: Icon(
+            Icons.exit_to_app,
+            color: Colors.red[300],
+            size: 30,
+          ),
+        ),
+        confirmText: 'Exit',
+        cancelText: 'Stay',
+      ),
+      barrierDismissible: false,
+    );
+    print(result);
+    return result ?? false;
   }
 
   AppBar _buildAppBar() {

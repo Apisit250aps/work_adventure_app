@@ -6,6 +6,8 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
+import 'package:work_adventure/screens/todo/work_screen.dart';
+import 'package:work_adventure/widgets/ui/dialog/custom_confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
@@ -39,25 +41,30 @@ class CharacterScreen extends GetView<CharacterController> {
             return const Center(child: Text('No characters available'));
           } else {
             return Center(
-              child: CarouselSlider.builder(
-                itemCount: controller.charactersSlot.length,
-                itemBuilder: (context, index, realIndex) {
-                  final character = controller.charactersSlot[index];
-                  return CharacterCard(
-                    character: character,
-                    onTap: () {
-                      controller.selectIndex(index);
-                      Get.toNamed('/operator');
-                    },
-                  );
-                },
-                options: CarouselOptions(
-                  aspectRatio: 1,
-                  enlargeCenterPage: true,
-                  onPageChanged: (index, reason) {
-                    controller.selectIndex(index);
-                    print('???$index');
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 50,
+                ),
+                child: CarouselSlider.builder(
+                  itemCount: controller.charactersSlot.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final character = controller.charactersSlot[index];
+                    return CharacterCard(
+                      character: character,
+                      onTap: () {
+                        controller.selectIndex(index);
+                        Get.toNamed('/operator');
+                      },
+                    );
                   },
+                  options: CarouselOptions(
+                    height: Get.height * 0.5,
+                    aspectRatio: 1,
+                    enlargeCenterPage: true,
+                    onPageChanged: (index, reason) {
+                      controller.selectIndex(index);
+                    },
+                  ),
                 ),
               ),
             );
@@ -73,27 +80,11 @@ class CharacterScreen extends GetView<CharacterController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
-
-  void createCharacterSheets(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 1,
-          child: const Column(
-            children: [],
-          ),
-        );
-      },
-    );
-  }
 }
 
 class CharacterCard extends GetWidget<CharacterController> {
   final Character character;
-  final VoidCallback? onTap; // รับ onTap เป็นพารามิเตอร์
+  final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
 
   const CharacterCard({
@@ -108,26 +99,132 @@ class CharacterCard extends GetWidget<CharacterController> {
     return GestureDetector(
       onTap: onTap,
       onDoubleTap: onDoubleTap,
+      onLongPress: () => editCharacterSheets(character),
       child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Image.asset(
-              controller.characterImages[character.avatarIndex as int],
-              width: 250,
+        width: 300,
+        margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              primaryColor,
+              secondaryColor,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              offset: const Offset(0, 10),
+              blurRadius: 10,
             ),
-            const SizedBox(height: 10),
-            Text(
-              character.name as String,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 36,
-              ),
-            )
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -50,
+                right: -50,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            controller
+                                .characterImages[character.avatarIndex as int],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      character.name as String,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      '${character.className} • Level ${character.level}',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 20),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Focus Point: ${character.focusPoint}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void editCharacterSheets(Character character) {
+    Get.bottomSheet(const BottomSheetContent());
   }
 }
 
