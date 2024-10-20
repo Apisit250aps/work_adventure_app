@@ -347,6 +347,24 @@ class TableController extends GetxController {
 
   bool timeToRegenerate(int time) => (time == 5) ? true : false;
 
+  //task Sender
+  (int, int) taskSender(int difficulty) {
+    int baseExp = 70;
+    int baseCoin = 30;
+    int totalExp =
+        ((calculateEXP(baseExp) * difficulty) * levelMultiplier).round();
+    int totalCoin =
+        ((calculateCoin(baseCoin, 0) * difficulty) * levelMultiplier).round();
+    return (totalExp, totalCoin);
+  }
+
+  (int, int) questSender() {
+    int baseExp = 50;
+    int baseCoin = 30;
+    int totalExp = (calculateEXP(baseExp) * levelMultiplier).round();
+    int totalCoin = (calculateCoin(baseCoin, 0) * levelMultiplier).round();
+    return (totalExp, totalCoin);
+  }
 
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {

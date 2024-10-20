@@ -332,16 +332,8 @@ class TaskListTile extends GetWidget<TasksController> {
             color: task.isDone ? Colors.white : textColor),
         onPressed: () {
           int taskDiff = task.difficulty;
-          double levelMultiplier = _tableController.levelMultiplier;
-          int baseExp = 100;
-          int baseCoin = 50;
-          int totalExp = ((_tableController.calculateEXP(baseExp) * taskDiff) *
-                  levelMultiplier)
-              .round();
-          int totalCoin =
-              ((_tableController.calculateCoin(baseCoin, 0) * taskDiff) *
-                      levelMultiplier)
-                  .round();
+          final (totalExp, totalCoin) = _tableController.taskSender(taskDiff);
+
           if (!task.isDone) {
             _characterController.taskAdditional(totalExp, totalCoin);
             print("Task finished");

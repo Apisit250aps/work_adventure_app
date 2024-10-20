@@ -1,11 +1,17 @@
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:work_adventure/models/hive/quest_hive_model.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/table_controller.dart';
 
 class QuestController extends GetxController {
   late Box<Quest> _questBox;
   final quests = <Quest>[].obs;
   RxBool isLoading = true.obs;
+
+  final CharacterController _characterController =
+      Get.find<CharacterController>();
+  final TableController _tableController = Get.find<TableController>();
 
   @override
   void onInit() async {
@@ -134,6 +140,9 @@ class QuestController extends GetxController {
             _questBox.values.firstWhere((q) => q.id == quest.id);
         storedQuest.isCompleted = !storedQuest.isCompleted;
         await storedQuest.save();
+
+        final (totalExp, totalCoin) = _tableController.questSender();
+        _characterController.taskAdditional(totalExp, totalCoin);
         print('Quest status toggled successfully');
       }
     } catch (e) {
