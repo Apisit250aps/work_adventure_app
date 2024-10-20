@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/controllers/tasks_controller.dart';
 import 'package:work_adventure/models/task_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class TaskUpdateForm extends StatefulWidget {
@@ -190,40 +191,33 @@ class _TaskUpdateFormState extends State<TaskUpdateForm> {
     }
   }
 
-  void _confirmDelete() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content:
-              Text('Are you sure you want to delete "${widget.task.name}"?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final success =
-                    await widget.tasksController.deleteTask(widget.task.id);
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Task deleted successfully')),
-                  );
-                  Navigator.of(context).pop(true);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to delete task')),
-                  );
-                }
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
+  Future<void> _confirmDelete() async {
+    final shouldDelete = await Get.dialog(
+      ConfirmDialog(
+        message: "Are you sure you want to delete '${widget.task.name}'?",
+        icon: "warning",
+        onConfirm: () => Get.back(result: true),
+      ),
     );
+
+    if (shouldDelete == true) {
+      final success = await widget.tasksController.deleteTask(widget.task.id);
+      if (success) {
+        Get.back(); // ปิด bottom sheet หรือหน้าปัจจุบัน
+        Get.snackbar(
+          "Deleted",
+          'Task "${widget.task.name}" has been deleted',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        Get.snackbar(
+          "Error",
+          'Failed to delete task "${widget.task.name}"',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    }
   }
 }

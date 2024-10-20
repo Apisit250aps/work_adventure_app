@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:get/get.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/models/work_model.dart';
 import 'package:work_adventure/widgets/ui/buttons.dart';
+import 'package:work_adventure/widgets/ui/dialog/confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/inputs.dart';
 
 class WorkUpdateForm extends StatefulWidget {
@@ -113,7 +115,6 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
                     isVertical: false,
                     labelStyle: const TextStyle(
                       fontSize: 18,
-                      
                     ),
                   ),
                 ],
@@ -162,32 +163,15 @@ class _WorkUpdateFormState extends State<WorkUpdateForm> {
   }
 
   Future<void> _confirmDelete(BuildContext context, Work work) async {
-    final shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete "${work.name}"?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+    final shouldDelete = await Get.dialog(ConfirmDialog(
+        message: "Are you sure you want to delete '${work.name}'",
+        icon: "warning",
+        onConfirm: () => Get.back(result: true)));
 
     if (shouldDelete == true) {
       await widget.controller.deleteWork(work.id as String);
-      Navigator.of(context).pop(); // ปิด BottomSheet
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Work "${work.name}" has been deleted')),
-      );
+      Get.back(); // ปิด BottomSheet
+      Get.snackbar("Deleted", 'Work "${work.name}" has been deleted');
     }
   }
 
