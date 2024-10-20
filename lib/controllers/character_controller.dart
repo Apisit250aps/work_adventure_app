@@ -203,78 +203,74 @@ class CharacterController extends GetxController {
     return (expGap, expForNextLevel);
   }
 
-  void additionalExp(int add) async {
+  Future<void> additionalExp(int add) async {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter =
         updatedCharacter.copyWith(exp: (updatedCharacter.exp ?? 0) + add);
-
     characterSelect.value = updatedCharacter;
     await updateCharacterOnServer();
   }
 
-  void additionalCoins(int add) {
+  Future<void> additionalCoins(int add) async {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter =
         updatedCharacter.copyWith(coin: (updatedCharacter.coin ?? 0) + add);
-
     characterSelect.value = updatedCharacter;
-    updateCharacterOnServer();
+    await updateCharacterOnServer();
   }
 
-  void additionalSpecial() {
+  Future<void> additionalSpecial() async {
     print("เพิ่ม special +3");
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
         statusPoint: (updatedCharacter.statusPoint ?? 0) + 3);
     characterSelect.value = updatedCharacter;
-    updateCharacterOnServer();
+    await updateCharacterOnServer();
   }
 
-  void additionalFocus() {
+  Future<void> additionalFocus() async {
     print("เพิ่ม focus +1");
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
         focusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
     characterSelect.value = updatedCharacter;
-    updateCharacterOnServer();
+    await updateCharacterOnServer();
   }
 
-  bool isLevelup(int expInput) {
+  Future<bool> isLevelup(int expInput) async {
     final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
     if (expGap >= expForNextLevel) {
       print("level up");
-      additionalSpecial();
+      await additionalSpecial();
       print(characterSelect.value.toJson());
       return true;
     }
     return false;
   }
 
-  bool focusSender(int exp, int coin) {
-    isLevelup(exp);
+  Future<bool> focusSender(int exp, int coin) async {
+    await isLevelup(exp);
     print("ส่งค่า $exp");
     print("ส่งค่า $coin");
-    additionalExp(exp);
-    additionalCoins(coin);
-
+    await additionalExp(exp);
+    await additionalCoins(coin);
     return true;
   }
 
-  bool taskAdditional(int exp, int coin) {
-    isLevelup(exp);
+  Future<bool> taskAdditional(int exp, int coin) async {
+    await isLevelup(exp);
     print("เพิ่มค่า $exp");
-    additionalExp(exp);
+    await additionalExp(exp);
     print("เพิ่มค่า $coin");
-    additionalCoins(coin);
-
+    await additionalCoins(coin);
     return true;
   }
 
-  bool taskReduced(int exp, int coin) {
+  Future<bool> taskReduced(int exp, int coin) async {
     print("เพิ่มค่า ${-exp}");
-    additionalExp(-exp);
+    await additionalExp(-exp);
     print("เพิ่มค่า ${-coin}");
-    additionalCoins(-coin);
+    await additionalCoins(-coin);
     return true;
   }
 }
