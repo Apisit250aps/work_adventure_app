@@ -11,6 +11,7 @@ import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
+import 'package:lottie/lottie.dart';
 
 enum Difficulty { easy, medium, hard }
 
@@ -318,37 +319,84 @@ class TaskListTile extends GetWidget<TasksController> {
     final CharacterController _characterController =
         Get.find<CharacterController>();
     final TableController _tableController = Get.find<TableController>();
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.1),
-              offset: Offset(0, 10),
-              blurRadius: 50)
+            color: Colors.black.withOpacity(0.1),
+            offset: const Offset(0, 4),
+            blurRadius: 8,
+            spreadRadius: 0,
+          ),
         ],
       ),
-      child: IconButton(
-        icon: Icon(Boxicons.bx_check,
-            color: task.isDone ? Colors.white : textColor),
-        onPressed: () {
-          int taskDiff = task.difficulty;
-          final (totalExp, totalCoin) = _tableController.taskSender(taskDiff);
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            int taskDiff = task.difficulty;
+            final (totalExp, totalCoin) = _tableController.taskSender(taskDiff);
 
-          if (!task.isDone) {
-            _characterController.taskAdditional(totalExp, totalCoin);
-            print("Task finished");
-          } else if (task.isDone) {
-            _characterController.taskReduced(totalExp, totalCoin);
-            print("Task Unfinish");
-          }
+            String message;
+            if (!task.isDone) {
+              _characterController.taskAdditional(totalExp, totalCoin);
+              message = "เสร็จสิ้นงาน ได้รับ $totalExp🧿 และ $totalCoin💰";
+            } else {
+              _characterController.taskReduced(totalExp, totalCoin);
+              message = "ยกเลิกงาน ลด $totalExp🧿 และ $totalCoin💰";
+            }
 
-          controller.updateTask(task.copyWith(
-              isDone: !task.isDone, isFirst: task.isFirst! ? false : false));
-        },
-        style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(
-              task.isDone ? secondaryColor : Colors.white),
-          elevation: const WidgetStatePropertyAll(5),
+            controller.updateTask(task.copyWith(
+              isDone: !task.isDone,
+              isFirst: task.isFirst! ? false : false,
+            ));
+
+            Get.snackbar(
+              "สถานะงาน",
+              message,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 2),
+              backgroundColor: task.isDone
+                  ? Colors.red.withOpacity(0.7)
+                  : Colors.green.withOpacity(0.7),
+              colorText: Colors.white,
+              borderRadius: 8,
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              icon: Icon(
+                task.isDone ? Icons.cancel : Icons.check_circle,
+                color: Colors.white,
+                size: 28,
+              ),
+            );
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: task.isDone ? secondaryColor : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.8, end: 1.0),
+              duration: const Duration(milliseconds: 200),
+              builder: (context, value, child) {
+                return Transform.scale(
+                  scale: value,
+                  child: child,
+                );
+              },
+              child: Icon(
+                task.isDone ? Icons.check_circle : Icons.radio_button_unchecked,
+                color: task.isDone ? Colors.white : textColor,
+                size: 28,
+              ),
+            ),
+          ),
         ),
       ),
     );
