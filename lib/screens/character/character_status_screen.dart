@@ -43,6 +43,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
   }
 
   List<Widget> buildStatBars() {
+    final CharacterController characterController = Get.find();
     final stats = [
       ('STR', controller.special.value.strength),
       ('PER', controller.special.value.perception),
@@ -50,14 +51,20 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
       ('CHA', controller.special.value.charisma),
       ('INT', controller.special.value.intelligence),
       ('AGI', controller.special.value.agility),
-      ('LUK', controller.special.value.luck),
+      ('LCK', controller.special.value.luck),
     ];
 
     return stats
         .map((stat) => StatBar(
               label: stat.$1,
               value: stat.$2,
-              onIncrement: () => controller.incrementSpecial(stat.$1),
+              onIncrement: () {
+                controller.incrementSpecial(stat.$1);
+                if (characterController.characterSelect.value.statusPoint! >
+                    0) {
+                  characterController.pointDecrease();
+                }
+              },
             ))
         .toList();
   }
@@ -146,8 +153,8 @@ class CharacterInfoCard extends StatelessWidget {
                           .calculateLevel(
                               controller.characterSelect.value.exp ?? 0)
                           .toString()),
-                  _buildInfoItem(
-                      'Focus Points', controller.characterSelect.value.focusPoint.toString()),
+                  _buildInfoItem('Focus Points',
+                      controller.characterSelect.value.focusPoint.toString()),
                   _buildInfoItem('Status Points',
                       controller.characterSelect.value.statusPoint.toString()),
                 ],

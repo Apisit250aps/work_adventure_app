@@ -273,4 +273,13 @@ class CharacterController extends GetxController {
     await additionalCoins(-coin);
     return true;
   }
+
+  void pointDecrease() {
+    print("ลด special -1");
+    Character updatedCharacter = characterSelect.value.copyWith();
+    updatedCharacter = updatedCharacter.copyWith(
+        statusPoint: (updatedCharacter.statusPoint ?? 0) - 1);
+    characterSelect.value = updatedCharacter;
+    updateCharacterOnServer();
+  }
 }
