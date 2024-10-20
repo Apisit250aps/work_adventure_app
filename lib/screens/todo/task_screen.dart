@@ -9,6 +9,8 @@ import 'package:work_adventure/screens/todo/work_screen.dart';
 import 'package:work_adventure/widgets/ui/forms/task/task_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
+import 'package:work_adventure/controllers/character_controller.dart';
+import 'package:work_adventure/controllers/table_controller.dart';
 
 enum Difficulty { easy, medium, hard }
 
@@ -260,7 +262,7 @@ class TaskListTile extends GetWidget<TasksController> {
         task.name,
         style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: task.isDone?Colors.grey:textColor,
+          color: task.isDone ? Colors.grey : textColor,
           decoration: task.isDone ? TextDecoration.lineThrough : null,
         ),
       ),
@@ -313,6 +315,9 @@ class TaskListTile extends GetWidget<TasksController> {
   }
 
   Widget _buildLeadingIcon() {
+    final CharacterController _characterController =
+        Get.find<CharacterController>();
+    final TableController _tableController = Get.find<TableController>();
     return Container(
       decoration: const BoxDecoration(
         boxShadow: [
@@ -326,6 +331,25 @@ class TaskListTile extends GetWidget<TasksController> {
         icon: Icon(Boxicons.bx_check,
             color: task.isDone ? Colors.white : textColor),
         onPressed: () {
+          int taskDiff = task.difficulty;
+          double levelMultiplier = _tableController.levelMultiplier;
+          int baseExp = 100;
+          int baseCoin = 50;
+          int totalExp = ((_tableController.calculateEXP(baseExp) * taskDiff) *
+                  levelMultiplier)
+              .round();
+          int totalCoin =
+              ((_tableController.calculateCoin(baseCoin, 0) * taskDiff) *
+                      levelMultiplier)
+                  .round();
+          if (!task.isDone) {
+            _characterController.taskAdditional(totalExp, totalCoin);
+            print("Task finished");
+          } else if (task.isDone) {
+            _characterController.taskReduced(totalExp, totalCoin);
+            print("Task Unfinish");
+          }
+
           controller.updateTask(task.copyWith(
               isDone: !task.isDone, isFirst: task.isFirst! ? false : false));
         },

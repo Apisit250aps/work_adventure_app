@@ -347,6 +347,7 @@ class TableController extends GetxController {
 
   bool timeToRegenerate(int time) => (time == 5) ? true : false;
 
+
   //สุ่มเหตุการณ์
   // void generateRandomEvent() {
 

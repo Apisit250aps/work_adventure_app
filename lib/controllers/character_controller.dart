@@ -255,12 +255,22 @@ class CharacterController extends GetxController {
     return true;
   }
 
-  bool taskSender(int exp, int coin) {
+  bool taskAdditional(int exp, int coin) {
+    print("เพิ่มค่า $exp");
     additionalExp(exp);
+    print("เพิ่มค่า $coin");
     additionalCoins(coin);
     if (isLevelup(exp)) {
       return true;
     }
     return false;
+  }
+
+  bool taskReduced(int exp, int coin) {
+    print("เพิ่มค่า ${-exp}");
+    additionalExp(-exp);
+    print("เพิ่มค่า ${-coin}");
+    additionalCoins(-coin);
+    return true;
   }
 }
