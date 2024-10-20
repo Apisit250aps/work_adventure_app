@@ -174,7 +174,7 @@ class CharacterController extends GetxController {
 
   int calculateLevel(int exp) {
     const double base = 1.045;
-    const double C = 10000;
+    const double C = 13000;
 
     return (log(exp / C + 1) / log(base) + 1).toInt();
   }
@@ -183,7 +183,7 @@ class CharacterController extends GetxController {
 
   (int, int) calculateExpForNextLevel(int exp) {
     const double base = 1.045;
-    const double C = 10000;
+    const double C = 13000;
 
     int totalExp = currentExp + exp;
     int currentLevel = calculateLevel(currentExp);
