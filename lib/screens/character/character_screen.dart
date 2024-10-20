@@ -6,7 +6,8 @@ import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:work_adventure/models/character_model.dart';
-import 'package:work_adventure/widgets/ui/dialog/message_dialog.dart';
+import 'package:work_adventure/screens/todo/work_screen.dart';
+import 'package:work_adventure/widgets/ui/forms/character/character_update_form.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
 
 class CharacterScreen extends GetView<CharacterController> {
@@ -44,25 +45,27 @@ class CharacterScreen extends GetView<CharacterController> {
                 padding: const EdgeInsets.symmetric(
                   vertical: 50,
                 ),
-                child: CarouselSlider.builder(
-                  itemCount: controller.charactersSlot.length,
-                  itemBuilder: (context, index, realIndex) {
-                    final character = controller.charactersSlot[index];
-                    return CharacterCard(
-                      character: character,
-                      onTap: () {
-                        controller.selectIndex(index);
-                        Get.toNamed('/operator');
-                      },
-                    );
-                  },
-                  options: CarouselOptions(
-                    height: Get.height * 0.5,
-                    aspectRatio: 1,
-                    enlargeCenterPage: true,
-                    onPageChanged: (index, reason) {
-                      controller.selectIndex(index);
+                child: Obx(
+                  () => CarouselSlider.builder(
+                    itemCount: controller.charactersSlot.length,
+                    itemBuilder: (context, index, realIndex) {
+                      final character = controller.charactersSlot[index];
+                      return CharacterCard(
+                        character: character,
+                        onTap: () {
+                          controller.selectIndex(index);
+                          Get.toNamed('/operator');
+                        },
+                      );
                     },
+                    options: CarouselOptions(
+                      height: Get.height * 0.5,
+                      aspectRatio: 1,
+                      enlargeCenterPage: true,
+                      onPageChanged: (index, reason) {
+                        controller.selectIndex(index);
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -222,13 +225,12 @@ class CharacterCard extends GetWidget<CharacterController> {
     );
   }
 
-  void editCharacterSheets(Character character) {
-    Get.dialog(const MessageDialog(
-      message: "message",
-      title: "Error!",
-      icon: "info",
+  void editCharacterSheets(Character character) async {
+    Widget form = CharacterUpdateForm(character: character);
+    await Get.bottomSheet(BottomSheetContent(
+      child: form,
     ));
-    // Get.bottomSheet(const BottomSheetContent());
+    controller.loadCharacters();
   }
 }
 

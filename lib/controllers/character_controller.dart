@@ -120,6 +120,24 @@ class CharacterController extends GetxController {
     }
   }
 
+  Future<bool> updateCharacter(Character character) async {
+    isLoading.value = true;
+    try {
+      final String id = character.id as String;
+      final String endpoint = "${_rest.updateCharacter}/$id";
+      final response = await _apiService.put(endpoint, character.toJson());
+      if (response.statusCode == 200) {
+        loadCharacters();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> updateCharacterOnServer() async {
     try {
       String path = _rest.updateCharacter;
