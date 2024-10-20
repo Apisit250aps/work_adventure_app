@@ -274,34 +274,44 @@ class FocusController extends GetxController {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_timeRemaining.value > 0) {
         _timeRemaining--;
-        regenerationCounter++;
-
-        focusCounter++;
-        if (focusCounter.value >= 600) {
-          _characterController.additionalFocus();
-          focusCounterReset();
-        }
-
-        if (mustSender.value) {
-          _characterController.focusSender(expInput.value, coinInput.value);
-          expInputReset();
-          coinInputReset();
-          mustSenderReset();
-        }
-
-        if (_tableController.timeToRegenerate(regenerationCounter.value)) {
-          if (!_isDead.value) {
-            print("Regeneration is working");
-            damageInput.value -=
-                _tableController.healthRegeneration.clamp(0, damageInput.value);
-            print("damge after: ${damageInput.value} ");
-          }
-          regenerationCounter.value = 0;
-        }
+        updateServerSystem();
+        focusSystem();
+        generationSystem();
       } else {
         _endSession();
       }
     });
+  }
+
+
+  void updateServerSystem() {
+    if (mustSender.value) {
+      _characterController.focusSender(expInput.value, coinInput.value);
+      expInputReset();
+      coinInputReset();
+      mustSenderReset();
+    }
+  }
+
+  void focusSystem() {
+    focusCounter++;
+    if (focusCounter.value >= 600) {
+      _characterController.additionalFocus();
+      focusCounterReset();
+    }
+  }
+
+  void generationSystem() {
+    regenerationCounter++;
+    if (_tableController.timeToRegenerate(regenerationCounter.value)) {
+      if (!_isDead.value) {
+        print("Regeneration is working");
+        damageInput.value -=
+            _tableController.healthRegeneration.clamp(0, damageInput.value);
+        print("damge after: ${damageInput.value} ");
+      }
+      regenerationCounter.value = 0;
+    }
   }
 
   void _startEventTimer() {

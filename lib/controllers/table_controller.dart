@@ -339,7 +339,7 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 6)
+        ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 5.5)
                 .floor())
             .clamp(1, 400);
     return regeneration;
