@@ -8,6 +8,41 @@ import 'dart:convert';
 
 import 'package:work_adventure/utils/jwt_storage.dart';
 
+class UserStats {
+  final int totalFocusPoint;
+  final int totalCoin;
+  final String userId;
+  final int totalPoints;
+  final String username;
+
+  UserStats({
+    required this.totalFocusPoint,
+    required this.totalCoin,
+    required this.userId,
+    required this.totalPoints,
+    required this.username,
+  });
+
+  factory UserStats.fromJson(Map<String, dynamic> json) {
+    return UserStats(
+        totalFocusPoint: json['totalFocusPoint'] as int,
+        totalCoin: json['totalCoin'] as int,
+        userId: json['userId'] as String,
+        totalPoints: json['totalPoints'] as int,
+        username: json['username'] as String);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'totalFocusPoint': totalFocusPoint,
+      'totalCoin': totalCoin,
+      'userId': userId,
+      'totalPoints': totalPoints,
+      'username': username,
+    };
+  }
+}
+
 class UserController extends GetxController {
   final RestServiceController _rest = Get.find();
   final ApiService _apiService = Get.find();
@@ -17,12 +52,37 @@ class UserController extends GetxController {
   final RxList<Character> characters = <Character>[].obs;
   final RxBool isAuthenticated = false.obs;
   final RxBool isLoading = true.obs;
-
+  final Rx<List<UserStats>> ranking = Rx<List<UserStats>>([]);
+  UserStats? get currentUserStats => ranking.value.firstWhere(
+        (stats) => stats.userId == user.value?.id,
+        orElse: () => UserStats(
+          totalFocusPoint: 0,
+          totalCoin: 0,
+          userId: user.value!.id as String,
+          totalPoints: 0,
+          username: '',
+        ),
+      );
   @override
   void onInit() {
     super.onInit();
     ever(isAuthenticated, _handleAuthChanged);
     _loadToken();
+    loadRanking();
+  }
+
+  double calculateScore(UserStats stats) {
+    return stats.totalFocusPoint * (stats.totalCoin * 0.2);
+  }
+
+  // ฟังก์ชันเรียงลำดับ ranking
+  void sortRanking() {
+    ranking.value.sort((a, b) {
+      double scoreA = calculateScore(a);
+      double scoreB = calculateScore(b);
+      return scoreB.compareTo(scoreA); // เรียงจากมากไปน้อย
+    });
+    ranking.refresh(); // แจ้ง UI ให้อัพเดต
   }
 
   void _handleAuthChanged(bool isAuth) {
@@ -30,6 +90,29 @@ class UserController extends GetxController {
       Get.offAllNamed('/characters');
     } else {
       Get.offAllNamed('/login');
+    }
+  }
+
+  Future<void> loadRanking() async {
+    isLoading.value = true;
+    try {
+      final String endpoint = _rest.userRanking;
+      final response = await _apiService.get(endpoint);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        ranking.value =
+            jsonData.map((json) => UserStats.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load ranking data');
+      }
+    } catch (e) {
+      print("Error loading ranking: $e");
+      // You might want to update an error state here instead of throwing
+      // errorState.value = true;
+    } finally {
+      sortRanking();
+      isLoading.value = false;
     }
   }
 
