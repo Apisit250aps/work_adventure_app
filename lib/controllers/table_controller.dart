@@ -308,8 +308,10 @@ class TableController extends GetxController {
   }
 
   int randomItem() {
-    int perMultiplier = (specialRoll("p") ~/ 20).clamp(0, 5);
-    final dice = singleDiceRoll().clamp(1, 100) - perMultiplier;
+    int perMultiplier =
+        (((specialRoll("p") * 2) + ((specialRoll("l")) / 1.5)) ~/ 13)
+            .clamp(0, 7);
+    final dice = singleDiceRoll().clamp(1, 21) - perMultiplier;
     final characterLevel = _characterController.calculateLevel(0) ~/ 10;
 
     // คำนวณโอกาสการเกิดไอเทมแต่ละประเภท
@@ -368,11 +370,32 @@ class TableController extends GetxController {
   }
 
   //สุ่มเหตุการณ์
-  // void generateRandomEvent() {
+  int generateRandomEvent() {
+    int chaMultiplier = specialRoll("c") ~/ 15;
+    int perMultiplier = specialRoll("p") ~/ 10;
+    final dice = singleDiceRoll().clamp(1, 21);
 
-  //     _generateNothingEvent();
-  //     _generateEnemyEvent();
-  //     _generateVillageEvent();
+    // คำนวณโอกาสการเกิด Event แต่ละประเภท
+    final List<int> eventChance = [
+      (13 - chaMultiplier).clamp(7, 13), //EnemyEvent
+      (4 - perMultiplier).clamp(1, 4), //  NothingEvent
+      (3 + chaMultiplier * 2).clamp(3, 8), // VillageEvent
+      (1 + perMultiplier).clamp(1, 5) // TreasureEvent
+    ];
 
-  // }
+    // เรียงลำดับโอกาสจากน้อยไปมาก
+    final sorted = List.from(eventChance)..sort();
+
+    // เลือกประเภทศัตรูไอเทมลูกเต๋า
+    int selectedChance = dice <= sorted[3]
+        ? sorted[3]
+        : dice <= sorted[2] + sorted[3]
+            ? sorted[2]
+            : dice <= sorted[1] + sorted[2]
+                ? sorted[1]
+                : sorted[0];
+
+    // หาดัชนีของประเภทไอเทมที่ถูกเลือก
+    return eventChance.indexOf(selectedChance);
+  }
 }

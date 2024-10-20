@@ -28,7 +28,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
                 characterController: characterController,
                 controller: controller,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
               const Text(
                 'Character Stats',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
@@ -44,28 +44,20 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
   List<Widget> buildStatBars() {
     final CharacterController characterController = Get.find();
     final stats = [
-      (
-        'STR',
-        controller.special.value.strength,
-        '🫁  🛡️  ❤️  (ลดความเสียหาย)'
-      ),
+      ('STR', controller.special.value.strength, '🫁 🛡️ ❤️  (ลดความเสียหาย)'),
       ('PER', controller.special.value.perception, '💰  💎  (ทรัพยากร)'),
-      (
-        'END',
-        controller.special.value.endurance,
-        '❤️  🏕️  🩸  ⌚  (เอาตัวรอด)'
-      ),
+      ('END', controller.special.value.endurance, '❤️ 🏕️ 🩸 ⌚  (เอาตัวรอด)'),
       (
         'CHA',
         controller.special.value.charisma,
-        '📜  🏕️  🍀  💰  (ลดความเสี่ยง)'
+        '📜 🏕️ 🍀 💰  (ลดความเสี่ยง)'
       ),
       (
         'INT',
         controller.special.value.intelligence,
-        '🧿  🫁  🏕️  ⌚  (ค่าประสบการณ์)'
+        '🧿 🫁 🏕️ ⌚  (ค่าประสบการณ์)'
       ),
-      ('AGI', controller.special.value.agility, '⚔️  ⌚  🩸  (เร่งเวลา)'),
+      ('AGI', controller.special.value.agility, '⚔️ ⌚ 🩸  (เร่งเวลา)'),
       ('LCK', controller.special.value.luck, '🍀  (ดวงดี)'),
     ];
 
@@ -255,7 +247,7 @@ class StatBar extends StatelessWidget {
             padding: const EdgeInsets.only(left: 55, top: 0),
             child: Text(
               description,
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
           ),
         ],

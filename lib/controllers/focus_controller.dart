@@ -283,7 +283,6 @@ class FocusController extends GetxController {
     });
   }
 
-
   void updateServerSystem() {
     if (mustSender.value) {
       _characterController.focusSender(expInput.value, coinInput.value);
@@ -409,25 +408,21 @@ class FocusController extends GetxController {
   }
 
   void _generateRandomEvent() {
-    double luckBonus =
-        _getSpecialPercentage(_characterController.special.value.luck);
-    int ranNumber = Random().nextInt(100) + 1;
-
     // ปรับโอกาสการเกิดเหตุการณ์ต่างๆ
-    int nothingChance = (30 - luckBonus * 100).clamp(5, 30).toInt();
-    int enemyChance = 0;
-    int treasureChance = 100;
+    int runEvent = _tableController.generateRandomEvent();
 
-    if (ranNumber <= nothingChance) {
+    if (runEvent == 0) {
+      _generateEnemyEvent();
+    } else if (runEvent == 1) {
       _generateNothingEvent();
-    } else if (ranNumber <= enemyChance) {
-      _generateEnemyEvent();
-    } else if (ranNumber <= treasureChance) {
-      _generateTreasureEvent();
-    } else if (!questIsActive) {
-      _generateVillageEvent();
+    } else if (runEvent == 2) {
+      if (!questIsActive) {
+        _generateVillageEvent();
+      } else {
+        _generateEnemyEvent();
+      }
     } else {
-      _generateEnemyEvent();
+      _generateTreasureEvent();
     }
   }
 
