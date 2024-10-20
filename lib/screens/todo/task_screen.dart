@@ -11,7 +11,6 @@ import 'package:work_adventure/widgets/ui/forms/task/task_update_form.dart';
 import 'package:work_adventure/widgets/ui/sheets/sheets_ui.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
-import 'package:lottie/lottie.dart';
 
 enum Difficulty { easy, medium, hard }
 
@@ -316,9 +315,9 @@ class TaskListTile extends GetWidget<TasksController> {
   }
 
   Widget _buildLeadingIcon() {
-    final CharacterController _characterController =
+    final CharacterController characterController =
         Get.find<CharacterController>();
-    final TableController _tableController = Get.find<TableController>();
+    final TableController tableController = Get.find<TableController>();
 
     return Container(
       decoration: BoxDecoration(
@@ -338,14 +337,14 @@ class TaskListTile extends GetWidget<TasksController> {
           borderRadius: BorderRadius.circular(12),
           onTap: () {
             int taskDiff = task.difficulty;
-            final (totalExp, totalCoin) = _tableController.taskSender(taskDiff);
+            final (totalExp, totalCoin) = tableController.taskSender(taskDiff);
 
             String message;
             if (!task.isDone) {
-              _characterController.taskAdditional(totalExp, totalCoin);
+              characterController.taskAdditional(totalExp, totalCoin);
               message = "เสร็จสิ้นงาน ได้รับ $totalExp🧿 และ $totalCoin💰";
             } else {
-              _characterController.taskReduced(totalExp, totalCoin);
+              characterController.taskReduced(totalExp, totalCoin);
               message = "ยกเลิกงาน ลด $totalExp🧿 และ $totalCoin💰";
             }
 
