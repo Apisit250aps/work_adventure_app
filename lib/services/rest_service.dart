@@ -14,6 +14,7 @@ class RestServiceController extends GetxController {
 
   // user rest service
   String get userData => '$base/user/data';
+  String get userRanking => "$base/user/ranking";
 
   // character rest service
   String get character => '$base/character/';

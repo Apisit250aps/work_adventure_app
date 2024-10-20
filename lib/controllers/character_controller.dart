@@ -200,13 +200,13 @@ class CharacterController extends GetxController {
     return (expGap, expForNextLevel);
   }
 
-  void additionalExp(int add) {
+  void additionalExp(int add) async {
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter =
         updatedCharacter.copyWith(exp: (updatedCharacter.exp ?? 0) + add);
 
     characterSelect.value = updatedCharacter;
-    updateCharacterOnServer();
+    await updateCharacterOnServer();
   }
 
   void additionalCoins(int add) {

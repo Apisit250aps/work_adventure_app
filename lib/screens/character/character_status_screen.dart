@@ -147,7 +147,7 @@ class CharacterInfoCard extends StatelessWidget {
                               controller.characterSelect.value.exp ?? 0)
                           .toString()),
                   _buildInfoItem(
-                      'EXP', controller.characterSelect.value.exp.toString()),
+                      'Focus Points', controller.characterSelect.value.focusPoint.toString()),
                   _buildInfoItem('Status Points',
                       controller.characterSelect.value.statusPoint.toString()),
                 ],

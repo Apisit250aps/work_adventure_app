@@ -3,6 +3,7 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
+import 'package:work_adventure/screens/todo/work_screen.dart';
 
 class OperatorDrawer extends GetWidget<UserController> {
   const OperatorDrawer({super.key});
@@ -32,10 +33,10 @@ class OperatorDrawer extends GetWidget<UserController> {
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      const Text(
-                        'Level 42', // เลเวลของผู้ใช้
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
+                      // const Text(
+                      //   'Level 42', // เลเวลของผู้ใช้
+                      //   style: TextStyle(fontSize: 14, color: Colors.grey),
+                      // ),
                     ],
                   ),
                 ],
@@ -46,22 +47,64 @@ class OperatorDrawer extends GetWidget<UserController> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildStatTile('Focus points', '12,345', Boxicons.bx_time),
-                  _buildStatTile('Coins', '87', Boxicons.bx_coin_stack),
-                  _buildStatTile('Items Collected', '254', Icons.category),
+                  _buildStatTile(
+                      'Focus points',
+                      "${controller.currentUserStats?.totalFocusPoint}",
+                      Boxicons.bx_time),
+                  _buildStatTile(
+                      'Coins',
+                      "${controller.currentUserStats?.totalCoin}",
+                      Boxicons.bx_coin_stack),
+                  _buildStatTile(
+                    'Scores',
+                    "${(controller.currentUserStats!.totalFocusPoint * (controller.currentUserStats!.totalCoin * 0.2)).round()}",
+                    Boxicons.bx_award,
+                  ),
                   const SizedBox(height: 20),
                   const Text(
                     'Quick Actions',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  _buildActionButton('Daily Reward', Icons.card_giftcard, () {
-                    // โค้ดสำหรับรับรางวัลประจำวัน
+                  _buildActionButton('Ranking', Boxicons.bx_award, () {
+                    Get.bottomSheet(BottomSheetContent(
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Boxicons.bx_award, size: 24,),
+                                Text(
+                                  "Ranking",
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Obx(
+                            () => ListView.builder(
+                              physics:
+                                  const NeverScrollableScrollPhysics(), // ปิดการ scroll ของ ListView
+                              shrinkWrap: true, //
+                              itemCount: controller.ranking.value.length,
+                              itemBuilder: (context, index) {
+                                UserStats user =
+                                    controller.ranking.value[index];
+                                return buildRankingItem(index, user);
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ));
                   }),
                   const SizedBox(height: 10),
-                  _buildActionButton('Inventory', Icons.inventory, () {
-                    // โค้ดสำหรับเปิดหน้า Inventory
-                  }),
+                  
                 ],
               ),
             ),
@@ -79,12 +122,80 @@ class OperatorDrawer extends GetWidget<UserController> {
     );
   }
 
+  Widget buildRankingItem(int index, UserStats user) {
+    bool isCurrentUser = user.userId == controller.user.value?.id as String;
+    Color backgroundColor =
+        isCurrentUser ? Colors.blue.withOpacity(0.1) : Colors.transparent;
+    Color textColor = isCurrentUser ? Colors.blue : Colors.black;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: _getRankColor(index),
+          child: Text(
+            '${index + 1}',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        title: Text(
+          user.username,
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          'FP: ${user.totalFocusPoint}',
+          style: TextStyle(color: textColor.withOpacity(0.7)),
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            
+            Text(
+              '${user.totalCoin}',
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              'Coins',
+              style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getRankColor(int index) {
+    switch (index) {
+      case 0:
+        return Colors.amber[700]!;
+      case 1:
+        return Colors.blueGrey[400]!;
+      case 2:
+        return Colors.brown[400]!;
+      default:
+        return Colors.blue[300]!;
+    }
+  }
+
   Widget _buildStatTile(String title, String value, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: secondaryColor),
+          Icon(icon, size: 20, color: Colors.pink[400]),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
