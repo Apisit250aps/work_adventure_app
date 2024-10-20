@@ -152,6 +152,6 @@ class QuestTileList extends GetWidget<QuestController> {
         ),
       );
     }
-    controller.toggleQuestStatus(quest);
+    controller.toggleQuestStatus(quest, totalExp, totalCoin);
   }
 }
