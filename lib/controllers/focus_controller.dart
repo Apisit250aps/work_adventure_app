@@ -78,7 +78,7 @@ class FocusController extends GetxController {
   // Other variables
   int rollOne = 0;
   String enemyQuestName = "";
-  int enemyQuestCounter = 0;
+  RxInt enemyQuestCounter = 0.obs;
   bool questIsActive = false;
   int questNumber = 21;
   int questGold = 0;
@@ -248,7 +248,7 @@ class FocusController extends GetxController {
 
   void _resetQuestVariables() {
     enemyQuestName = "";
-    enemyQuestCounter = 0;
+    enemyQuestCounter.value = 0;
     questIsActive = false;
     questNumber = 21;
     questGold = 0;
@@ -433,11 +433,11 @@ class FocusController extends GetxController {
     questNumber = questDifficulty;
     final MonsterName questDescription = _getQuestDescription(questDifficulty);
     final enemyCount = _tableController.enemyCount(questDifficulty);
-    enemyQuestCounter = enemyCount;
+    questEnemyNumber = enemyCount;
     final (exp, gold) = _tableController.questReward(questDifficulty);
     questExp = exp;
     questGold = gold;
-    questEnemyNumber = enemyCount;
+    enemyQuestName = (questDescription).toString();
 
     _updateEncounter("🏡", """
     $villageType
@@ -457,7 +457,6 @@ class FocusController extends GetxController {
   }
 
   void _generateEnemyEvent() {
-    rollOne = _tableController.singleDiceRoll();
     final index = TableController().getEnemyIndex(questNumber, questIsActive);
     final MonsterName enemy = _getRandomEnemy(index);
     final (enemyCoin, enemyDamage, enemyEXP) = _calculateEnemyStats(index);
@@ -471,12 +470,31 @@ class FocusController extends GetxController {
     damageInput += (enemyDamage)
         .clamp(0, (_tableController.calculateCharacterHP - damageInput.value));
     print("damge before: ${damageInput.value} ");
+
     if (_tableController.healthReduceCondition(damageInput.value)) {
+      if (questIsActive && enemyQuestName == enemy.toString()) {
+        enemyQuestCounter.value++;
+        if (enemyQuestCounter.value == questEnemyNumber) {
+          expInput += questExp;
+          coinInput += questGold;
+          questReset();
+        }
+      }
+
       expInput += enemyEXP;
       coinInput += enemyCoin;
     } else {
       _handleCharacterDeath(enemy);
     }
+  }
+
+  void questReset() {
+    questIsActive = false;
+    questEnemyNumber = 0;
+    questExp = 0;
+    questGold = 0;
+    questNumber = 0;
+    enemyQuestCounter.value = 0;
   }
 
   void _handleCharacterDeath(MonsterName enemy) {

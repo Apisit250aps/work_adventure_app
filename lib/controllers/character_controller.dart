@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:work_adventure/models/character_model.dart';
-import 'package:work_adventure/models/spacial_model.dart';
 import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 
@@ -11,20 +10,6 @@ class CharacterController extends GetxController {
   final ApiService _apiService = Get.find();
   final RxList<Character> charactersSlot = <Character>[].obs;
   final Rx<Character> characterSelect = const Character().obs;
-
-  final Rx<Special> special = Rx<Special>(Special(
-    id: "",
-    charId: "",
-    strength: 10,
-    perception: 5,
-    endurance: 1,
-    charisma: 3,
-    intelligence: 3,
-    agility: 100,
-    luck: 20,
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  ));
 
   List<String> get characterImages => <String>[
         'assets/images/characters/wizard.png',
