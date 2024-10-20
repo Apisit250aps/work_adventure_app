@@ -6,29 +6,31 @@ import 'package:work_adventure/controllers/quest_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
+
 // import 'package:work_adventure/controllers/characterbar_controller.dart';
 
 class PageControllerX extends GetxController {
   final pageIndex = 0.obs;
-  late final PageController pageController;
+  late PageController pageController;
+  final WorkController workController;
+  final QuestController questController;
+  final SpecialController specialController;
+  final FocusController focusController;
+  final TableController tableController;
+  final CharacterbarController characterbarController;
 
-  late final WorkController workController;
-  late final QuestController questController;
-  late final SpecialController specialController;
-  late final FocusController focusController;
-  late final TableController tableController;
-  late final CharacterbarController characterbarController;
+  PageControllerX()
+      : workController = Get.put(WorkController()),
+        specialController = Get.put(SpecialController()),
+        tableController = Get.put(TableController()),
+        focusController = Get.put(FocusController()),
+        characterbarController = Get.put(CharacterbarController()),
+        questController = Get.put(QuestController());
 
   @override
   void onInit() {
     super.onInit();
     pageController = PageController();
-    workController = Get.put(WorkController());
-    questController = Get.put(QuestController());
-    specialController = Get.put(SpecialController());
-    tableController = Get.put(TableController());
-    focusController = Get.put(FocusController());
-    characterbarController = Get.put(CharacterbarController());
   }
 
   @override

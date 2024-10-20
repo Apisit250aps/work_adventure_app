@@ -17,6 +17,9 @@ import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
+import 'package:work_adventure/controllers/table_controller.dart';
+import 'package:work_adventure/controllers/special_controller.dart';
+import 'package:work_adventure/controllers/focus_controller.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -72,11 +75,14 @@ class WorkAdventure extends StatelessWidget {
         ),
       ],
       initialBinding: BindingsBuilder(() {
-        Get.put(QuestController());
         Get.put(RestServiceController());
         Get.put(ApiService());
-        Get.put(UserController());
         Get.put(CharacterController());
+        // Get.put(SpecialController());
+        // Get.put(TableController());
+        // Get.put(FocusController());
+        // Get.put(QuestController());
+        Get.put(UserController());
       }),
       debugShowCheckedModeBanner: false,
     );
