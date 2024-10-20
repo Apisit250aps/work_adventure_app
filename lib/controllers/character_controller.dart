@@ -197,7 +197,8 @@ class CharacterController extends GetxController {
     print("$totalExp $expCurrentLevel");
     print("EXP : $currentExp");
     print(characterSelect.value.exp.toString());
-    print("Point: ${characterSelect.value.statusPoint.toString()}");
+    print("status: ${characterSelect.value.statusPoint.toString()}");
+    print("focus: ${characterSelect.value.focusPoint.toString()}");
 
     return (expGap, expForNextLevel);
   }
@@ -233,7 +234,7 @@ class CharacterController extends GetxController {
     print("เพิ่ม focus +1");
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
-        statusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
+        focusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
     characterSelect.value = updatedCharacter;
     updateCharacterOnServer();
   }

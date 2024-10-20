@@ -18,15 +18,9 @@ class CharacterbarController extends GetxController {
   }
 
   (int, int) expBar() {
-    int focusInput = _focusController.focusCounter.value;
     int expInput = _focusController.expInput.toInt();
 
     if (_shouldResetInputs(expInput)) {
-      _resetInputs();
-    }
-
-    if (focusInput == 600) {
-      _resetFocusAndAddAdditional();
       _resetInputs();
     }
 
@@ -44,11 +38,6 @@ class CharacterbarController extends GetxController {
     _focusController.expInputReset();
     _focusController.coinInputReset();
     _focusController.mustSenderReset();
-  }
-
-  void _resetFocusAndAddAdditional() {
-    _focusController.focusCounterReset();
-    _characterController.additionalFocus();
   }
 
   (int, int) _calculateExpForNextLevel(int expInput) {

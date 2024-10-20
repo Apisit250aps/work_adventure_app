@@ -35,7 +35,7 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.35;
+      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.40;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
@@ -339,13 +339,13 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3)
+        ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 5)
                 .floor())
             .clamp(0, 400);
     return regeneration;
   }
 
-  bool timeToRegenerate(int time) => (time == 5) ? true : false;
+  bool timeToRegenerate(int time) => (time == 2) ? true : false;
 
   //task Sender
   (int, int) taskSender(int difficulty) {
