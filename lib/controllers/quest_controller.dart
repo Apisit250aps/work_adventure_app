@@ -130,7 +130,8 @@ class QuestController extends GetxController {
     loadQuests();
   }
 
-  Future<void> toggleQuestStatus(Quest quest) async {
+  Future<void> toggleQuestStatus(
+      Quest quest, int totalExp, int totalCoin) async {
     isLoading.value = true;
     print('Toggling status for quest: ${quest.id}');
 
@@ -140,9 +141,8 @@ class QuestController extends GetxController {
             _questBox.values.firstWhere((q) => q.id == quest.id);
         storedQuest.isCompleted = !storedQuest.isCompleted;
         await storedQuest.save();
-
-        final (totalExp, totalCoin) = _tableController.questSender();
         _characterController.taskAdditional(totalExp, totalCoin);
+        print('EXP :${totalExp} Coin:${totalCoin} completed');
         print('Quest status toggled successfully');
       }
     } catch (e) {

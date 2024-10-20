@@ -420,7 +420,7 @@ class HPEXPBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
     final tabController = Get.find<TableController>();
-
+    print("${tabController.levelMultiplier}");
     return Positioned(
       bottom: 0,
       left: 0,

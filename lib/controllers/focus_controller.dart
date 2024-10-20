@@ -275,7 +275,13 @@ class FocusController extends GetxController {
       if (_timeRemaining.value > 0) {
         _timeRemaining--;
         regenerationCounter++;
+
         focusCounter++;
+        if (focusCounter.value >= 600) {
+          _characterController.additionalFocus();
+          focusCounterReset();
+        }
+
         if (_tableController.timeToRegenerate(regenerationCounter.value)) {
           if (!_isDead.value) {
             print("Regeneration is working");

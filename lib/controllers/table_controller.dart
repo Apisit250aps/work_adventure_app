@@ -35,7 +35,7 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.5;
+      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.40;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
@@ -80,7 +80,7 @@ class TableController extends GetxController {
 
   // การคำนวณประสบการณ์
   int calculateEXP(int exp) => ((exp +
-              ((exp * (specialRoll('i') / 10)) *
+              ((exp * (specialRoll('i') / 15)) *
                   _percentage(specialRoll('i')))) *
           levelMultiplier)
       .round();
@@ -339,18 +339,18 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        (((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5) / 3)
+        ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 5)
                 .floor())
             .clamp(0, 400);
     return regeneration;
   }
 
-  bool timeToRegenerate(int time) => (time == 5) ? true : false;
+  bool timeToRegenerate(int time) => (time == 2) ? true : false;
 
   //task Sender
   (int, int) taskSender(int difficulty) {
-    int baseExp = 80;
-    int baseCoin = 40;
+    int baseExp = 60;
+    int baseCoin = 25;
     int totalExp =
         ((calculateEXP(baseExp) * difficulty) * levelMultiplier).round();
     int totalCoin =
@@ -360,10 +360,10 @@ class TableController extends GetxController {
   }
 
   (int, int) questSender() {
-    int baseExp = 50;
-    int baseCoin = 25;
+    int baseExp = 40;
+    int baseCoin = 15;
     int totalExp = (calculateEXP(baseExp) * levelMultiplier).round();
-    int totalCoin = (calculateCoin(baseCoin, 0) * levelMultiplier).round();
+    int totalCoin = (calculateCoin(baseCoin, -100) * levelMultiplier).round();
     return (totalExp, totalCoin);
   }
 

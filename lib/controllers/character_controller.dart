@@ -152,6 +152,7 @@ class CharacterController extends GetxController {
 
   Future<void> updateCharacterOnServer() async {
     try {
+      loadCharacters();
       String path = _rest.updateCharacter;
       String endpoints = "$path/${characterSelect.value.id}";
       print(characterSelect.value.toJson());
@@ -161,11 +162,12 @@ class CharacterController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print("Special updated successfully on server");
+        print("updated successfully on server");
       } else {
         print(
             "Failed to update special on server. Status code: ${response.statusCode}");
       }
+      loadCharacters();
     } catch (e) {
       print("Error updating special on server: $e");
       // You might want to show an error message to the user here
@@ -194,8 +196,9 @@ class CharacterController extends GetxController {
     print("ทดสอบๆ $expGap $expForNextLevel $currentLevel");
     print("$totalExp $expCurrentLevel");
     print("EXP : $currentExp");
-    print(characterSelect.value.toJson());
-    print(calculateLevel(900));
+    print(characterSelect.value.exp.toString());
+    print("status: ${characterSelect.value.statusPoint.toString()}");
+    print("focus: ${characterSelect.value.focusPoint.toString()}");
 
     return (expGap, expForNextLevel);
   }
@@ -231,7 +234,7 @@ class CharacterController extends GetxController {
     print("เพิ่ม focus +1");
     Character updatedCharacter = characterSelect.value.copyWith();
     updatedCharacter = updatedCharacter.copyWith(
-        statusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
+        focusPoint: (updatedCharacter.focusPoint ?? 0) + 1);
     characterSelect.value = updatedCharacter;
     updateCharacterOnServer();
   }
