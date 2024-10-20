@@ -282,6 +282,13 @@ class FocusController extends GetxController {
           focusCounterReset();
         }
 
+        if (mustSender.value) {
+          _characterController.focusSender(expInput.value, coinInput.value);
+          expInputReset();
+          coinInputReset();
+          mustSenderReset();
+        }
+
         if (_tableController.timeToRegenerate(regenerationCounter.value)) {
           if (!_isDead.value) {
             print("Regeneration is working");

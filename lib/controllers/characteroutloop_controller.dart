@@ -19,25 +19,8 @@ class CharacterbarController extends GetxController {
 
   (int, int) expBar() {
     int expInput = _focusController.expInput.toInt();
-
-    if (_shouldResetInputs(expInput)) {
-      _resetInputs();
-    }
-
+    _characterController.isLevelup(expInput);
     return _calculateExpForNextLevel(expInput);
-  }
-
-  bool _shouldResetInputs(int expInput) {
-    return _characterController.isLevelup(expInput) ||
-        _focusController.mustSender.value;
-  }
-
-  void _resetInputs() {
-    _characterController.focusSender(
-        _focusController.expInput.toInt(), _focusController.coinInput.toInt());
-    _focusController.expInputReset();
-    _focusController.coinInputReset();
-    _focusController.mustSenderReset();
   }
 
   (int, int) _calculateExpForNextLevel(int expInput) {

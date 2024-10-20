@@ -341,7 +341,7 @@ class TableController extends GetxController {
     int regeneration =
         ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 5)
                 .floor())
-            .clamp(0, 400);
+            .clamp(1, 400);
     return regeneration;
   }
 
