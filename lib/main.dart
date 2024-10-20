@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
-import 'package:work_adventure/controllers/quest_controller.dart';
 import 'package:work_adventure/controllers/user_controller.dart';
 import 'package:work_adventure/models/hive/quest_hive_model.dart';
 import 'package:work_adventure/screens/auth/login_screen.dart';
@@ -17,9 +16,10 @@ import 'package:work_adventure/services/api_service.dart';
 import 'package:work_adventure/services/rest_service.dart';
 import 'package:work_adventure/utils/get_bindings.dart';
 import 'package:work_adventure/widgets/ui/loading/slime_loading.dart';
-import 'package:work_adventure/controllers/table_controller.dart';
-import 'package:work_adventure/controllers/special_controller.dart';
-import 'package:work_adventure/controllers/focus_controller.dart';
+// import 'package:work_adventure/controllers/table_controller.dart';
+// import 'package:work_adventure/controllers/special_controller.dart';
+// import 'package:work_adventure/controllers/focus_controller.dart';
+// import 'package:work_adventure/controllers/quest_controller.dart';
 
 void main() async {
   await Hive.initFlutter();
