@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
-import 'package:work_adventure/widgets/ui/forms/character_form.dart';
+import 'package:work_adventure/widgets/ui/forms/character/character_form.dart';
 
 class CharacterCreateScreen extends GetView<CharacterController> {
   const CharacterCreateScreen({super.key});
