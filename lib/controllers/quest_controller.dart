@@ -11,7 +11,7 @@ class QuestController extends GetxController {
 
   final CharacterController _characterController =
       Get.find<CharacterController>();
-  final TableController _tableController = Get.find<TableController>();
+  final TableController tableController = Get.find<TableController>();
 
   @override
   void onInit() async {

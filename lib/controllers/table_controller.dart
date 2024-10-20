@@ -308,8 +308,8 @@ class TableController extends GetxController {
   }
 
   int randomItem() {
-    int luckmultiplier = (specialRoll("l") ~/ 20).clamp(0, 5);
-    final dice = singleDiceRoll().clamp(1, 100) + luckmultiplier;
+    int perMultiplier = (specialRoll("p") ~/ 20).clamp(0, 5);
+    final dice = singleDiceRoll().clamp(1, 100) - perMultiplier;
     final characterLevel = _characterController.calculateLevel(0) ~/ 10;
 
     // คำนวณโอกาสการเกิดไอเทมแต่ละประเภท
@@ -339,7 +339,7 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        ((((special.value["a"]! * 1.5) + (special.value["i"]! / 1.5)) / 5.5)
+        ((((special.value["a"]! * 1.5) + (special.value["e"]! / 1.5)) / 5)
                 .floor())
             .clamp(1, 400);
     return regeneration;
