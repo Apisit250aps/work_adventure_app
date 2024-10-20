@@ -142,7 +142,7 @@ class QuestController extends GetxController {
         storedQuest.isCompleted = !storedQuest.isCompleted;
         await storedQuest.save();
         _characterController.taskAdditional(totalExp, totalCoin);
-        print('EXP :${totalExp} Coin:${totalCoin} completed');
+        print('EXP :$totalExp Coin:$totalCoin completed');
         print('Quest status toggled successfully');
       }
     } catch (e) {
