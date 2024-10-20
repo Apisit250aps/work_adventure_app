@@ -113,9 +113,10 @@ class _CharacterFormState extends State<CharacterUpdateForm> {
                     ),
                     child: IconButton(
                       icon: const Icon(Boxicons.bx_trash, color: Colors.white),
-                      onPressed: () {
+                      onPressed: () async {
                         // _confirmDelete(context, widget.work);
                         confirmDelete(widget.character);
+                       
                       },
                     ),
                   ),
@@ -144,14 +145,18 @@ class _CharacterFormState extends State<CharacterUpdateForm> {
     );
   }
 
-  void confirmDelete(Character character) {
-    Get.dialog(
+  void confirmDelete(Character character) async {
+    await Get.dialog(
       ConfirmDialog(
         message: "Character will delete",
         icon: "warning",
-        onConfirm: () => Get.back(),
+        onConfirm: () {
+          controller.deleteCharacter(character.id as String);
+          Get.back();
+        },
       ),
     );
+    Get.back();
   }
 
   @override

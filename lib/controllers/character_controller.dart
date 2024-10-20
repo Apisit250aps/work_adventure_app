@@ -138,6 +138,18 @@ class CharacterController extends GetxController {
     }
   }
 
+  Future<void> deleteCharacter(String id) async {
+    isLoading.value = true;
+    try {
+      final String endpoint = "${_rest.deleteCharacter}/$id";
+      await _apiService.delete(endpoint);
+    } catch (e) {
+      throw Error();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> updateCharacterOnServer() async {
     try {
       String path = _rest.updateCharacter;
