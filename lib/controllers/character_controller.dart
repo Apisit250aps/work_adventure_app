@@ -191,7 +191,7 @@ class CharacterController extends GetxController {
     int expCurrentLevel = (C * (pow(base, currentLevel - 1) - 1)).toInt();
     int expForNextLevel = expNextLevel - expCurrentLevel;
     int expGap = totalExp - expCurrentLevel;
-    print("ทดสอบๆ $expGap $expForNextLevel ${currentLevel}");
+    print("ทดสอบๆ $expGap $expForNextLevel $currentLevel");
     print("$totalExp $expCurrentLevel");
     print("EXP : $currentExp");
     print(characterSelect.value.toJson());

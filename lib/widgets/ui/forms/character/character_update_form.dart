@@ -55,9 +55,7 @@ class _CharacterFormState extends State<CharacterUpdateForm> {
         });
       } catch (e) {
         Get.snackbar(
-          widget.character == null
-              ? "Failed to create character"
-              : "Failed to update character",
+          "Failed to update character",
           e.toString(),
         );
       } finally {
@@ -116,7 +114,6 @@ class _CharacterFormState extends State<CharacterUpdateForm> {
                       onPressed: () async {
                         // _confirmDelete(context, widget.work);
                         confirmDelete(widget.character);
-                       
                       },
                     ),
                   ),
@@ -128,7 +125,7 @@ class _CharacterFormState extends State<CharacterUpdateForm> {
                           ? const CircularProgressIndicator(color: Colors.white)
                           : const Text(
                               "Save",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18,

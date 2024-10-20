@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:get/get.dart';
+import 'package:work_adventure/constant.dart';
+import 'package:work_adventure/controllers/user_controller.dart';
 
-class OperatorDrawer extends StatelessWidget {
+class OperatorDrawer extends GetWidget<UserController> {
   const OperatorDrawer({super.key});
 
   @override
@@ -10,23 +14,25 @@ class OperatorDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage('assets/images/characters/wizard.png'), // ใส่รูปโปรไฟล์ของผู้ใช้ที่นี่
+                    backgroundImage: AssetImage(
+                        'assets/images/characters/wizard.png'), // ใส่รูปโปรไฟล์ของผู้ใช้ที่นี่
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'John Doe', // ชื่อผู้ใช้
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        controller.user.value?.username as String, // ชื่อผู้ใช้
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      Text(
+                      const Text(
                         'Level 42', // เลเวลของผู้ใช้
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
@@ -40,8 +46,8 @@ class OperatorDrawer extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
-                  _buildStatTile('XP', '12,345', Icons.star),
-                  _buildStatTile('Quests Completed', '87', Icons.assignment_turned_in),
+                  _buildStatTile('Focus points', '12,345', Boxicons.bx_time),
+                  _buildStatTile('Coins', '87', Boxicons.bx_coin_stack),
                   _buildStatTile('Items Collected', '254', Icons.category),
                   const SizedBox(height: 20),
                   const Text(
@@ -61,10 +67,10 @@ class OperatorDrawer extends StatelessWidget {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              leading: const Icon(Boxicons.bx_exit),
+              title: const Text('Logout'),
               onTap: () {
-                // โค้ดสำหรับเปิดหน้าตั้งค่า
+                controller.logout();
               },
             ),
           ],
@@ -78,13 +84,21 @@ class OperatorDrawer extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.blue),
+          Icon(icon, size: 20, color: secondaryColor),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
             ],
           ),
         ],
@@ -92,7 +106,8 @@ class OperatorDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(String title, IconData icon, VoidCallback onPressed) {
+  Widget _buildActionButton(
+      String title, IconData icon, VoidCallback onPressed) {
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon),
