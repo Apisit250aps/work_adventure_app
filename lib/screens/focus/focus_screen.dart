@@ -411,9 +411,9 @@ class HPEXPBars extends StatelessWidget {
 
   const HPEXPBars({
     super.key,
-    this.staminaBarWidth = 1.0,
+    this.staminaBarWidth = 0.35,
     this.hpBarWidth = 0.35,
-    this.expBarWidth = 0.35,
+    this.expBarWidth = 1.0,
   });
 
   @override
@@ -435,7 +435,7 @@ class HPEXPBars extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
-                widthFactor: staminaBarWidth,
+                widthFactor: expBarWidth,
                 child: ProgressBar(
                   value: expNow,
                   max: expMax,
@@ -461,7 +461,7 @@ class HPEXPBars extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: (expBarWidth * 100).toInt(),
+                  flex: (staminaBarWidth * 100).toInt(),
                   child: ProgressBar(
                     value: staminaNow,
                     max: staminaMax,
