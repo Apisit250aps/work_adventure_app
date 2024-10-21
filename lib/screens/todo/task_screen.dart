@@ -19,6 +19,7 @@ class TaskScreen extends GetWidget<TasksController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.loadTasks();
     return DefaultTabController(
       length: 2,
       child: Scaffold(

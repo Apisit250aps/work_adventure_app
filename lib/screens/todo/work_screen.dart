@@ -114,7 +114,9 @@ class TaskOfWork extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          print("Task of work");
+        },
         style: ButtonStyle(
           iconColor: WidgetStatePropertyAll(
             task.isDone ? baseColor : textColor,

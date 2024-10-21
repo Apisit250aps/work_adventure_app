@@ -6,6 +6,7 @@ import 'package:work_adventure/controllers/quest_controller.dart';
 import 'package:work_adventure/controllers/special_controller.dart';
 import 'package:work_adventure/controllers/work_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
+import 'package:work_adventure/controllers/tasks_controller.dart';
 
 // import 'package:work_adventure/controllers/characterbar_controller.dart';
 
@@ -18,9 +19,11 @@ class PageControllerX extends GetxController {
   final FocusController focusController;
   final TableController tableController;
   final CharacterbarController characterbarController;
+  final TasksController tasksController;
 
   PageControllerX()
       : workController = Get.put(WorkController()),
+        tasksController = Get.put(TasksController()),
         specialController = Get.put(SpecialController()),
         tableController = Get.put(TableController()),
         focusController = Get.put(FocusController()),
