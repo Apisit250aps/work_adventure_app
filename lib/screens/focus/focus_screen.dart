@@ -466,7 +466,7 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFC766A),
                     label: 'HP',
                     customText: (value, max) =>
-                        'HP: $value/$max (+${tabController.healthRegeneration}/5s)',
+                        'HP: $value/$max (+${tabController.healthRegeneration}/2s)',
                   ),
                 ),
                 Expanded(
