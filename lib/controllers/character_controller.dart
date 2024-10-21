@@ -243,7 +243,7 @@ class CharacterController extends GetxController {
   }
 
   Future<bool> taskAdditional(int exp, int coin) async {
-    await isLevelup(exp);
+    isLevelup(exp);
     print("เพิ่มค่า $exp");
     await additionalExp(exp);
     print("เพิ่มค่า $coin");
