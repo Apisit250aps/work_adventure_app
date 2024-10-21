@@ -64,7 +64,7 @@ class FocusController extends GetxController {
   final RxBool isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
   final RxBool isDead = false.obs;
-  final RxInt _deathTimeRemaining = 0.obs;
+  final RxInt deathTimeRemaining = 0.obs;
   RxInt damageInput = 0.obs;
   RxInt expInput = 0.obs;
   RxInt coinInput = 0.obs;
@@ -98,8 +98,8 @@ class FocusController extends GetxController {
   late List<List<MonsterName>> enemy;
 
   // Getters
-  int get timeRemaining => _timeRemaining.value;
   int get totalTime => _totalTime.value;
+  int get timeRemaining => _timeRemaining.value;
   bool get isActive => _isActive.value;
   List<LogEntry> get adventureLog => _adventureLog.toList();
   String get currentEncounterIcon => _currentEncounterIcon.value;
@@ -243,10 +243,13 @@ class FocusController extends GetxController {
     focusCounter.value = 0;
     mustSender.value = false;
     _restTimeRemaining.value = 0;
-    _deathTimeRemaining.value = 0;
+    deathTimeRemaining.value = 0;
     damageInput.value = 0;
     expInput.value = 0;
     coinInput.value = 0;
+    runBar = 0.obs;
+    dieBar = 0.obs;
+    restBar = 0.obs;
   }
 
   void _resetQuestVariables() {
@@ -275,14 +278,33 @@ class FocusController extends GetxController {
   // Timer methods
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _timeRemaining--;
+      runBar++;
+
+      if (runBar.value >= _eventIntervalSeconds) {
+        runBar.value = 0;
+      }
+      if (isDead.value) {
+        dieBar++;
+      } else {
+        dieBar.value = 0;
+      }
+      if (isResting.value) {
+        restBar++;
+      } else {
+        restBar.value = 0;
+      }
+
+      if (_timeRemaining.value <= 0) {
+        mustSender.value = true;
+      }
+      updateServerSystem();
+      focusSystem();
       if (_timeRemaining.value > 0) {
-        updateServerSystem();
-        focusSystem();
         generationSystem();
       } else {
         _endSession();
       }
-      _timeRemaining--;
     });
   }
 
@@ -319,11 +341,6 @@ class FocusController extends GetxController {
   void _startEventTimer() {
     _eventTimer?.cancel();
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
-      if (isDead.value) {
-        isDead.value = false;
-        damageInput.value ~/= 2;
-        spCounter.value = 0;
-      }
       if (_isActive.value &&
           _timeRemaining.value > 0 &&
           isDead.value == false) {
@@ -360,8 +377,14 @@ class FocusController extends GetxController {
   void _startReviveTimer() {
     _eventTimer?.cancel();
     _reviveTimer?.cancel();
-    _reviveTimer = Timer(Duration(seconds: _deathTimeRemaining.value), () {
+    _reviveTimer = Timer(Duration(seconds: deathTimeRemaining.value), () {
       _reviveTimer?.cancel();
+      runBar++;
+      if (isDead.value) {
+        isDead.value = false;
+        damageInput.value ~/= 2;
+        spCounter.value = 0;
+      }
       _startEventTimer();
     });
   }
@@ -504,10 +527,9 @@ class FocusController extends GetxController {
     mustSender.value = true;
     isDead.value = true;
     spCounter.value = _tableController.calculateCharacterStamina;
-    _deathTimeRemaining.value = _tableController.timeTodie;
-    int deathTimeShow = _deathTimeRemaining.value + _eventIntervalSeconds + 1;
+    deathTimeRemaining.value = _tableController.timeTodie;
     final deathMessage = _getDeathMessage(enemy.toString());
-    _updateEncounter("💀", "$deathMessage\n$deathTimeShow");
+    _updateEncounter("💀", "$deathMessage");
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
 
     _startReviveTimer();

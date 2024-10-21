@@ -304,7 +304,7 @@ class ProgressBar extends StatelessWidget {
     required this.color,
     required this.label,
     this.isReversed = false,
-    this.animationDuration = const Duration(milliseconds: 1000),
+    this.animationDuration = const Duration(milliseconds: 700),
     this.customText,
     this.textAlignRight = false,
   });
@@ -350,7 +350,7 @@ class ProgressBar extends StatelessWidget {
           },
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 100),
           child: Container(
             key: ValueKey<int>(value),
             height: 23,
@@ -433,13 +433,13 @@ class HPEXPBars extends StatelessWidget {
         int eventNow = 1;
         int runMax = tabController.timeEventRun;
         int runNow = focusController.runBar.value;
-        int dieMax = tabController.timeTodie;
+        int dieMax = focusController.deathTimeRemaining.value + runMax;
         int dieNow = focusController.dieBar.value;
-        int restMax = tabController.restTimer;
+        int restMax = tabController.restTimer + runMax;
         int restNow = focusController.restBar.value;
 
         if (focusController.isDead.value) {
-          eventMax = dieMax;
+          eventMax = dieMax + 1;
           eventNow = dieNow;
         } else if (focusController.isResting.value) {
           eventMax = restMax;
@@ -463,8 +463,8 @@ class HPEXPBars extends StatelessWidget {
                   child: ProgressBar(
                     value: eventNow,
                     max: eventMax,
-                    color: const Color(0xFFFFD700),
-                    label: 'SP',
+                    color: Colors.grey,
+                    label: 'bar',
                     isReversed: true,
                     textAlignRight: true,
                     customText: (value, max) => '$value/$max',
@@ -498,7 +498,7 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFC766A),
                     label: 'HP',
                     customText: (value, max) =>
-                        'HP: $value/$max (+${tabController.healthRegeneration}/3s)',
+                        'HP: $value/$max (+${tabController.healthRegeneration}/5s)',
                   ),
                 ),
                 Expanded(
