@@ -31,7 +31,6 @@ class CharacterController extends GetxController {
   void onInit() {
     super.onInit();
     loadCharacters();
-   
   }
 
   @override
@@ -223,11 +222,11 @@ class CharacterController extends GetxController {
     await updateCharacterOnServer();
   }
 
-  Future<bool> isLevelup(int expInput) async {
+  bool isLevelup(int expInput) {
     final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
     if (expGap >= expForNextLevel) {
       print("level up");
-      await additionalSpecial();
+      additionalSpecial();
       print(characterSelect.value.toJson());
       return true;
     }

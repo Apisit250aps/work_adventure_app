@@ -273,18 +273,18 @@ class FocusController extends GetxController {
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_timeRemaining.value > 0) {
-        _timeRemaining--;
         updateServerSystem();
         focusSystem();
         generationSystem();
       } else {
         _endSession();
       }
+      _timeRemaining--;
     });
   }
 
   void updateServerSystem() {
-    if (mustSender.value) {
+    if (mustSender.value || _characterController.isLevelup(expInput.value)) {
       _characterController.focusSender(expInput.value, coinInput.value);
       expInputReset();
       coinInputReset();
@@ -572,7 +572,8 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
-    int baseMax = (_characterController.calculateLevel(0) * 3).clamp(2, 450);
+    int baseMax =
+        ((_characterController.calculateLevel(0) * 2.5).toInt()).clamp(2, 450);
     int baseMin =
         ((_characterController.calculateLevel(0) * 1.5).toInt()).clamp(2, 255);
     final multipliers = [

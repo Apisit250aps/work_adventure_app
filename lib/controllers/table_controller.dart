@@ -39,7 +39,7 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 10 + special.value['s']!);
+      (special.value['e']! * 10000 + special.value['s']!);
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -80,13 +80,13 @@ class TableController extends GetxController {
 
   // การคำนวณประสบการณ์
   int calculateEXP(int exp) => ((exp +
-              ((exp * (specialRoll('i') / 20)) *
+              ((exp * (specialRoll('i') / 15)) *
                   _percentage(specialRoll('i')))) *
           levelMultiplier)
       .round();
 
   double get expIncreasePercentage {
-    double intmultiplier = (special.value["i"]! / 20).clamp(1, 10) * 100;
+    double intmultiplier = (special.value["i"]! / 15).clamp(1, 10) * 100;
     double intPercentage = _percentage(special.value["i"]!);
     return intmultiplier + intPercentage - 100;
   }
@@ -311,7 +311,7 @@ class TableController extends GetxController {
     int perMultiplier =
         (((specialRoll("p") * 2) + ((specialRoll("l")) / 1.5)) ~/ 13)
             .clamp(0, 7);
-    final dice = singleDiceRoll().clamp(1, 21) - perMultiplier;
+    int dice = singleDiceRoll().clamp(1, 21) - perMultiplier;
     final characterLevel = _characterController.calculateLevel(0) ~/ 10;
 
     // คำนวณโอกาสการเกิดไอเทมแต่ละประเภท
@@ -373,7 +373,8 @@ class TableController extends GetxController {
   int generateRandomEvent() {
     int chaMultiplier = specialRoll("c") ~/ 15;
     int perMultiplier = specialRoll("p") ~/ 10;
-    final dice = singleDiceRoll().clamp(1, 21);
+    // int dice = singleDiceRoll().clamp(1, 21);
+    int dice = 1;
 
     // คำนวณโอกาสการเกิด Event แต่ละประเภท
     final List<int> eventChance = [

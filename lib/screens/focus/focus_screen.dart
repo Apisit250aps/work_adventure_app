@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
-import 'package:work_adventure/controllers/character_controller.dart';
+
 import 'package:collection/collection.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 
@@ -13,14 +13,6 @@ class FocusScreen extends GetView<FocusController> {
   const FocusScreen({super.key, required int totalTime});
   @override
   Widget build(BuildContext context) {
-    final characterController = Get.find<CharacterController>();
-    int expInput = controller.expInput.value;
-    characterController.isLevelup(expInput).then((isLevelup) {
-      controller.expInputReset();
-      controller.coinInputReset();
-      controller.mustSenderReset();
-    });
-
     return Container(
       color: backgroundColor,
       child: SafeArea(
@@ -428,7 +420,6 @@ class HPEXPBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
     final tabController = Get.find<TableController>();
-    print("${tabController.levelMultiplier}");
     return Positioned(
       bottom: 0,
       left: 0,
