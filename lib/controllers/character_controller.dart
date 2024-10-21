@@ -223,6 +223,7 @@ class CharacterController extends GetxController {
   }
 
   bool isLevelup(int expInput) {
+    loadCharacters();
     final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
     if (expGap >= expForNextLevel) {
       print("level up");
@@ -234,7 +235,6 @@ class CharacterController extends GetxController {
   }
 
   Future<bool> focusSender(int exp, int coin) async {
-    await isLevelup(exp);
     print("ส่งค่า $exp");
     print("ส่งค่า $coin");
     await additionalExp(exp);

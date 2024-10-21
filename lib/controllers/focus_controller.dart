@@ -284,7 +284,7 @@ class FocusController extends GetxController {
   }
 
   void updateServerSystem() {
-    if (mustSender.value || _characterController.isLevelup(expInput.value)) {
+    if (_characterController.isLevelup(expInput.value) || mustSender.value) {
       _characterController.focusSender(expInput.value, coinInput.value);
       expInputReset();
       coinInputReset();
@@ -578,9 +578,9 @@ class FocusController extends GetxController {
         ((_characterController.calculateLevel(0) * 1.5).toInt()).clamp(2, 255);
     final multipliers = [
       [1, 1, 1],
-      [2, 2, 2],
-      [4, 6, 6],
-      [12, 18, 18]
+      [3, 3, 3.5],
+      [5, 7, 8],
+      [13, 18, 18]
     ];
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)
@@ -589,7 +589,7 @@ class FocusController extends GetxController {
 
     int coin = ((baseValue) * multipliers[index][1]).toInt();
     int damage = (baseValue * multipliers[index][2]).toInt();
-    int exp = ((rollOne + 5).clamp(5, 20)) * multipliers[index][0];
+    int exp = (((rollOne + 5).clamp(5, 20)) * multipliers[index][0]).toInt();
 
     return (
       _tableController.calculateCoin(coin, index),
