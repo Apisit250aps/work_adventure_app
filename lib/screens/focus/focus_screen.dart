@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
-
 import 'package:collection/collection.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 
@@ -420,6 +419,7 @@ class HPEXPBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
     final tabController = Get.find<TableController>();
+    final focusController = Get.find<FocusController>();
     return Positioned(
       bottom: 0,
       left: 0,
@@ -429,8 +429,49 @@ class HPEXPBars extends StatelessWidget {
         final (expNow, expMax) = characterbar.expBar();
         final (staminaNow, staminaMax) = characterbar.spBar();
 
+        int eventMax = 1;
+        int eventNow = 1;
+        int runMax = tabController.timeEventRun;
+        int runNow = focusController.runBar.value;
+        int dieMax = tabController.timeTodie;
+        int dieNow = focusController.dieBar.value;
+        int restMax = tabController.restTimer;
+        int restNow = focusController.restBar.value;
+
+        if (focusController.isDead.value) {
+          eventMax = dieMax;
+          eventNow = dieNow;
+        } else if (focusController.isResting.value) {
+          eventMax = restMax;
+          eventNow = restNow;
+        } else {
+          eventMax = runMax;
+          eventNow = runNow;
+        }
+
         return Column(
           children: [
+            Row(
+              children: [
+                Expanded(
+                  flex: (hpBarWidth * 100).toInt(),
+                  child:
+                      const SizedBox(), // แทนที่ ProgressBar ด้วย SizedBox ว่างเปล่า
+                ),
+                Expanded(
+                  flex: (staminaBarWidth * 100).toInt(),
+                  child: ProgressBar(
+                    value: eventNow,
+                    max: eventMax,
+                    color: const Color(0xFFFFD700),
+                    label: 'SP',
+                    isReversed: true,
+                    textAlignRight: true,
+                    customText: (value, max) => '$value/$max',
+                  ),
+                ),
+              ],
+            ),
             // EXP bar
             Align(
               alignment: Alignment.centerLeft,
