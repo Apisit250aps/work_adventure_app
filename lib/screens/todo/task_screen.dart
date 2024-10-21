@@ -341,11 +341,14 @@ class TaskListTile extends GetWidget<TasksController> {
 
             String message;
             if (!task.isDone) {
-              characterController.taskAdditional(totalExp, totalCoin);
-              message = "เสร็จสิ้นงาน ได้รับ $totalExp🧿 และ $totalCoin💰";
+              if (task.isFirst!) {
+                characterController.taskAdditional(totalExp, totalCoin);
+                message = "เสร็จสิ้นงาน ได้รับ $totalExp🧿 และ $totalCoin💰";
+              } else {
+                message = "เสร็จสิ้นงาน คุณได้รับ EXP🧿 และ Coin💰";
+              }
             } else {
-              characterController.taskReduced(totalExp, totalCoin);
-              message = "ยกเลิกงาน ลด $totalExp🧿 และ $totalCoin💰";
+              message = "ยกเลิกงาน โปรดตรวจสอบความเรียบร้อยอีกครั้ง";
             }
 
             controller.updateTask(task.copyWith(

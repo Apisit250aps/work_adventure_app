@@ -251,14 +251,6 @@ class CharacterController extends GetxController {
     return true;
   }
 
-  Future<bool> taskReduced(int exp, int coin) async {
-    print("เพิ่มค่า ${-exp}");
-    await additionalExp(-exp);
-    print("เพิ่มค่า ${-coin}");
-    await additionalCoins(-coin);
-    return true;
-  }
-
   void pointDecrease() {
     print("ลด special -1");
     Character updatedCharacter = characterSelect.value.copyWith();

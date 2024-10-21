@@ -272,18 +272,21 @@ class FocusController extends GetxController {
   // Timer methods
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _timeRemaining--;
+      updateServerSystem();
+      focusSystem();
       if (_timeRemaining.value > 0) {
-        updateServerSystem();
-        focusSystem();
         generationSystem();
       } else {
         _endSession();
       }
-      _timeRemaining--;
     });
   }
 
   void updateServerSystem() {
+    if (_timeRemaining.value <= 0) {
+      mustSender.value = true;
+    }
     if (_characterController.isLevelup(expInput.value) || mustSender.value) {
       _characterController.focusSender(expInput.value, coinInput.value);
       expInputReset();
@@ -364,6 +367,7 @@ class FocusController extends GetxController {
   }
 
   void _endSession() {
+    _timeRemaining.value = 0;
     _stopTimers();
     _isActive.value = false;
     showSummary();
@@ -579,15 +583,15 @@ class FocusController extends GetxController {
     final multipliers = [
       [1, 1, 1],
       [3, 3, 3.5],
-      [5, 7, 8],
-      [13, 18, 18]
+      [5, 7, 7],
+      [13, 17, 17]
     ];
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)
             .round()) +
         4;
 
-    int coin = ((baseValue) * multipliers[index][1]).toInt();
+    int coin = ((baseValue / 2) * multipliers[index][1]).toInt();
     int damage = (baseValue * multipliers[index][2]).toInt();
     int exp = (((rollOne + 5).clamp(5, 20)) * multipliers[index][0]).toInt();
 

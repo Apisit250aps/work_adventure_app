@@ -45,12 +45,12 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
     final CharacterController characterController = Get.find();
     final stats = [
       ('STR', controller.special.value.strength, '🫁 🛡️ ❤️  (ลดความเสียหาย)'),
-      ('PER', controller.special.value.perception, '💰  💎  (ทรัพยากร)'),
+      ('PER', controller.special.value.perception, '💰 ⚔️ 💎  (ทรัพยากร)'),
       ('END', controller.special.value.endurance, '❤️ 🏕️ 🩸 ⌚  (เอาตัวรอด)'),
       (
         'CHA',
         controller.special.value.charisma,
-        '📜 🏕️ 🍀 💰  (ลดความเสี่ยง)'
+        '📜 ☠️ 🏕️ 🍀  (ลดความเสี่ยง)'
       ),
       (
         'INT',

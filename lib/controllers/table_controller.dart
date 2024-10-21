@@ -173,10 +173,10 @@ class TableController extends GetxController {
 
   (int, int) questReward(int difficulty) {
     const questRewards = [
-      [40, 70], // EXP, Coin สำหรับเควสธรรมดา
-      [80, 210], // สำหรับเควสไม่ธรรมดา
-      [160, 420], // สำหรับเควสหายาก
-      [320, 840] // สำหรับเควสระดับเทพ
+      [40, 35], // EXP, Coin สำหรับเควสธรรมดา
+      [80, 105], // สำหรับเควสไม่ธรรมดา
+      [160, 210], // สำหรับเควสหายาก
+      [320, 420] // สำหรับเควสระดับเทพ
     ];
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
@@ -273,6 +273,8 @@ class TableController extends GetxController {
 
   int get timeTodie {
     int baseTime = 90;
+    int roll = singleDiceRoll();
+    int chamultiplier = special.value["c"]! ~/ 6;
     int timeEventDie = (((special.value["s"]! +
                     special.value["p"]! +
                     special.value["e"]! +
@@ -283,20 +285,24 @@ class TableController extends GetxController {
                 7) -
             7)
         .clamp(0, 93);
+
     int timeDie =
         ((baseTime - ((baseTime * _percentage(timeEventDie)).toInt())) -
                 (timeEventRun + 1))
-            .clamp(10, 90);
+            .clamp(30, 90);
+    if (roll > 17 - chamultiplier) {
+      return timeDie ~/ 2;
+    }
     return timeDie;
   }
 
   //เหตุการณ์เจอสมบัติ
   (int, int) itemReward(int difficulty) {
     const questRewards = [
-      [10, 20], // EXP, Coin
-      [20, 40],
-      [40, 80],
-      [80, 160]
+      [10, 5], // EXP, Coin
+      [20, 10],
+      [40, 20],
+      [80, 40]
     ];
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
@@ -351,8 +357,8 @@ class TableController extends GetxController {
 
   //task Sender
   (int, int) taskSender(int difficulty) {
-    int baseExp = 60;
-    int baseCoin = 25;
+    int baseExp = 25;
+    int baseCoin = 10;
     int totalExp =
         ((calculateEXP(baseExp) * difficulty) * levelMultiplier).round();
     int totalCoin =
@@ -362,8 +368,8 @@ class TableController extends GetxController {
   }
 
   (int, int) questSender() {
-    int baseExp = 40;
-    int baseCoin = 15;
+    int baseExp = 10;
+    int baseCoin = 5;
     int totalExp = (calculateEXP(baseExp) * levelMultiplier).round();
     int totalCoin = (calculateCoin(baseCoin, -100) * levelMultiplier).round();
     return (totalExp, totalCoin);
@@ -374,7 +380,6 @@ class TableController extends GetxController {
     int chaMultiplier = specialRoll("c") ~/ 15;
     int perMultiplier = specialRoll("p") ~/ 10;
     int dice = singleDiceRoll().clamp(1, 21);
-
 
     // คำนวณโอกาสการเกิด Event แต่ละประเภท
     final List<int> eventChance = [
