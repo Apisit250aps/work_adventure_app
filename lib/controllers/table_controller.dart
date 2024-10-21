@@ -39,7 +39,7 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 10000 + special.value['s']!);
+      (special.value['e']! * 10 + special.value['s']!);
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -373,8 +373,8 @@ class TableController extends GetxController {
   int generateRandomEvent() {
     int chaMultiplier = specialRoll("c") ~/ 15;
     int perMultiplier = specialRoll("p") ~/ 10;
-    // int dice = singleDiceRoll().clamp(1, 21);
-    int dice = 1;
+    int dice = singleDiceRoll().clamp(1, 21);
+
 
     // คำนวณโอกาสการเกิด Event แต่ละประเภท
     final List<int> eventChance = [
