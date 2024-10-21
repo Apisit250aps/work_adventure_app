@@ -14,8 +14,11 @@ import 'package:work_adventure/widgets/ui/dialog/confirm_dialog.dart';
 import 'package:work_adventure/widgets/ui/forms/quest/quest_create_form.dart';
 import 'package:work_adventure/widgets/ui/forms/work/work_create_form.dart';
 import 'package:work_adventure/widgets/ui/navigate/bottom_nav.dart';
+import 'package:work_adventure/widgets/ui/navigate/operator_drawer.dart';
 
 class OperatorScreen extends GetView<PageControllerX> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   OperatorScreen({super.key});
 
   final List<PageData> pages = [
@@ -55,7 +58,9 @@ class OperatorScreen extends GetView<PageControllerX> {
         }
       },
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: _buildAppBar(),
+        endDrawer: const OperatorDrawer(),
         body: PageView(
           controller: controller.pageController,
           onPageChanged: controller.changePage,
@@ -102,6 +107,15 @@ class OperatorScreen extends GetView<PageControllerX> {
           ),
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            print('Drawer button pressed'); // Для отладки
+            _scaffoldKey.currentState?.openEndDrawer();
+          },
+          icon: const Icon(Boxicons.bx_menu_alt_right),
+        )
+      ],
       // actions: [
       //   IconButton(
       //     onPressed: () {

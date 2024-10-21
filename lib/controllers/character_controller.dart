@@ -31,6 +31,7 @@ class CharacterController extends GetxController {
   void onInit() {
     super.onInit();
     loadCharacters();
+   
   }
 
   @override

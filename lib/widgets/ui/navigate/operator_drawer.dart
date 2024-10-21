@@ -10,6 +10,7 @@ class OperatorDrawer extends GetWidget<UserController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.loadRanking();
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -75,7 +76,10 @@ class OperatorDrawer extends GetWidget<UserController> {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Boxicons.bx_award, size: 24,),
+                                Icon(
+                                  Boxicons.bx_award,
+                                  size: 24,
+                                ),
                                 Text(
                                   "Ranking",
                                   style: TextStyle(
@@ -104,7 +108,6 @@ class OperatorDrawer extends GetWidget<UserController> {
                     ));
                   }),
                   const SizedBox(height: 10),
-                  
                 ],
               ),
             ),
@@ -140,7 +143,8 @@ class OperatorDrawer extends GetWidget<UserController> {
           backgroundColor: _getRankColor(index),
           child: Text(
             '${index + 1}',
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         title: Text(
@@ -158,7 +162,6 @@ class OperatorDrawer extends GetWidget<UserController> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            
             Text(
               '${user.totalCoin}',
               style: TextStyle(
