@@ -150,7 +150,7 @@ class SpecialController extends GetxController {
             updatedSpecial =
                 updatedSpecial.copyWith(agility: updatedSpecial.agility + 1);
             break;
-          case "LUK":
+          case "LCK":
             updatedSpecial =
                 updatedSpecial.copyWith(luck: updatedSpecial.luck + 1);
             break;

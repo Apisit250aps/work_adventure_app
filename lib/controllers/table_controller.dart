@@ -80,13 +80,13 @@ class TableController extends GetxController {
 
   // การคำนวณประสบการณ์
   int calculateEXP(int exp) => ((exp +
-              ((exp * (specialRoll('i') / 15)) *
+              ((exp * (specialRoll('i') / 20)) *
                   _percentage(specialRoll('i')))) *
           levelMultiplier)
       .round();
 
   double get expIncreasePercentage {
-    double intmultiplier = (special.value["i"]! / 10).clamp(1, 10) * 100;
+    double intmultiplier = (special.value["i"]! / 20).clamp(1, 10) * 100;
     double intPercentage = _percentage(special.value["i"]!);
     return intmultiplier + intPercentage - 100;
   }
@@ -341,13 +341,13 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        ((((special.value["a"]! * 1.5) + (special.value["e"]! / 2.5)) / 6)
+        ((((special.value["a"]! * 1.5) + (special.value["e"]! / 2.5)) / 5.5)
                 .floor())
             .clamp(1, 400);
     return regeneration;
   }
 
-  bool timeToRegenerate(int time) => (time == 2) ? true : false;
+  bool timeToRegenerate(int time) => (time == 3) ? true : false;
 
   //task Sender
   (int, int) taskSender(int difficulty) {
