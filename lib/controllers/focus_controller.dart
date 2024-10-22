@@ -605,19 +605,19 @@ class FocusController extends GetxController {
   (int, int, int) _calculateEnemyStats(int index) {
     int baseMax =
         ((_characterController.calculateLevel(_characterController.currentExp) *
-                    2.5)
+                    3)
                 .toInt())
             .clamp(2, 450);
     int baseMin =
         ((_characterController.calculateLevel(_characterController.currentExp) *
-                    1.5)
+                    2)
                 .toInt())
             .clamp(2, 255);
     final multipliers = [
-      [1, 1, 1],
-      [3, 2, 2],
-      [6, 6, 6],
-      [12, 16, 18]
+      [2, 1, 1],
+      [4, 2, 2],
+      [8, 6, 5],
+      [16, 13, 13]
     ];
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)

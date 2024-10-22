@@ -43,7 +43,7 @@ class TableController extends GetxController {
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 10 + special.value['s']!) + 10;
+      (special.value['e']! * 10 + special.value['s']!) + 15;
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -107,7 +107,7 @@ class TableController extends GetxController {
     } else {
       finalCoin = finalCoin + (finalCoin * perBonus).round();
     }
-    return finalCoin.clamp(1, double.infinity.toInt());
+    return finalCoin == 0 ? 1 : finalCoin;
   }
 
   bool _shouldReduceCoin(int difficulty) {
