@@ -72,6 +72,10 @@ class FocusController extends GetxController {
   RxInt runBar = 0.obs;
   RxInt dieBar = 0.obs;
   RxInt restBar = 0.obs;
+
+  RxInt eventIntervalSeconds = 0.obs;
+  RxInt restMaxBar = 0.obs;
+
   // Timers
   Timer? _timer;
   Timer? _eventTimer;
@@ -113,6 +117,8 @@ class FocusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    restMaxBar.value = _tableController.restTimer;
+    eventIntervalSeconds.value = _tableController.timeEventRun;
     _initializeEnemies();
     _initializeItems();
     _setupTableControllerListener();
@@ -394,6 +400,8 @@ class FocusController extends GetxController {
   }
 
   void _endSession() {
+    _resetQuestVariables();
+    _resetSessionVariables();
     _stopTimers();
     _isActive.value = false;
     showSummary();
@@ -480,8 +488,8 @@ class FocusController extends GetxController {
   }
 
   void _generateNothingEvent() {
-    _updateEncounter("🌲",
-        "คุณก้าวเท้าเดินไปบนเส้นทางอันเงียบสงบ\nไม่มีสิ่งใดมารบกวนการเดินทาง\nอันแสนผ่อนคลายของคุณ");
+    _updateEncounter("⛅",
+        "เส้นทางที่คุณเดินไม่มีแม้แต่เงา\nไม่มีสิ่งใดมารบกวนความสงบ\nความเป็นจริงที่แสนผ่อนคลาย");
     _addLogEntry(
         "🌟", "Peaceful", "You continue your journey without incident.");
   }
@@ -603,26 +611,22 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
-    int baseMax =
-        ((_characterController.calculateLevel(_characterController.currentExp) *
-                    3)
-                .toInt())
-            .clamp(2, 450);
+    int baseMax = (2 *
+            (_characterController
+                .calculateLevel(_characterController.currentExp))) +
+        6;
+
     int baseMin =
-        ((_characterController.calculateLevel(_characterController.currentExp) *
-                    2)
-                .toInt())
-            .clamp(2, 255);
+        (_characterController.calculateLevel(_characterController.currentExp)) +
+            3;
     final multipliers = [
       [2, 1, 1],
       [4, 2, 2],
       [8, 6, 5],
-      [16, 13, 13]
+      [16, 13, 11]
     ];
-    final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
-                _tableController.levelMultiplier)
-            .round()) +
-        4;
+    final baseValue = (Random().nextInt(baseMax).clamp(baseMin, baseMax)) *
+        (_tableController.levelMultiplier).round();
 
     int coin = ((baseValue) * multipliers[index][1]).toInt();
     int damage = (baseValue * multipliers[index][2]).toInt();

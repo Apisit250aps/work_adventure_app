@@ -35,15 +35,13 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      (pow(1.15, _characterController.calculateLevel(expCurrent)).toDouble() +
-          0.15) *
-      (_characterController.calculateLevel(expCurrent) / 10);
+      (_characterController.calculateLevel(expCurrent) / 15).clamp(0.5, 6);
 
   int get expCurrent => _characterController.currentExp;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 10 + special.value['s']!) + 15;
+      (special.value['e']! * 7 + special.value['s']!) + 15;
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -99,15 +97,15 @@ class TableController extends GetxController {
   int calculateCoin(int coin, int difficulty) {
     double luckBonus = _percentage(specialRoll('l'));
     double perBonus = _percentage(specialRoll('p'));
-    int coinBase = (coin * levelMultiplier).round();
-    int finalCoin = coinBase + ((coinBase * luckBonus) ~/ 0.65);
+    int coinBase = (coin * (levelMultiplier)).round();
+    int finalCoin = (coinBase + ((coinBase * luckBonus))).toInt();
 
     if (_shouldReduceCoin(difficulty)) {
       finalCoin ~/= 3;
     } else {
-      finalCoin = finalCoin + (finalCoin * perBonus).round();
+      finalCoin = (finalCoin + (finalCoin * perBonus)).round();
     }
-    return finalCoin == 0 ? 1 : finalCoin;
+    return finalCoin <= 0 ? 1 : finalCoin;
   }
 
   bool _shouldReduceCoin(int difficulty) {
@@ -120,20 +118,14 @@ class TableController extends GetxController {
     const baseReduction = 0.05;
     const maxReduction = 0.80;
     const scalingFactor = 0.025;
-    const lateGameBoost = 1.5;
 
     final physicalRoll = specialRoll('s') ~/ 1.5;
     double reductionPercentage = _calculateBaseReduction(
         physicalRoll, baseReduction, maxReduction, scalingFactor);
 
-    if (special.value['s']! >= 80) {
-      reductionPercentage *=
-          _calculateLateGameMultiplier(physicalRoll, lateGameBoost);
-    }
-
     reductionPercentage =
         reductionPercentage.clamp(baseReduction, maxReduction);
-    return (damage * (1 - reductionPercentage)).toInt();
+    return ((damage * (1 - reductionPercentage)).toInt());
   }
 
   double _calculateBaseReduction(int strengthRoll, double baseReduction,
@@ -141,10 +133,6 @@ class TableController extends GetxController {
     return baseReduction +
         (maxReduction - baseReduction) *
             (1 - exp(-scalingFactor * strengthRoll));
-  }
-
-  double _calculateLateGameMultiplier(int strengthRoll, double lateGameBoost) {
-    return 1 + (strengthRoll - 80) / 20 * (lateGameBoost - 1);
   }
 
   // การคำนวณลดความเสียหาย
@@ -198,11 +186,11 @@ class TableController extends GetxController {
   // การคำนวณศัตรู
   int enemyCount(int difficulty) {
     final agilityPerEnemy =
-        ((specialRoll("c") * 1.5) + specialRoll("a")) ~/ 2.5;
+        ((specialRoll("c") * 1.5) + specialRoll("a") / 2) ~/ 10;
     final percentage = _percentage(agilityPerEnemy);
-    final baseEnemyCount = 50 - (50 * percentage);
+    final baseEnemyCount = 20 - (20 * percentage);
     final adjustedEnemyCount = baseEnemyCount ~/ (difficulty + 1);
-    return adjustedEnemyCount.clamp(3, 50);
+    return adjustedEnemyCount.clamp(3, 20);
   }
 
   int getEnemyIndex(int questNumber, bool isActive) {
@@ -261,13 +249,11 @@ class TableController extends GetxController {
   }
 
   int get restHealing {
-    double healPoint = ((rollDice / 2.5).clamp(0, 21) +
+    double healPoint = ((rollDice / 2.5).clamp(3, 21) +
             (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
         levelMultiplier;
-    int totalHealing =
-        (healPoint + (healPoint * _percentage(specialRoll("l")))).round();
 
-    return totalHealing;
+    return healPoint.toInt();
   }
 
   //เหตุการณ์ตาย
@@ -302,10 +288,10 @@ class TableController extends GetxController {
   //เหตุการณ์เจอสมบัติ
   (int, int) itemReward(int difficulty) {
     const questRewards = [
-      [20, 10], // EXP, Coin
-      [40, 20],
-      [80, 40],
-      [160, 80]
+      [10, 8], // EXP, Coin
+      [20, 16],
+      [40, 32],
+      [80, 64]
     ];
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
@@ -351,8 +337,7 @@ class TableController extends GetxController {
   //รีเลือด
   int get healthRegeneration {
     int regeneration =
-        ((((special.value["a"]! * 1.5) + (special.value["e"]! / 2.5)) / 5)
-                .floor())
+        ((((special.value["a"]! * 1.5) + (special.value["e"]!)) / 10).floor())
             .clamp(1, 400);
     return regeneration;
   }
@@ -361,22 +346,22 @@ class TableController extends GetxController {
 
   //task Sender
   (int, int) taskSender(int difficulty) {
-    int baseExp = 25;
+    int baseExp = 100;
     int baseCoin = 10;
     int totalExp =
         ((calculateEXP(baseExp) * difficulty) * levelMultiplier).round();
     int totalCoin =
         ((calculateCoin(baseCoin, -100) * difficulty) * levelMultiplier)
             .round();
-    return (totalExp, totalCoin);
+    return (totalExp.clamp(baseExp, 100000), totalCoin.clamp(baseCoin, 100000));
   }
 
   (int, int) questSender() {
-    int baseExp = 10;
+    int baseExp = 30;
     int baseCoin = 5;
-    int totalExp = (calculateEXP(baseExp) * levelMultiplier).round();
-    int totalCoin = (calculateCoin(baseCoin, -100) * levelMultiplier).round();
-    return (totalExp, totalCoin);
+    int totalExp = (calculateEXP(baseExp) * (levelMultiplier)).round();
+    int totalCoin = (calculateCoin(baseCoin, -100) * (levelMultiplier)).round();
+    return (totalExp.clamp(baseExp, 100000), totalCoin.clamp(baseCoin, 100000));
   }
 
   //สุ่มเหตุการณ์

@@ -431,11 +431,11 @@ class HPEXPBars extends StatelessWidget {
 
         int eventMax = 1;
         int eventNow = 1;
-        int runMax = tabController.timeEventRun;
+        int runMax = focusController.eventIntervalSeconds.value;
         int runNow = focusController.runBar.value;
         int dieMax = focusController.deathTimeRemaining.value;
         int dieNow = focusController.dieBar.value;
-        int restMax = tabController.restTimer;
+        int restMax = focusController.restMaxBar.value;
         int restNow = focusController.restBar.value;
         int barChange = 0;
 
