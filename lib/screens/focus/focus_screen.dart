@@ -433,17 +433,20 @@ class HPEXPBars extends StatelessWidget {
         int eventNow = 1;
         int runMax = tabController.timeEventRun;
         int runNow = focusController.runBar.value;
-        int dieMax = focusController.deathTimeRemaining.value + runMax;
+        int dieMax = focusController.deathTimeRemaining.value;
         int dieNow = focusController.dieBar.value;
-        int restMax = tabController.restTimer + runMax;
+        int restMax = tabController.restTimer;
         int restNow = focusController.restBar.value;
+        int barChange = 0;
 
         if (focusController.isDead.value) {
           eventMax = dieMax + 1;
           eventNow = dieNow;
+          barChange = 1;
         } else if (focusController.isResting.value) {
           eventMax = restMax;
           eventNow = restNow;
+          barChange = 2;
         } else {
           eventMax = runMax;
           eventNow = runNow;
@@ -463,7 +466,11 @@ class HPEXPBars extends StatelessWidget {
                   child: ProgressBar(
                     value: eventNow,
                     max: eventMax,
-                    color: Colors.grey,
+                    color: barChange == 1
+                        ? Colors.grey
+                        : barChange == 2
+                            ? Colors.green
+                            : Colors.purple,
                     label: 'bar',
                     isReversed: true,
                     textAlignRight: true,

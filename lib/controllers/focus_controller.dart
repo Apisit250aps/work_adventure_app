@@ -279,11 +279,7 @@ class FocusController extends GetxController {
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _timeRemaining--;
-      runBar++;
 
-      if (runBar.value >= _eventIntervalSeconds) {
-        runBar.value = 0;
-      }
       if (isDead.value) {
         dieBar++;
       } else {
@@ -293,6 +289,14 @@ class FocusController extends GetxController {
         restBar++;
       } else {
         restBar.value = 0;
+      }
+
+      if (!isDead.value && !isResting.value) {
+        runBar++;
+      }
+
+      if (runBar.value >= _eventIntervalSeconds) {
+        runBar.value = 0;
       }
 
       if (_timeRemaining.value <= 0) {
@@ -340,6 +344,11 @@ class FocusController extends GetxController {
 
   void _startEventTimer() {
     _eventTimer?.cancel();
+    if (isDead.value) {
+      isDead.value = false;
+      damageInput.value ~/= 2;
+      spCounter.value = 0;
+    }
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
       if (_isActive.value &&
           _timeRemaining.value > 0 &&
@@ -358,7 +367,7 @@ class FocusController extends GetxController {
 
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
-        int restTime = restDuration + _eventIntervalSeconds;
+        int restTime = restDuration;
         _restTimeRemaining.value--;
 
         final elapsedTime = restTime - _restTimeRemaining.value;
@@ -379,12 +388,7 @@ class FocusController extends GetxController {
     _reviveTimer?.cancel();
     _reviveTimer = Timer(Duration(seconds: deathTimeRemaining.value), () {
       _reviveTimer?.cancel();
-      runBar++;
-      if (isDead.value) {
-        isDead.value = false;
-        damageInput.value ~/= 2;
-        spCounter.value = 0;
-      }
+
       _startEventTimer();
     });
   }
@@ -526,6 +530,7 @@ class FocusController extends GetxController {
   void _handleCharacterDeath(MonsterName enemy) {
     mustSender.value = true;
     isDead.value = true;
+    runBar.value = 0;
     spCounter.value = _tableController.calculateCharacterStamina;
     deathTimeRemaining.value = _tableController.timeTodie;
     final deathMessage = _getDeathMessage(enemy.toString());
@@ -538,14 +543,15 @@ class FocusController extends GetxController {
   void _generateRestEvent() {
     isResting.value = true;
     mustSender.value = true;
+    runBar.value = 0;
     int healing = _tableController.restHealing;
-    int restDurationShow = restDuration + _eventIntervalSeconds;
+    int restDurationShow = restDuration;
     damageInput.value -= (healing).clamp(0, damageInput.value);
 
     String selectedDialogue = _getRandomRestDialogue();
 
     _updateEncounter("🏕️",
-        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพัก $restDurationShow วินาที");
+        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพักผ่อนจากสนธยาจนรุ่งสาง");
     _addLogEntry("🏕️", "พัก",
         "$selectedDialogue\nHP $healing เวลา $restDurationShow วินาที");
 
@@ -603,9 +609,9 @@ class FocusController extends GetxController {
         ((_characterController.calculateLevel(0) * 1.5).toInt()).clamp(2, 255);
     final multipliers = [
       [1, 1, 1],
-      [3, 3, 3.5],
-      [5, 7, 8],
-      [13, 18, 18]
+      [3, 2, 2],
+      [6, 6, 6],
+      [12, 16, 18]
     ];
     final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
                 _tableController.levelMultiplier)

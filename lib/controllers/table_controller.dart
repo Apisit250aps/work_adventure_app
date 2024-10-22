@@ -35,7 +35,9 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      pow(1.15, _characterController.calculateLevel(0) / 5).toDouble() + 0.40;
+      (pow(1.15, _characterController.calculateLevel(0)).toDouble() + 0.15) *
+      (_characterController.calculateLevel(_characterController.currentExp) /
+          10);
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
@@ -246,15 +248,14 @@ class TableController extends GetxController {
       (counter > calculateCharacterStamina) ? true : false;
 
   int get restTimer {
-    int baseTimeRest = 15;
-    int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 15);
-    int timeRest =
-        ((baseTimeRest - endurancePerTime) - (timeEventRun + 1)).clamp(0, 20);
+    int baseTimeRest = 10;
+    int endurancePerTime = (((specialRoll("e") + specialRoll("i"))) ~/ 20);
+    int timeRest = ((baseTimeRest - endurancePerTime)).clamp(2, 10);
     return timeRest;
   }
 
   int get restHealing {
-    double healPoint = ((rollDice / 2).clamp(0, 50) +
+    double healPoint = ((rollDice / 2.5).clamp(0, 21) +
             (specialRoll("c") + (specialRoll("e"))) ~/ 2) *
         levelMultiplier;
     int totalHealing =
@@ -273,36 +274,32 @@ class TableController extends GetxController {
 
   int get timeTodie {
     int baseTime = 90;
-    int roll = singleDiceRoll();
     int chamultiplier = special.value["c"]! ~/ 6;
     int timeEventDie = (((special.value["s"]! +
                     special.value["p"]! +
                     special.value["e"]! +
-                    special.value["c"]! +
+                    (special.value["c"]! * 2.5) +
                     special.value["i"]! +
                     special.value["a"]! +
                     special.value["l"]!) ~/
                 7) -
             7)
-        .clamp(0, 93);
+        .clamp(0, 90);
 
     int timeDie =
         ((baseTime - ((baseTime * _percentage(timeEventDie)).toInt())) -
                 (timeEventRun + 1))
-            .clamp(30, 90);
-    if (roll > 17 - chamultiplier) {
-      return timeDie ~/ 2;
-    }
-    return timeDie;
+            .clamp(20, 90);
+    return timeDie - chamultiplier;
   }
 
   //เหตุการณ์เจอสมบัติ
   (int, int) itemReward(int difficulty) {
     const questRewards = [
-      [10, 5], // EXP, Coin
-      [20, 10],
+      [20, 10], // EXP, Coin
       [40, 20],
-      [80, 40]
+      [80, 40],
+      [160, 80]
     ];
 
     int exp = (questRewards[difficulty][0] * levelMultiplier).round();
