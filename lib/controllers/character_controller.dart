@@ -161,7 +161,7 @@ class CharacterController extends GetxController {
 
   int calculateLevel(int exp) {
     const double base = 1.045;
-    const double C = 13000;
+    const double C = 20000;
 
     return (log(exp / C + 1) / log(base) + 1).toInt();
   }
@@ -170,7 +170,7 @@ class CharacterController extends GetxController {
 
   (int, int) calculateExpForNextLevel(int exp) {
     const double base = 1.045;
-    const double C = 13000;
+    const double C = 20000;
 
     int totalExp = currentExp + exp;
     int currentLevel = calculateLevel(currentExp);
@@ -225,7 +225,7 @@ class CharacterController extends GetxController {
   bool isLevelup(int expInput) {
     loadCharacters();
     final (expGap, expForNextLevel) = calculateExpForNextLevel(expInput);
-    if (expGap >= expForNextLevel) {
+    if (expGap > expForNextLevel) {
       print("level up");
       additionalSpecial();
       print(characterSelect.value.toJson());
@@ -248,14 +248,6 @@ class CharacterController extends GetxController {
     await additionalExp(exp);
     print("เพิ่มค่า $coin");
     await additionalCoins(coin);
-    return true;
-  }
-
-  Future<bool> taskReduced(int exp, int coin) async {
-    print("เพิ่มค่า ${-exp}");
-    await additionalExp(-exp);
-    print("เพิ่มค่า ${-coin}");
-    await additionalCoins(-coin);
     return true;
   }
 

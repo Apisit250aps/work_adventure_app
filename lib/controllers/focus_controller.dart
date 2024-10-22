@@ -61,13 +61,20 @@ class FocusController extends GetxController {
   RxInt regenerationCounter = 0.obs;
   RxInt focusCounter = 0.obs;
   RxBool mustSender = false.obs;
-  final RxBool _isResting = false.obs;
+  final RxBool isResting = false.obs;
   final RxInt _restTimeRemaining = 0.obs;
-  final RxBool _isDead = false.obs;
-  final RxInt _deathTimeRemaining = 0.obs;
+  final RxBool isDead = false.obs;
+  final RxInt deathTimeRemaining = 0.obs;
   RxInt damageInput = 0.obs;
   RxInt expInput = 0.obs;
   RxInt coinInput = 0.obs;
+
+  RxInt runBar = 0.obs;
+  RxInt dieBar = 0.obs;
+  RxInt restBar = 0.obs;
+
+  RxInt eventIntervalSeconds = 0.obs;
+  RxInt restMaxBar = 0.obs;
 
   // Timers
   Timer? _timer;
@@ -95,8 +102,8 @@ class FocusController extends GetxController {
   late List<List<MonsterName>> enemy;
 
   // Getters
-  int get timeRemaining => _timeRemaining.value;
   int get totalTime => _totalTime.value;
+  int get timeRemaining => _timeRemaining.value;
   bool get isActive => _isActive.value;
   List<LogEntry> get adventureLog => _adventureLog.toList();
   String get currentEncounterIcon => _currentEncounterIcon.value;
@@ -110,6 +117,8 @@ class FocusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    restMaxBar.value = _tableController.restTimer;
+    eventIntervalSeconds.value = _tableController.timeEventRun;
     _initializeEnemies();
     _initializeItems();
     _setupTableControllerListener();
@@ -224,8 +233,8 @@ class FocusController extends GetxController {
   void pauseFocus() {
     _stopTimers();
     _isActive.value = false;
-    _isResting.value = false;
-    _isDead.value = false;
+    isResting.value = false;
+    isDead.value = false;
   }
 
   void _resetSessionVariables() {
@@ -240,10 +249,13 @@ class FocusController extends GetxController {
     focusCounter.value = 0;
     mustSender.value = false;
     _restTimeRemaining.value = 0;
-    _deathTimeRemaining.value = 0;
+    deathTimeRemaining.value = 0;
     damageInput.value = 0;
     expInput.value = 0;
     coinInput.value = 0;
+    runBar = 0.obs;
+    dieBar = 0.obs;
+    restBar = 0.obs;
   }
 
   void _resetQuestVariables() {
@@ -272,14 +284,37 @@ class FocusController extends GetxController {
   // Timer methods
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _timeRemaining--;
+
+      if (isDead.value) {
+        dieBar++;
+      } else {
+        dieBar.value = 0;
+      }
+      if (isResting.value) {
+        restBar++;
+      } else {
+        restBar.value = 0;
+      }
+
+      if (!isDead.value && !isResting.value) {
+        runBar++;
+      }
+
+      if (runBar.value >= _eventIntervalSeconds) {
+        runBar.value = 0;
+      }
+
+      if (_timeRemaining.value <= 0) {
+        mustSender.value = true;
+      }
+      updateServerSystem();
+      focusSystem();
       if (_timeRemaining.value > 0) {
-        updateServerSystem();
-        focusSystem();
         generationSystem();
       } else {
         _endSession();
       }
-      _timeRemaining--;
     });
   }
 
@@ -303,7 +338,7 @@ class FocusController extends GetxController {
   void generationSystem() {
     regenerationCounter++;
     if (_tableController.timeToRegenerate(regenerationCounter.value)) {
-      if (!_isDead.value) {
+      if (!isDead.value) {
         print("Regeneration is working");
         damageInput.value -=
             _tableController.healthRegeneration.clamp(0, damageInput.value);
@@ -315,15 +350,15 @@ class FocusController extends GetxController {
 
   void _startEventTimer() {
     _eventTimer?.cancel();
+    if (isDead.value) {
+      isDead.value = false;
+      damageInput.value ~/= 2;
+      spCounter.value = 0;
+    }
     _eventTimer = Timer.periodic(Duration(seconds: _eventIntervalSeconds), (_) {
-      if (_isDead.value) {
-        _isDead.value = false;
-        damageInput.value ~/= 2;
-        spCounter.value = 0;
-      }
       if (_isActive.value &&
           _timeRemaining.value > 0 &&
-          _isDead.value == false) {
+          isDead.value == false) {
         generateEvent();
       }
     });
@@ -338,7 +373,7 @@ class FocusController extends GetxController {
 
     _restTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_restTimeRemaining.value > 0) {
-        int restTime = restDuration + _eventIntervalSeconds;
+        int restTime = restDuration;
         _restTimeRemaining.value--;
 
         final elapsedTime = restTime - _restTimeRemaining.value;
@@ -347,7 +382,7 @@ class FocusController extends GetxController {
         spCounter.value = totalStaminaToRecover - recoveredStamina;
       } else {
         spCounter.value = 0;
-        _isResting.value = false;
+        isResting.value = false;
         _restTimer?.cancel();
         _startEventTimer();
       }
@@ -357,13 +392,16 @@ class FocusController extends GetxController {
   void _startReviveTimer() {
     _eventTimer?.cancel();
     _reviveTimer?.cancel();
-    _reviveTimer = Timer(Duration(seconds: _deathTimeRemaining.value), () {
+    _reviveTimer = Timer(Duration(seconds: deathTimeRemaining.value), () {
       _reviveTimer?.cancel();
+
       _startEventTimer();
     });
   }
 
   void _endSession() {
+    _resetQuestVariables();
+    _resetSessionVariables();
     _stopTimers();
     _isActive.value = false;
     showSummary();
@@ -371,7 +409,7 @@ class FocusController extends GetxController {
 
   void _resetSessionState() {
     _isActive.value = false;
-    _isResting.value = false;
+    isResting.value = false;
     _adventureLog.clear();
     _currentEncounterIcon.value = "🌟";
     _currentEncounterDescription.value = "รอการผจญภัย...\n";
@@ -450,8 +488,8 @@ class FocusController extends GetxController {
   }
 
   void _generateNothingEvent() {
-    _updateEncounter("🌲",
-        "คุณก้าวเท้าเดินไปบนเส้นทางอันเงียบสงบ\nไม่มีสิ่งใดมารบกวนการเดินทาง\nอันแสนผ่อนคลายของคุณ");
+    _updateEncounter("⛅",
+        "เส้นทางที่คุณเดินไม่มีแม้แต่เงา\nไม่มีสิ่งใดมารบกวนความสงบ\nความเป็นจริงที่แสนผ่อนคลาย");
     _addLogEntry(
         "🌟", "Peaceful", "You continue your journey without incident.");
   }
@@ -499,28 +537,29 @@ class FocusController extends GetxController {
 
   void _handleCharacterDeath(MonsterName enemy) {
     mustSender.value = true;
-    _isDead.value = true;
+    isDead.value = true;
+    runBar.value = 0;
     spCounter.value = _tableController.calculateCharacterStamina;
-    _deathTimeRemaining.value = _tableController.timeTodie;
-    int deathTimeShow = _deathTimeRemaining.value + _eventIntervalSeconds + 1;
+    deathTimeRemaining.value = _tableController.timeTodie;
     final deathMessage = _getDeathMessage(enemy.toString());
-    _updateEncounter("💀", "$deathMessage\n$deathTimeShow");
+    _updateEncounter("💀", "$deathMessage");
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
 
     _startReviveTimer();
   }
 
   void _generateRestEvent() {
-    _isResting.value = true;
+    isResting.value = true;
     mustSender.value = true;
+    runBar.value = 0;
     int healing = _tableController.restHealing;
-    int restDurationShow = restDuration + _eventIntervalSeconds;
+    int restDurationShow = restDuration;
     damageInput.value -= (healing).clamp(0, damageInput.value);
 
     String selectedDialogue = _getRandomRestDialogue();
 
     _updateEncounter("🏕️",
-        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพัก $restDurationShow วินาที");
+        "$selectedDialogue\nฟื้นฟูพลังชีวิต $healing🔺\nพักผ่อนจากสนธยาจนรุ่งสาง");
     _addLogEntry("🏕️", "พัก",
         "$selectedDialogue\nHP $healing เวลา $restDurationShow วินาที");
 
@@ -572,20 +611,22 @@ class FocusController extends GetxController {
   }
 
   (int, int, int) _calculateEnemyStats(int index) {
-    int baseMax =
-        ((_characterController.calculateLevel(0) * 2.5).toInt()).clamp(2, 450);
+    int baseMax = (2 *
+            (_characterController
+                .calculateLevel(_characterController.currentExp))) +
+        6;
+
     int baseMin =
-        ((_characterController.calculateLevel(0) * 1.5).toInt()).clamp(2, 255);
+        (_characterController.calculateLevel(_characterController.currentExp)) +
+            3;
     final multipliers = [
-      [1, 1, 1],
-      [3, 3, 3.5],
-      [5, 7, 8],
-      [13, 18, 18]
+      [2, 1, 1],
+      [4, 2, 2],
+      [8, 6, 5],
+      [16, 13, 11]
     ];
-    final baseValue = ((((rollOne).clamp(baseMin, baseMax)) *
-                _tableController.levelMultiplier)
-            .round()) +
-        4;
+    final baseValue = (Random().nextInt(baseMax).clamp(baseMin, baseMax)) *
+        (_tableController.levelMultiplier).round();
 
     int coin = ((baseValue) * multipliers[index][1]).toInt();
     int damage = (baseValue * multipliers[index][2]).toInt();

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:work_adventure/constant.dart';
 import 'package:work_adventure/controllers/focus_controller.dart';
 import 'package:work_adventure/controllers/characteroutloop_controller.dart';
-
 import 'package:collection/collection.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
 
@@ -305,7 +304,7 @@ class ProgressBar extends StatelessWidget {
     required this.color,
     required this.label,
     this.isReversed = false,
-    this.animationDuration = const Duration(milliseconds: 1000),
+    this.animationDuration = const Duration(milliseconds: 700),
     this.customText,
     this.textAlignRight = false,
   });
@@ -351,7 +350,7 @@ class ProgressBar extends StatelessWidget {
           },
         ),
         AnimatedSwitcher(
-          duration: const Duration(milliseconds: 1000),
+          duration: const Duration(milliseconds: 100),
           child: Container(
             key: ValueKey<int>(value),
             height: 23,
@@ -411,15 +410,16 @@ class HPEXPBars extends StatelessWidget {
 
   const HPEXPBars({
     super.key,
-    this.staminaBarWidth = 1.0,
+    this.staminaBarWidth = 0.35,
     this.hpBarWidth = 0.35,
-    this.expBarWidth = 0.35,
+    this.expBarWidth = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
     final characterbar = Get.find<CharacterbarController>();
     final tabController = Get.find<TableController>();
+    final focusController = Get.find<FocusController>();
     return Positioned(
       bottom: 0,
       left: 0,
@@ -429,13 +429,61 @@ class HPEXPBars extends StatelessWidget {
         final (expNow, expMax) = characterbar.expBar();
         final (staminaNow, staminaMax) = characterbar.spBar();
 
+        int eventMax = 1;
+        int eventNow = 1;
+        int runMax = focusController.eventIntervalSeconds.value;
+        int runNow = focusController.runBar.value;
+        int dieMax = focusController.deathTimeRemaining.value;
+        int dieNow = focusController.dieBar.value;
+        int restMax = focusController.restMaxBar.value;
+        int restNow = focusController.restBar.value;
+        int barChange = 0;
+
+        if (focusController.isDead.value) {
+          eventMax = dieMax + 1;
+          eventNow = dieNow;
+          barChange = 1;
+        } else if (focusController.isResting.value) {
+          eventMax = restMax;
+          eventNow = restNow;
+          barChange = 2;
+        } else {
+          eventMax = runMax;
+          eventNow = runNow;
+        }
+
         return Column(
           children: [
+            Row(
+              children: [
+                Expanded(
+                  flex: (hpBarWidth * 100).toInt(),
+                  child:
+                      const SizedBox(), // แทนที่ ProgressBar ด้วย SizedBox ว่างเปล่า
+                ),
+                Expanded(
+                  flex: (staminaBarWidth * 100).toInt(),
+                  child: ProgressBar(
+                    value: eventNow,
+                    max: eventMax,
+                    color: barChange == 1
+                        ? Colors.grey
+                        : barChange == 2
+                            ? Colors.green
+                            : Colors.purple,
+                    label: 'bar',
+                    isReversed: true,
+                    textAlignRight: true,
+                    customText: (value, max) => '$value/$max',
+                  ),
+                ),
+              ],
+            ),
             // EXP bar
             Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
-                widthFactor: staminaBarWidth,
+                widthFactor: expBarWidth,
                 child: ProgressBar(
                   value: expNow,
                   max: expMax,
@@ -457,11 +505,11 @@ class HPEXPBars extends StatelessWidget {
                     color: const Color(0xFFFC766A),
                     label: 'HP',
                     customText: (value, max) =>
-                        'HP: $value/$max (+${tabController.healthRegeneration}/3s)',
+                        'HP: $value/$max (+${tabController.healthRegeneration}/5s)',
                   ),
                 ),
                 Expanded(
-                  flex: (expBarWidth * 100).toInt(),
+                  flex: (staminaBarWidth * 100).toInt(),
                   child: ProgressBar(
                     value: staminaNow,
                     max: staminaMax,
