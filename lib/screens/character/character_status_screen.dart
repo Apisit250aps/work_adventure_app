@@ -58,7 +58,7 @@ class CharacterStatusScreen extends GetWidget<SpecialController> {
         '🧿 🫁 🏕️ ⌚  (ค่าประสบการณ์)'
       ),
       ('AGI', controller.special.value.agility, '⚔️ ⌚ 🩸  (เร่งเวลา)'),
-      ('LCK', controller.special.value.luck, '🍀  (ดวงดี)'),
+      ('LCK', controller.special.value.luck, '🍀 💰  (ดวงดี)'),
     ];
 
     return stats

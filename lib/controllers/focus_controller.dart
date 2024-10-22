@@ -604,9 +604,15 @@ class FocusController extends GetxController {
 
   (int, int, int) _calculateEnemyStats(int index) {
     int baseMax =
-        ((_characterController.calculateLevel(0) * 2.5).toInt()).clamp(2, 450);
+        ((_characterController.calculateLevel(_characterController.currentExp) *
+                    2.5)
+                .toInt())
+            .clamp(2, 450);
     int baseMin =
-        ((_characterController.calculateLevel(0) * 1.5).toInt()).clamp(2, 255);
+        ((_characterController.calculateLevel(_characterController.currentExp) *
+                    1.5)
+                .toInt())
+            .clamp(2, 255);
     final multipliers = [
       [1, 1, 1],
       [3, 2, 2],

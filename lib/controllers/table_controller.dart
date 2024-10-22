@@ -35,13 +35,15 @@ class TableController extends GetxController {
   double _percentage(int value) => (value / 100);
 
   double get levelMultiplier =>
-      (pow(1.15, _characterController.calculateLevel(0)).toDouble() + 0.15) *
-      (_characterController.calculateLevel(_characterController.currentExp) /
-          10);
+      (pow(1.15, _characterController.calculateLevel(expCurrent)).toDouble() +
+          0.15) *
+      (_characterController.calculateLevel(expCurrent) / 10);
+
+  int get expCurrent => _characterController.currentExp;
 
   // สถานะตัวละคร
   int get calculateCharacterHP =>
-      (special.value['e']! * 10 + special.value['s']!);
+      (special.value['e']! * 10 + special.value['s']!) + 10;
 
   int get calculateCharacterStamina =>
       ((special.value['s']! + special.value['i']!) ~/ 4).clamp(5, 50);
@@ -95,14 +97,17 @@ class TableController extends GetxController {
 
   // การคำนวณเหรียญ
   int calculateCoin(int coin, int difficulty) {
-    final luckBonus = _percentage(specialRoll('l'));
+    double luckBonus = _percentage(specialRoll('l'));
+    double perBonus = _percentage(specialRoll('p'));
     int coinBase = (coin * levelMultiplier).round();
     int finalCoin = coinBase + ((coinBase * luckBonus) ~/ 0.65);
 
     if (_shouldReduceCoin(difficulty)) {
       finalCoin ~/= 3;
+    } else {
+      finalCoin = finalCoin + (finalCoin * perBonus).round();
     }
-    return finalCoin;
+    return finalCoin.clamp(1, double.infinity.toInt());
   }
 
   bool _shouldReduceCoin(int difficulty) {
@@ -202,7 +207,8 @@ class TableController extends GetxController {
 
   int getEnemyIndex(int questNumber, bool isActive) {
     final dice = singleDiceRoll().clamp(1, 100);
-    final characterLevel = _characterController.calculateLevel(0) ~/ 10;
+    final characterLevel =
+        _characterController.calculateLevel(expCurrent) ~/ 10;
 
     // คำนวณโอกาสการเกิดศัตรูแต่ละประเภท
     final List<int> enemyChance = [
@@ -315,7 +321,8 @@ class TableController extends GetxController {
         (((specialRoll("p") * 2) + ((specialRoll("l")) / 1.5)) ~/ 13)
             .clamp(0, 7);
     int dice = singleDiceRoll().clamp(1, 21) - perMultiplier;
-    final characterLevel = _characterController.calculateLevel(0) ~/ 10;
+    final characterLevel =
+        _characterController.calculateLevel(expCurrent) ~/ 10;
 
     // คำนวณโอกาสการเกิดไอเทมแต่ละประเภท
     final List<int> itemChance = [
