@@ -542,7 +542,7 @@ class FocusController extends GetxController {
     spCounter.value = _tableController.calculateCharacterStamina;
     deathTimeRemaining.value = _tableController.timeTodie;
     final deathMessage = _getDeathMessage(enemy.toString());
-    _updateEncounter("💀", "$deathMessage");
+    _updateEncounter("💀", deathMessage);
     _addLogEntry("💀", "Death", "Your character has fallen in battle.");
 
     _startReviveTimer();
