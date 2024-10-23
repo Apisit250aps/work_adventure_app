@@ -1,4 +1,4 @@
-package com.example.work_adventure
+package com.phisan.todorpg
 
 import io.flutter.embedding.android.FlutterActivity
 

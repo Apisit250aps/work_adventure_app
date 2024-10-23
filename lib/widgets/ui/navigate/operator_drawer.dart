@@ -112,6 +112,12 @@ class OperatorDrawer extends GetWidget<UserController> {
               ),
             ),
             const Divider(),
+            
+            const ListTile(
+              leading: Icon(Boxicons.bx_info_circle),
+              title: Text('version 1.1.0'),
+            
+            ),
             ListTile(
               leading: const Icon(Boxicons.bx_exit),
               title: const Text('Logout'),
