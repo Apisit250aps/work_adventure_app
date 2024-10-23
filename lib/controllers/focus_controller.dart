@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:work_adventure/controllers/character_controller.dart';
 import 'package:work_adventure/controllers/table_controller.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class LogEntry {
   final String icon;
@@ -117,6 +118,7 @@ class FocusController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    WakelockPlus.enable();
     restMaxBar.value = _tableController.restTimer;
     eventIntervalSeconds.value = _tableController.timeEventRun;
     _initializeEnemies();
@@ -338,7 +340,7 @@ class FocusController extends GetxController {
   void generationSystem() {
     regenerationCounter++;
     if (_tableController.timeToRegenerate(regenerationCounter.value)) {
-      if (!isDead.value) {
+      if (!isDead.value && !isResting.value) {
         print("Regeneration is working");
         damageInput.value -=
             _tableController.healthRegeneration.clamp(0, damageInput.value);
@@ -760,6 +762,7 @@ class FocusController extends GetxController {
 
   @override
   void onClose() {
+    WakelockPlus.disable();
     _stopTimers();
     super.onClose();
   }

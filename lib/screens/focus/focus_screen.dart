@@ -10,6 +10,7 @@ import 'package:work_adventure/controllers/table_controller.dart';
 
 class FocusScreen extends GetView<FocusController> {
   const FocusScreen({super.key, required int totalTime});
+
   @override
   Widget build(BuildContext context) {
     return Container(

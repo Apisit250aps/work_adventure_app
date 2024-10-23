@@ -54,6 +54,7 @@ dependencies:
   lottie: ^3.1.3
 
   collection: any
+  wakelock_plus: ^1.2.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
